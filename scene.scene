@@ -48,7 +48,7 @@
         ],
         "children": [
           {
-            "uuid": "1533a8c5-0e00-4fcd-a1d8-5a72048961ad",
+            "uuid": "37bd850c-4f5b-42e4-addb-9f43a49bea95",
             "name": "Tile_-4_-4",
             "priority": 0.0,
             "visible": true,
@@ -96,7 +96,7 @@
             ]
           },
           {
-            "uuid": "dd0190c2-7b40-44ec-9476-e7e196470aab",
+            "uuid": "225540e2-22e7-4850-ad38-65ef7d1cbcb4",
             "name": "Tile_-4_-3",
             "priority": 0.0,
             "visible": true,
@@ -144,7 +144,7 @@
             ]
           },
           {
-            "uuid": "7ab27188-b230-45d4-88b0-460c39a8ba16",
+            "uuid": "d941c028-9ce3-4c49-beab-8c624777f769",
             "name": "Tile_-4_-2",
             "priority": 0.0,
             "visible": true,
@@ -192,7 +192,7 @@
             ]
           },
           {
-            "uuid": "a94ad924-8abd-419e-b4f8-7fca3f8a75ba",
+            "uuid": "cc384bef-1f63-4f4c-9ba4-3b18c0f7cc9a",
             "name": "Tile_-4_-1",
             "priority": 0.0,
             "visible": true,
@@ -240,7 +240,7 @@
             ]
           },
           {
-            "uuid": "3ce642ef-1698-431f-8809-2b81b1e5975b",
+            "uuid": "388dc2d4-70cf-4d2e-baaa-91c121882aed",
             "name": "Tile_-4_0",
             "priority": 0.0,
             "visible": true,
@@ -288,7 +288,7 @@
             ]
           },
           {
-            "uuid": "2f707fb9-2e90-4862-88d7-2cc861a1829e",
+            "uuid": "c075dcdf-d81b-4c73-8067-8b805f581a97",
             "name": "Tile_-4_1",
             "priority": 0.0,
             "visible": true,
@@ -336,7 +336,7 @@
             ]
           },
           {
-            "uuid": "88c48d9e-5c50-4da4-99e9-250bcebd66fe",
+            "uuid": "e5dd6c55-ac89-4326-b314-e8549d12425d",
             "name": "Tile_-4_2",
             "priority": 0.0,
             "visible": true,
@@ -384,7 +384,7 @@
             ]
           },
           {
-            "uuid": "2de5b75b-760f-4dfe-a7e9-c6488b48e613",
+            "uuid": "881e3d60-3a69-44fa-905f-7a2fb795c79c",
             "name": "Tile_-4_3",
             "priority": 0.0,
             "visible": true,
@@ -432,55 +432,7 @@
             ]
           },
           {
-            "uuid": "0d73b169-c36f-4e1d-9833-2826f08e241e",
-            "name": "Tile_-4_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                -8.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "73dc79e9-eb37-48d2-a0ae-1babf701be04",
+            "uuid": "7233f11e-bc75-44f0-892c-44263f8684c7",
             "name": "Tile_-3_-4",
             "priority": 0.0,
             "visible": true,
@@ -528,7 +480,7 @@
             ]
           },
           {
-            "uuid": "75706d38-df7b-4537-af7d-5d9f0b82bd7f",
+            "uuid": "a5c127df-2afb-49fa-9b53-2a12e8f1af5a",
             "name": "Tile_-3_-3",
             "priority": 0.0,
             "visible": true,
@@ -576,7 +528,7 @@
             ]
           },
           {
-            "uuid": "5e376849-6e50-4c8e-bf37-3af638f8faad",
+            "uuid": "24a078e0-15bd-409f-a915-c5289b49ef40",
             "name": "Tile_-3_-2",
             "priority": 0.0,
             "visible": true,
@@ -624,7 +576,7 @@
             ]
           },
           {
-            "uuid": "6867e647-e33b-4e92-b9dc-31c45eef43bc",
+            "uuid": "0a171f34-12f8-4f6d-8c59-80344a2f8f6e",
             "name": "Tile_-3_-1",
             "priority": 0.0,
             "visible": true,
@@ -672,7 +624,7 @@
             ]
           },
           {
-            "uuid": "26ac0594-fc21-42fb-985c-f19155eb3ebd",
+            "uuid": "cf074ee5-c41f-44ae-b449-d6cf93c6109d",
             "name": "Tile_-3_0",
             "priority": 0.0,
             "visible": true,
@@ -720,7 +672,7 @@
             ]
           },
           {
-            "uuid": "53240536-6083-4819-9ff9-ddbde821790e",
+            "uuid": "dd2fd2ef-2801-4d74-9add-a8a40c3712db",
             "name": "Tile_-3_1",
             "priority": 0.0,
             "visible": true,
@@ -768,7 +720,7 @@
             ]
           },
           {
-            "uuid": "cd7fa2c9-a0c5-45f9-a1b6-8a76a2c834f5",
+            "uuid": "3f60c003-7f44-41b3-8e88-83214e93be2b",
             "name": "Tile_-3_2",
             "priority": 0.0,
             "visible": true,
@@ -816,7 +768,7 @@
             ]
           },
           {
-            "uuid": "ed392b4d-bcf3-461c-ac43-d9d56453e331",
+            "uuid": "c2901aea-9177-4eeb-9407-8f603ea13c7d",
             "name": "Tile_-3_3",
             "priority": 0.0,
             "visible": true,
@@ -864,55 +816,7 @@
             ]
           },
           {
-            "uuid": "d286fb72-4bc0-4b6c-b6f5-e318be170dab",
-            "name": "Tile_-3_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                -6.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "5038f80c-2b5e-4818-a102-ed0655d03727",
+            "uuid": "02fc8181-4132-45cf-bab8-f0084bae330d",
             "name": "Tile_-2_-4",
             "priority": 0.0,
             "visible": true,
@@ -960,7 +864,7 @@
             ]
           },
           {
-            "uuid": "563299a1-f205-4e69-baf1-81b8088f6358",
+            "uuid": "3f4ef8d0-c556-4c1a-9d4b-7a9cedb619ef",
             "name": "Tile_-2_-3",
             "priority": 0.0,
             "visible": true,
@@ -1008,7 +912,7 @@
             ]
           },
           {
-            "uuid": "c75b64f3-b98d-4b5b-8ff8-61e4c8980b1f",
+            "uuid": "b39a70f4-cda5-4387-9db3-90a861c3b6a0",
             "name": "Tile_-2_-2",
             "priority": 0.0,
             "visible": true,
@@ -1056,7 +960,7 @@
             ]
           },
           {
-            "uuid": "cba4c0bd-a9ce-46a4-bfa8-5cc737c01ffe",
+            "uuid": "11ae71d7-042d-4162-b86b-fe65221754d5",
             "name": "Tile_-2_-1",
             "priority": 0.0,
             "visible": true,
@@ -1104,7 +1008,7 @@
             ]
           },
           {
-            "uuid": "1b84f1d5-11fc-40a0-b491-84bd298fdcf4",
+            "uuid": "b2c5c97f-6a8c-46c8-bf96-70a05a26416b",
             "name": "Tile_-2_0",
             "priority": 0.0,
             "visible": true,
@@ -1152,7 +1056,7 @@
             ]
           },
           {
-            "uuid": "339cb2dd-6bd8-412a-80dd-f2b79d11b6b9",
+            "uuid": "d4b242d9-df33-4b57-9f39-bdc150119602",
             "name": "Tile_-2_1",
             "priority": 0.0,
             "visible": true,
@@ -1200,7 +1104,7 @@
             ]
           },
           {
-            "uuid": "95a78ea6-a4be-4698-8fca-557859316d8d",
+            "uuid": "d65f8141-eb88-492a-9e79-ca78a00be474",
             "name": "Tile_-2_2",
             "priority": 0.0,
             "visible": true,
@@ -1248,7 +1152,7 @@
             ]
           },
           {
-            "uuid": "ce1f6a39-f7eb-4378-8855-2f6667e51ffc",
+            "uuid": "bd264d9c-5a88-44f9-81b1-ba12c2501499",
             "name": "Tile_-2_3",
             "priority": 0.0,
             "visible": true,
@@ -1296,55 +1200,7 @@
             ]
           },
           {
-            "uuid": "8dada331-6be9-49ba-b41f-320d509f9a1e",
-            "name": "Tile_-2_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                -4.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "be0457b6-efbb-4eb8-905d-1e77433d74d0",
+            "uuid": "af96da9a-1ee3-443c-9c8e-b5fc9a997157",
             "name": "Tile_-1_-4",
             "priority": 0.0,
             "visible": true,
@@ -1392,7 +1248,7 @@
             ]
           },
           {
-            "uuid": "ea170155-00ca-4fb4-a941-c23ae15c589f",
+            "uuid": "bfbef419-47e8-4208-99cc-1a5b1c2ff4cb",
             "name": "Tile_-1_-3",
             "priority": 0.0,
             "visible": true,
@@ -1440,7 +1296,7 @@
             ]
           },
           {
-            "uuid": "61b05550-6b83-487b-a126-f3246367f44d",
+            "uuid": "c5ce65e3-b129-4f0e-b8d4-0a526d7ba92d",
             "name": "Tile_-1_-2",
             "priority": 0.0,
             "visible": true,
@@ -1488,7 +1344,7 @@
             ]
           },
           {
-            "uuid": "7ef5a27e-bfb1-43a9-b3f5-e3d4513b73b2",
+            "uuid": "3a9d4681-8559-491e-a5a4-7a42d36e0d98",
             "name": "Tile_-1_-1",
             "priority": 0.0,
             "visible": true,
@@ -1536,7 +1392,7 @@
             ]
           },
           {
-            "uuid": "ebc90356-4c0b-422d-b2c5-51952c45e3aa",
+            "uuid": "3d737bee-9c9a-4c54-af07-a6dc825009bc",
             "name": "Tile_-1_0",
             "priority": 0.0,
             "visible": true,
@@ -1584,7 +1440,7 @@
             ]
           },
           {
-            "uuid": "3a8528fa-375b-432a-9086-fea2c17154ad",
+            "uuid": "ed503d73-a9c7-41ce-ab0b-103e7a1ed6b7",
             "name": "Tile_-1_1",
             "priority": 0.0,
             "visible": true,
@@ -1632,7 +1488,7 @@
             ]
           },
           {
-            "uuid": "3a570387-63d5-4495-9a06-2ac64b0d7086",
+            "uuid": "9151a52d-eba2-425a-a928-372b7840e866",
             "name": "Tile_-1_2",
             "priority": 0.0,
             "visible": true,
@@ -1680,7 +1536,7 @@
             ]
           },
           {
-            "uuid": "939980ca-f423-4445-a9f2-e76a633b179e",
+            "uuid": "9025d939-ec6a-4857-b618-95f0366ba7c7",
             "name": "Tile_-1_3",
             "priority": 0.0,
             "visible": true,
@@ -1728,55 +1584,7 @@
             ]
           },
           {
-            "uuid": "931b25f6-f0d9-4b8b-9fb5-512bc3c2b156",
-            "name": "Tile_-1_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                -2.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "5b31204f-5414-44fd-867b-6769b77f074a",
+            "uuid": "bc4cf5a8-ee77-4297-9f39-c3187aab7e0a",
             "name": "Tile_0_-4",
             "priority": 0.0,
             "visible": true,
@@ -1824,7 +1632,7 @@
             ]
           },
           {
-            "uuid": "9a2c408a-06cb-45e5-8067-104329c19984",
+            "uuid": "d05744bd-c14c-4437-a4aa-279b15ce62d2",
             "name": "Tile_0_-3",
             "priority": 0.0,
             "visible": true,
@@ -1872,7 +1680,7 @@
             ]
           },
           {
-            "uuid": "f2b9d346-cd68-43d3-a3ab-3d9a2a44e4c4",
+            "uuid": "1b577a09-ce7c-416e-b664-86300f043adf",
             "name": "Tile_0_-2",
             "priority": 0.0,
             "visible": true,
@@ -1920,7 +1728,7 @@
             ]
           },
           {
-            "uuid": "71244e77-ef64-4c70-8b6d-b3f42e4d7821",
+            "uuid": "5b7e9c1c-cab1-442f-9b7b-ca704a2c4265",
             "name": "Tile_0_-1",
             "priority": 0.0,
             "visible": true,
@@ -1968,7 +1776,7 @@
             ]
           },
           {
-            "uuid": "064b67d4-b3ab-4797-96e4-31802916449a",
+            "uuid": "84bc6e52-390f-40ef-b346-1f824a5962a5",
             "name": "Tile_0_0",
             "priority": 0.0,
             "visible": true,
@@ -2016,7 +1824,7 @@
             ]
           },
           {
-            "uuid": "3a92112a-f66d-4ac1-9a4d-b5099a2d2aa1",
+            "uuid": "d8fec2a2-af16-410a-919b-7bdbc8bd404c",
             "name": "Tile_0_1",
             "priority": 0.0,
             "visible": true,
@@ -2064,7 +1872,7 @@
             ]
           },
           {
-            "uuid": "7991752c-3c1c-4392-81f5-122a0b56c445",
+            "uuid": "7aaf9eb3-be5f-4232-a5c1-b4f01a1695f2",
             "name": "Tile_0_2",
             "priority": 0.0,
             "visible": true,
@@ -2112,7 +1920,7 @@
             ]
           },
           {
-            "uuid": "e9d56fdf-4209-411d-9756-26f1845092fd",
+            "uuid": "155795c4-6d66-4fff-824a-daca071b1681",
             "name": "Tile_0_3",
             "priority": 0.0,
             "visible": true,
@@ -2160,55 +1968,7 @@
             ]
           },
           {
-            "uuid": "e107291e-24ed-4025-a2c3-4fed19133202",
-            "name": "Tile_0_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                0.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "e8a2e22a-ab83-4702-996d-f45dbd865a9f",
+            "uuid": "cab43488-13d6-4ab9-976f-a9b2853ea49a",
             "name": "Tile_1_-4",
             "priority": 0.0,
             "visible": true,
@@ -2256,7 +2016,7 @@
             ]
           },
           {
-            "uuid": "8e84bdb2-716d-4753-b026-404a39724c21",
+            "uuid": "96395f03-a02e-42a2-b8dd-6c7ff88201c2",
             "name": "Tile_1_-3",
             "priority": 0.0,
             "visible": true,
@@ -2304,7 +2064,7 @@
             ]
           },
           {
-            "uuid": "142e4bc0-b193-428b-80b6-e8be3d435dcb",
+            "uuid": "36354a4a-0c05-43a3-b4ac-55f9eafa9480",
             "name": "Tile_1_-2",
             "priority": 0.0,
             "visible": true,
@@ -2352,7 +2112,7 @@
             ]
           },
           {
-            "uuid": "c71a7d38-8754-4bb8-bacb-02b33d4ed452",
+            "uuid": "33f384d3-2186-4599-a3e1-185b63191d9a",
             "name": "Tile_1_-1",
             "priority": 0.0,
             "visible": true,
@@ -2400,7 +2160,7 @@
             ]
           },
           {
-            "uuid": "7d1f122e-b2d4-49b3-8ba2-71c8e5ce93ac",
+            "uuid": "4f68e45b-6de7-4ee1-9354-da7d4e6efe81",
             "name": "Tile_1_0",
             "priority": 0.0,
             "visible": true,
@@ -2448,7 +2208,7 @@
             ]
           },
           {
-            "uuid": "e810e46f-646f-47de-ba29-91777865c9f5",
+            "uuid": "61825582-08ca-4b6c-ac34-c70f4de5a99c",
             "name": "Tile_1_1",
             "priority": 0.0,
             "visible": true,
@@ -2496,7 +2256,7 @@
             ]
           },
           {
-            "uuid": "84db2337-b0dd-4a3b-bf5b-036429961011",
+            "uuid": "4d8df7ba-74f6-4b07-8a75-8598e4831945",
             "name": "Tile_1_2",
             "priority": 0.0,
             "visible": true,
@@ -2544,7 +2304,7 @@
             ]
           },
           {
-            "uuid": "a6f4800a-63a8-489d-9179-1449dede3e62",
+            "uuid": "056ec80d-39e3-49e5-9741-f465269e0173",
             "name": "Tile_1_3",
             "priority": 0.0,
             "visible": true,
@@ -2592,55 +2352,7 @@
             ]
           },
           {
-            "uuid": "b9629969-3f83-44be-9ea7-22073d3218e3",
-            "name": "Tile_1_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                2.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "2699ed89-41d5-4612-8e3a-5c2c189a8fd2",
+            "uuid": "2bf92da0-efc8-4739-bd2c-d121afea67b4",
             "name": "Tile_2_-4",
             "priority": 0.0,
             "visible": true,
@@ -2688,7 +2400,7 @@
             ]
           },
           {
-            "uuid": "fc283b3b-ace0-498a-871b-92c54daaa873",
+            "uuid": "592fc292-123b-472a-bc6b-8fa209901535",
             "name": "Tile_2_-3",
             "priority": 0.0,
             "visible": true,
@@ -2736,7 +2448,7 @@
             ]
           },
           {
-            "uuid": "4396fc84-6b22-47ba-9df3-e6758d75478a",
+            "uuid": "8942d578-0a7c-4148-a982-69586dd00dc6",
             "name": "Tile_2_-2",
             "priority": 0.0,
             "visible": true,
@@ -2784,7 +2496,7 @@
             ]
           },
           {
-            "uuid": "9e83c54a-63bf-44ea-9a66-af2811589b54",
+            "uuid": "ffcf5812-0acf-4c87-bacb-29445b3f79e5",
             "name": "Tile_2_-1",
             "priority": 0.0,
             "visible": true,
@@ -2832,7 +2544,7 @@
             ]
           },
           {
-            "uuid": "ee98d959-ba70-4317-a3fa-8df06fd47a0d",
+            "uuid": "814e5d8c-ca0f-4473-913d-ccfe0ed9c40d",
             "name": "Tile_2_0",
             "priority": 0.0,
             "visible": true,
@@ -2880,7 +2592,7 @@
             ]
           },
           {
-            "uuid": "574057ba-ff2c-45d9-9254-01a3ac9df89a",
+            "uuid": "a81c1fb2-eb5b-4926-a663-6a82a2e36723",
             "name": "Tile_2_1",
             "priority": 0.0,
             "visible": true,
@@ -2928,7 +2640,7 @@
             ]
           },
           {
-            "uuid": "35d1f4ef-4107-47a4-8194-9471680f7ec0",
+            "uuid": "31c4affb-d383-4f65-813b-63cf1428dcbc",
             "name": "Tile_2_2",
             "priority": 0.0,
             "visible": true,
@@ -2976,7 +2688,7 @@
             ]
           },
           {
-            "uuid": "4fd67a4e-021f-4794-b429-3820c630bbfb",
+            "uuid": "44fc6e30-57a8-467e-8bc0-00ada367d0d4",
             "name": "Tile_2_3",
             "priority": 0.0,
             "visible": true,
@@ -3024,55 +2736,7 @@
             ]
           },
           {
-            "uuid": "01afea42-b6f1-46b8-857a-29ee89a7aed8",
-            "name": "Tile_2_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                4.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "7d28267f-484e-44bc-b74c-dc3d7c97387d",
+            "uuid": "2b80cfff-033e-44c4-b9c7-938def704934",
             "name": "Tile_3_-4",
             "priority": 0.0,
             "visible": true,
@@ -3120,7 +2784,7 @@
             ]
           },
           {
-            "uuid": "4622bffd-14a5-4599-9fde-87a985358103",
+            "uuid": "6cb864c3-60ba-416b-ba41-181da8e8f1d4",
             "name": "Tile_3_-3",
             "priority": 0.0,
             "visible": true,
@@ -3168,7 +2832,7 @@
             ]
           },
           {
-            "uuid": "5ea882a6-f696-426d-a23e-aa5ed6e2db1c",
+            "uuid": "68c0d36c-ff37-4078-bec4-06ee344f22a0",
             "name": "Tile_3_-2",
             "priority": 0.0,
             "visible": true,
@@ -3216,7 +2880,7 @@
             ]
           },
           {
-            "uuid": "049a1918-3fce-425f-ac39-08326f8935cd",
+            "uuid": "07866367-40a5-42ba-a6ea-d78fd3c8633b",
             "name": "Tile_3_-1",
             "priority": 0.0,
             "visible": true,
@@ -3264,7 +2928,7 @@
             ]
           },
           {
-            "uuid": "31b77327-4ed5-4430-933e-8fe9206a0625",
+            "uuid": "8836a787-6dd8-406b-9c06-59d0557b705d",
             "name": "Tile_3_0",
             "priority": 0.0,
             "visible": true,
@@ -3312,7 +2976,7 @@
             ]
           },
           {
-            "uuid": "051f3d44-eeef-439a-a9ab-cc9835016566",
+            "uuid": "01d3c441-7897-4b5f-81d2-ee549a519023",
             "name": "Tile_3_1",
             "priority": 0.0,
             "visible": true,
@@ -3360,7 +3024,7 @@
             ]
           },
           {
-            "uuid": "b9d88e07-ad22-47c0-a1c6-aa8131b0a636",
+            "uuid": "8737aaf4-0faa-4fab-b0b9-7b0634eb6336",
             "name": "Tile_3_2",
             "priority": 0.0,
             "visible": true,
@@ -3408,7 +3072,7 @@
             ]
           },
           {
-            "uuid": "cfe47abd-d31e-48fc-8924-94fe26f965df",
+            "uuid": "bf277737-be73-4640-8584-94e0d524035c",
             "name": "Tile_3_3",
             "priority": 0.0,
             "visible": true,
@@ -3421,486 +3085,6 @@
               "position": [
                 6.0,
                 6.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "d1f3e67e-151d-4f76-a4e9-f815999e4b68",
-            "name": "Tile_3_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                6.0,
-                8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "82c52656-e37e-42ad-a2e7-abc8e010a7b2",
-            "name": "Tile_4_-4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                -8.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "038d3019-ab6f-4f8f-9887-a4f126ef5aa8",
-            "name": "Tile_4_-3",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                -6.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "b480fe98-fe51-45a0-b8f0-69180110ca04",
-            "name": "Tile_4_-2",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                -4.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "9efb1d49-6aad-48c3-b47c-b45a6b0e031f",
-            "name": "Tile_4_-1",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                -2.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "8e01b78c-52fc-4d8a-ad96-a3eea66df244",
-            "name": "Tile_4_0",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                0.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "68108dd3-bd65-46f1-a14a-4c4c594f6ce7",
-            "name": "Tile_4_1",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                2.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "502374a3-20a1-4d0d-b7d0-fbdd3eed22a6",
-            "name": "Tile_4_2",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                4.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
-                    "name": "WhiteMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "fdaf79ba-150f-4cf6-9af8-43b347af9a97",
-            "name": "Tile_4_3",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                6.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              2.0,
-              2.0,
-              0.5
-            ],
-            "components": [
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "00000000-0000-0000-0003-000000000001",
-                    "name": "Cube"
-                  },
-                  "material": {
-                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
-                    "name": "BlackMaterial",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "d20e3af2-af68-4fe6-b8fa-c476e8e61de5",
-            "name": "Tile_4_4",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                8.0,
-                8.0,
                 0.0
               ],
               "rotation": [
@@ -3985,6 +3169,1582 @@
             }
           }
         ]
+      },
+      {
+        "uuid": "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
+        "name": "ChessUnits",
+        "priority": 0.0,
+        "visible": true,
+        "enabled": true,
+        "pickable": true,
+        "selectable": true,
+        "layer": 0.0,
+        "flags": 0.0,
+        "pose": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": [
+          {
+            "type": "UnitsCreator",
+            "data": {
+              "display_name": "",
+              "enabled": true
+            }
+          }
+        ],
+        "children": [
+          {
+            "uuid": "1e7b884f-be47-438b-b082-70ca5c7b58f0",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "2cdd115f-a177-4c51-999a-578f7b9ed799",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "195fe8d8-a6cb-4316-8ed3-e0aa4e389a7b",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "15abdab7-2376-483c-905f-cb8bfda22417",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "010defa8-d852-4e26-a69f-d074d76aefed",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "16c9a439-3fac-454f-8b41-da08e3ff1fe5",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "0c0e8de4-614b-4b87-aadb-fbc246ebaf5c",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b45395f4-ff0a-430a-8b1e-122f1d321429",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "40a10da1-ec18-48d7-b424-993a0f4896c3",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "9b2bb79a-35fb-4481-99b6-b036e8c45f29",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "656cca51-85f3-4879-97c1-b3260949e9a4",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "74a13ea9-9ce2-4ab5-99da-eb819e4aaa03",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b675553b-687d-447f-bf67-a548b08eed24",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "2f2bcecb-0ef8-40a7-936b-2871b5d3756c",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "48caa7b0-475c-4f86-83d4-cf7462bc9892",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "e7665df5-5fde-4c32-89c5-a3ff98186be0",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "e212902a-6ebf-4032-937f-a6f53b3e8723",
+            "name": "Rock",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
+                    "name": "Hex_Rook"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "a5e51804-c3b5-460c-bad9-0b12f276f2d4",
+            "name": "Rock",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
+                    "name": "Hex_Rook"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "8982fef7-41af-49d4-aecf-c96a0e518db3",
+            "name": "Rock",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
+                    "name": "Hex_Rook"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "36a5b7f9-5aed-45d4-8611-e6b887d88d10",
+            "name": "Rock",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
+                    "name": "Hex_Rook"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "5a8b089b-3a31-4f69-8139-d30f8a60c2c0",
+            "name": "Knight",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
+                    "name": "Hex_Knight"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "0579b960-66be-442c-8f1b-e557f372674e",
+            "name": "Knight",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
+                    "name": "Hex_Knight"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "fd6fe938-a159-41a2-9274-b11cd473dcd9",
+            "name": "Knight",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
+                    "name": "Hex_Knight"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "ec953952-536e-4e23-8963-7a7cd5e1cad3",
+            "name": "Knight",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
+                    "name": "Hex_Knight"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "51b40bf2-0dac-449f-a045-bbf4b897cda4",
+            "name": "Bishop",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
+                    "name": "Hex_Bishop"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "2c07f67f-7574-42fe-981c-7aadfe45804f",
+            "name": "Bishop",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
+                    "name": "Hex_Bishop"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "f98b4106-37d5-4557-9a60-4bd2f7197623",
+            "name": "Bishop",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
+                    "name": "Hex_Bishop"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "206ca295-e045-43b8-a10d-665f52e6ae4b",
+            "name": "Bishop",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
+                    "name": "Hex_Bishop"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "72ef51a9-c4f6-41de-964c-b04d65267085",
+            "name": "Queen",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "92a6e748-e5de-44fc-9bef-6a8986915407",
+                    "name": "Hex_Queen"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "92131a73-58ad-4bb9-bb91-190d78c759ea",
+            "name": "Queen",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "92a6e748-e5de-44fc-9bef-6a8986915407",
+                    "name": "Hex_Queen"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b7aa937b-a194-4af7-a10a-454631b5ccc3",
+            "name": "Unit",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ae2f2ffe-92ac-4837-bc77-451a7dfb045c",
+                    "name": "Hex_King"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "c8e63620-9462-4a4f-b3f3-5c6bbab55571",
+            "name": "Unit",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ae2f2ffe-92ac-4837-bc77-451a7dfb045c",
+                    "name": "Hex_King"
+                  },
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          }
+        ]
       }
     ],
     "layer_names": {},
@@ -4022,17 +4782,17 @@
   "editor": {
     "camera": {
       "position": [
-        -5.65121079429766,
-        20.824596115656963,
-        11.340000481406848
+        -1.947879981856964,
+        20.4756526121066,
+        18.305121348671854
       ],
       "rotation": [
-        0.038826642504206206,
-        -0.2762248277205009,
-        0.9509600629758624,
-        -0.13366860142746287
+        0.011874466931587311,
+        -0.3776050937999841,
+        0.9254331254528658,
+        -0.029101898321865296
       ],
-      "radius": 23.0,
+      "radius": 29.0,
       "editor_entities": {
         "camera": [
           {
@@ -4049,7 +4809,7 @@
           {
             "type": "OrbitCameraController",
             "data": {
-              "radius": 23.0,
+              "radius": 29.0,
               "min_radius": 1.0,
               "max_radius": 100.0
             }
@@ -4085,6 +4845,8 @@
         ]
       }
     },
-    "selected_entity": "549734b2-191b-4016-8914-5d687ea1b7a3"
+    "expanded_entities": [
+      "ba5ebc38-adb1-4245-aebb-ea7cca4882f1"
+    ]
   }
 }
