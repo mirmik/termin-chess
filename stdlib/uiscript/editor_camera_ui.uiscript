@@ -1,0 +1,73 @@
+# Editor Camera UI - viewport controls overlay
+#
+# Layout:
+#   - Bottom-left: Colliders visibility toggle
+#   - Top-right: Camera mode buttons (Ortho, Wireframe)
+#
+# Widget names for binding:
+#   - colliders_btn: Toggle collider gizmos visibility
+#   - ortho_btn: Toggle orthographic camera mode
+#   - wireframe_btn: Toggle wireframe rendering
+
+root:
+  type: Panel
+  name: editor_camera_root
+  background_color: [0, 0, 0, 0]  # Transparent container
+  anchor: absolute
+  position: [0px, 0px]
+  width: 100%
+  height: 100%
+
+  children:
+    # Bottom-left: Colliders toggle
+    - type: Panel
+      name: bottom_left_panel
+      anchor: bottom-left
+      offset: [10, -10]
+      background_color: [0, 0, 0, 0]
+
+      children:
+        - type: IconButton
+          name: colliders_btn
+          icon: "C"
+          tooltip: "Toggle Colliders"
+          size: 26
+          font_size: 14
+          background_color: [0.15, 0.15, 0.15, 0.85]
+          hover_color: [0.25, 0.25, 0.25, 0.95]
+          active_color: [0.2, 0.5, 0.8, 0.95]
+          border_radius: 4
+
+    # Top-right: Camera controls
+    - type: Panel
+      name: top_right_panel
+      anchor: top-right
+      offset: [-10, 10]
+      background_color: [0, 0, 0, 0]
+
+      children:
+        - type: HStack
+          spacing: 4
+
+          children:
+            - type: IconButton
+              name: wireframe_btn
+              icon: "W"
+              tooltip: "Toggle Wireframe"
+              size: 26
+              font_size: 14
+              background_color: [0.15, 0.15, 0.15, 0.85]
+              hover_color: [0.25, 0.25, 0.25, 0.95]
+              active_color: [0.2, 0.5, 0.8, 0.95]
+              border_radius: 4
+
+            - type: IconButton
+              name: ortho_btn
+              icon: "O"
+              tooltip: "Toggle Orthographic"
+              size: 26
+              font_size: 14
+              background_color: [0.15, 0.15, 0.15, 0.85]
+              hover_color: [0.25, 0.25, 0.25, 0.95]
+              active_color: [0.2, 0.5, 0.8, 0.95]
+              border_radius: 4

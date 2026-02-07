@@ -1,0 +1,4090 @@
+{
+  "version": "1.0",
+  "scene": {
+    "uuid": "",
+    "background_color": [
+      0.05000000074505806,
+      0.05000000074505806,
+      0.07999999821186066,
+      1.0
+    ],
+    "entities": [
+      {
+        "uuid": "549734b2-191b-4016-8914-5d687ea1b7a3",
+        "name": "ChessBoard",
+        "priority": 0.0,
+        "visible": true,
+        "enabled": true,
+        "pickable": true,
+        "selectable": true,
+        "layer": 0.0,
+        "flags": 0.0,
+        "pose": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": [
+          {
+            "type": "BoardCreatorComponent",
+            "data": {
+              "display_name": "",
+              "enabled": true
+            }
+          }
+        ],
+        "children": [
+          {
+            "uuid": "1533a8c5-0e00-4fcd-a1d8-5a72048961ad",
+            "name": "Tile_-4_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "dd0190c2-7b40-44ec-9476-e7e196470aab",
+            "name": "Tile_-4_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "7ab27188-b230-45d4-88b0-460c39a8ba16",
+            "name": "Tile_-4_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "a94ad924-8abd-419e-b4f8-7fca3f8a75ba",
+            "name": "Tile_-4_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "3ce642ef-1698-431f-8809-2b81b1e5975b",
+            "name": "Tile_-4_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "2f707fb9-2e90-4862-88d7-2cc861a1829e",
+            "name": "Tile_-4_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "88c48d9e-5c50-4da4-99e9-250bcebd66fe",
+            "name": "Tile_-4_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "2de5b75b-760f-4dfe-a7e9-c6488b48e613",
+            "name": "Tile_-4_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "0d73b169-c36f-4e1d-9833-2826f08e241e",
+            "name": "Tile_-4_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -8.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "73dc79e9-eb37-48d2-a0ae-1babf701be04",
+            "name": "Tile_-3_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "75706d38-df7b-4537-af7d-5d9f0b82bd7f",
+            "name": "Tile_-3_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "5e376849-6e50-4c8e-bf37-3af638f8faad",
+            "name": "Tile_-3_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "6867e647-e33b-4e92-b9dc-31c45eef43bc",
+            "name": "Tile_-3_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "26ac0594-fc21-42fb-985c-f19155eb3ebd",
+            "name": "Tile_-3_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "53240536-6083-4819-9ff9-ddbde821790e",
+            "name": "Tile_-3_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "cd7fa2c9-a0c5-45f9-a1b6-8a76a2c834f5",
+            "name": "Tile_-3_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "ed392b4d-bcf3-461c-ac43-d9d56453e331",
+            "name": "Tile_-3_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "d286fb72-4bc0-4b6c-b6f5-e318be170dab",
+            "name": "Tile_-3_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "5038f80c-2b5e-4818-a102-ed0655d03727",
+            "name": "Tile_-2_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "563299a1-f205-4e69-baf1-81b8088f6358",
+            "name": "Tile_-2_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "c75b64f3-b98d-4b5b-8ff8-61e4c8980b1f",
+            "name": "Tile_-2_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "cba4c0bd-a9ce-46a4-bfa8-5cc737c01ffe",
+            "name": "Tile_-2_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "1b84f1d5-11fc-40a0-b491-84bd298fdcf4",
+            "name": "Tile_-2_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "339cb2dd-6bd8-412a-80dd-f2b79d11b6b9",
+            "name": "Tile_-2_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "95a78ea6-a4be-4698-8fca-557859316d8d",
+            "name": "Tile_-2_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "ce1f6a39-f7eb-4378-8855-2f6667e51ffc",
+            "name": "Tile_-2_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "8dada331-6be9-49ba-b41f-320d509f9a1e",
+            "name": "Tile_-2_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -4.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "be0457b6-efbb-4eb8-905d-1e77433d74d0",
+            "name": "Tile_-1_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "ea170155-00ca-4fb4-a941-c23ae15c589f",
+            "name": "Tile_-1_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "61b05550-6b83-487b-a126-f3246367f44d",
+            "name": "Tile_-1_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "7ef5a27e-bfb1-43a9-b3f5-e3d4513b73b2",
+            "name": "Tile_-1_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "ebc90356-4c0b-422d-b2c5-51952c45e3aa",
+            "name": "Tile_-1_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "3a8528fa-375b-432a-9086-fea2c17154ad",
+            "name": "Tile_-1_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "3a570387-63d5-4495-9a06-2ac64b0d7086",
+            "name": "Tile_-1_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "939980ca-f423-4445-a9f2-e76a633b179e",
+            "name": "Tile_-1_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "931b25f6-f0d9-4b8b-9fb5-512bc3c2b156",
+            "name": "Tile_-1_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -2.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "5b31204f-5414-44fd-867b-6769b77f074a",
+            "name": "Tile_0_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "9a2c408a-06cb-45e5-8067-104329c19984",
+            "name": "Tile_0_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "f2b9d346-cd68-43d3-a3ab-3d9a2a44e4c4",
+            "name": "Tile_0_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "71244e77-ef64-4c70-8b6d-b3f42e4d7821",
+            "name": "Tile_0_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "064b67d4-b3ab-4797-96e4-31802916449a",
+            "name": "Tile_0_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "3a92112a-f66d-4ac1-9a4d-b5099a2d2aa1",
+            "name": "Tile_0_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "7991752c-3c1c-4392-81f5-122a0b56c445",
+            "name": "Tile_0_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "e9d56fdf-4209-411d-9756-26f1845092fd",
+            "name": "Tile_0_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "e107291e-24ed-4025-a2c3-4fed19133202",
+            "name": "Tile_0_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                0.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "e8a2e22a-ab83-4702-996d-f45dbd865a9f",
+            "name": "Tile_1_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "8e84bdb2-716d-4753-b026-404a39724c21",
+            "name": "Tile_1_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "142e4bc0-b193-428b-80b6-e8be3d435dcb",
+            "name": "Tile_1_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "c71a7d38-8754-4bb8-bacb-02b33d4ed452",
+            "name": "Tile_1_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "7d1f122e-b2d4-49b3-8ba2-71c8e5ce93ac",
+            "name": "Tile_1_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "e810e46f-646f-47de-ba29-91777865c9f5",
+            "name": "Tile_1_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "84db2337-b0dd-4a3b-bf5b-036429961011",
+            "name": "Tile_1_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "a6f4800a-63a8-489d-9179-1449dede3e62",
+            "name": "Tile_1_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b9629969-3f83-44be-9ea7-22073d3218e3",
+            "name": "Tile_1_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                2.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "2699ed89-41d5-4612-8e3a-5c2c189a8fd2",
+            "name": "Tile_2_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "fc283b3b-ace0-498a-871b-92c54daaa873",
+            "name": "Tile_2_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "4396fc84-6b22-47ba-9df3-e6758d75478a",
+            "name": "Tile_2_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "9e83c54a-63bf-44ea-9a66-af2811589b54",
+            "name": "Tile_2_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "ee98d959-ba70-4317-a3fa-8df06fd47a0d",
+            "name": "Tile_2_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "574057ba-ff2c-45d9-9254-01a3ac9df89a",
+            "name": "Tile_2_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "35d1f4ef-4107-47a4-8194-9471680f7ec0",
+            "name": "Tile_2_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "4fd67a4e-021f-4794-b429-3820c630bbfb",
+            "name": "Tile_2_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "01afea42-b6f1-46b8-857a-29ee89a7aed8",
+            "name": "Tile_2_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                4.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "7d28267f-484e-44bc-b74c-dc3d7c97387d",
+            "name": "Tile_3_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "4622bffd-14a5-4599-9fde-87a985358103",
+            "name": "Tile_3_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "5ea882a6-f696-426d-a23e-aa5ed6e2db1c",
+            "name": "Tile_3_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "049a1918-3fce-425f-ac39-08326f8935cd",
+            "name": "Tile_3_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "31b77327-4ed5-4430-933e-8fe9206a0625",
+            "name": "Tile_3_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "051f3d44-eeef-439a-a9ab-cc9835016566",
+            "name": "Tile_3_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b9d88e07-ad22-47c0-a1c6-aa8131b0a636",
+            "name": "Tile_3_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "cfe47abd-d31e-48fc-8924-94fe26f965df",
+            "name": "Tile_3_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "d1f3e67e-151d-4f76-a4e9-f815999e4b68",
+            "name": "Tile_3_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "82c52656-e37e-42ad-a2e7-abc8e010a7b2",
+            "name": "Tile_4_-4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "038d3019-ab6f-4f8f-9887-a4f126ef5aa8",
+            "name": "Tile_4_-3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b480fe98-fe51-45a0-b8f0-69180110ca04",
+            "name": "Tile_4_-2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                -4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "9efb1d49-6aad-48c3-b47c-b45a6b0e031f",
+            "name": "Tile_4_-1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                -2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "8e01b78c-52fc-4d8a-ad96-a3eea66df244",
+            "name": "Tile_4_0",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                0.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "68108dd3-bd65-46f1-a14a-4c4c594f6ce7",
+            "name": "Tile_4_1",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                2.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "502374a3-20a1-4d0d-b7d0-fbdd3eed22a6",
+            "name": "Tile_4_2",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "fdaf79ba-150f-4cf6-9af8-43b347af9a97",
+            "name": "Tile_4_3",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
+                    "name": "BlackMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "d20e3af2-af68-4fe6-b8fa-c476e8e61de5",
+            "name": "Tile_4_4",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                8.0,
+                8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              2.0,
+              2.0,
+              0.5
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "00000000-0000-0000-0003-000000000001",
+                    "name": "Cube"
+                  },
+                  "material": {
+                    "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
+                    "name": "WhiteMaterial",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "uuid": "64a01777-5d57-4709-abd2-9a1caaacf544",
+        "name": "Light",
+        "priority": 0.0,
+        "visible": true,
+        "enabled": true,
+        "pickable": true,
+        "selectable": true,
+        "layer": 0.0,
+        "flags": 0.0,
+        "pose": {
+          "position": [
+            0.83,
+            4.48,
+            4.57
+          ],
+          "rotation": [
+            -0.1098,
+            -0.4342,
+            0.854,
+            0.2647
+          ]
+        },
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": [
+          {
+            "type": "LightComponent",
+            "data": {
+              "light_type": "directional",
+              "color": [
+                1.0,
+                1.0,
+                1.0
+              ],
+              "intensity": 1.0,
+              "shadows_enabled": true,
+              "shadows_map_resolution": 2048.0,
+              "cascade_count": 3.0,
+              "max_distance": 100.0,
+              "split_lambda": 0.5,
+              "cascade_blend": true
+            }
+          }
+        ]
+      }
+    ],
+    "layer_names": {},
+    "flag_names": {},
+    "viewport_configs": [],
+    "scene_pipelines": [],
+    "ambient_color": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "ambient_intensity": 0.15000000596046448,
+    "shadow_settings": {
+      "method": 1.0,
+      "softness": 1.0,
+      "bias": 0.004999999888241291
+    },
+    "skybox_type": "gradient",
+    "skybox_color": [
+      0.5,
+      0.699999988079071,
+      0.8999999761581421
+    ],
+    "skybox_top_color": [
+      0.4000000059604645,
+      0.6000000238418579,
+      0.8999999761581421
+    ],
+    "skybox_bottom_color": [
+      0.6000000238418579,
+      0.5,
+      0.4000000059604645
+    ]
+  },
+  "editor": {
+    "camera": {
+      "position": [
+        -5.65121079429766,
+        20.824596115656963,
+        11.340000481406848
+      ],
+      "rotation": [
+        0.038826642504206206,
+        -0.2762248277205009,
+        0.9509600629758624,
+        -0.13366860142746287
+      ],
+      "radius": 23.0,
+      "editor_entities": {
+        "camera": [
+          {
+            "type": "CameraComponent",
+            "data": {
+              "near_clip": 0.1,
+              "far_clip": 100.0,
+              "ortho_size": 5.0,
+              "fov_x_degrees": 59.99999999999999,
+              "fov_y_degrees": 45.0,
+              "fov_mode": "FixHorizontal"
+            }
+          },
+          {
+            "type": "OrbitCameraController",
+            "data": {
+              "radius": 23.0,
+              "min_radius": 1.0,
+              "max_radius": 100.0
+            }
+          },
+          {
+            "type": "ViewportHintComponent",
+            "data": {
+              "display_name": "",
+              "enabled": true,
+              "pipeline_name": "(Editor)",
+              "layer_mask": "0xffffffffffffffff"
+            }
+          }
+        ],
+        "editor_ui": [
+          {
+            "type": "UIComponent",
+            "data": {
+              "display_name": "",
+              "enabled": true
+            }
+          },
+          {
+            "type": "EditorCameraUIController",
+            "data": {
+              "display_name": "",
+              "enabled": true,
+              "colliders_enabled": false,
+              "wireframe_enabled": false,
+              "ortho_enabled": false
+            }
+          }
+        ]
+      }
+    },
+    "selected_entity": "549734b2-191b-4016-8914-5d687ea1b7a3"
+  }
+}
