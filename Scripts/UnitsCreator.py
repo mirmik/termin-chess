@@ -72,9 +72,11 @@ class UnitsCreator(PythonComponent):
         pawn_mesh = TcMesh.from_name("Hex_Pawn")
         self.make_unit(material, pawn_mesh, position, name="Pawn")
     
-    def make_rock(self, material, position):
-        rock_mesh = TcMesh.from_name("Hex_Rock")
-        self.make_unit(material, rock_mesh, position, name="Rock")
+    def make_rook(self, material, position):
+        rook_mesh = TcMesh.from_name("Hex_Rook")
+        print(f"Making rook at {position}: {rook_mesh}")
+        self.make_unit(material, rook_mesh, position, name="Rook")
+    
     def make_knight(self, material, position):
         knight_mesh = TcMesh.from_name("Hex_Knight")
         self.make_unit(material, knight_mesh, position, name="Knight")
@@ -87,13 +89,17 @@ class UnitsCreator(PythonComponent):
         queen_mesh = TcMesh.from_name("Hex_Queen")
         self.make_unit(material, queen_mesh, position, name="Queen")
 
+    def make_king(self, material, position):
+        king_mesh = TcMesh.from_name("Hex_King")
+        self.make_unit(material, king_mesh, position, name="King")
+
     def make_units(self):
         print("Make Units button clicked.")
 
         self.entity.destroy_children()
 
         pawn_mesh = TcMesh.from_name("Hex_Pawn")
-        rock_mesh = TcMesh.from_name("Hex_Rock")
+        rook_mesh = TcMesh.from_name("Hex_Rook")
         knight_mesh = TcMesh.from_name("Hex_Knight")
         bishop_mesh = TcMesh.from_name("Hex_Bishop")
         queen_mesh = TcMesh.from_name("Hex_Queen")
@@ -106,10 +112,10 @@ class UnitsCreator(PythonComponent):
             self.make_pawn(white_material, self.chessboard_position_to_world(f"{file}2"))
             self.make_pawn(black_material, self.chessboard_position_to_world(f"{file}7"))
 
-        self.make_rock(white_material, self.chessboard_position_to_world("a1"))
-        self.make_rock(white_material, self.chessboard_position_to_world("h1"))
-        self.make_rock(black_material, self.chessboard_position_to_world("a8"))
-        self.make_rock(black_material, self.chessboard_position_to_world("h8"))
+        self.make_rook(white_material, self.chessboard_position_to_world("a1"))
+        self.make_rook(white_material, self.chessboard_position_to_world("h1"))
+        self.make_rook(black_material, self.chessboard_position_to_world("a8"))
+        self.make_rook(black_material, self.chessboard_position_to_world("h8"))
         self.make_knight(white_material, self.chessboard_position_to_world("b1"))
         self.make_knight(white_material, self.chessboard_position_to_world("g1"))
         self.make_knight(black_material, self.chessboard_position_to_world("b8"))
@@ -120,8 +126,8 @@ class UnitsCreator(PythonComponent):
         self.make_bishop(black_material, self.chessboard_position_to_world("f8"))
         self.make_queen(white_material, self.chessboard_position_to_world("d1"))
         self.make_queen(black_material, self.chessboard_position_to_world("d8"))
-        self.make_unit(white_material, king_mesh, self.chessboard_position_to_world("e1"))
-        self.make_unit(black_material, king_mesh, self.chessboard_position_to_world("e8"))
+        self.make_king(white_material, self.chessboard_position_to_world("e1"))
+        self.make_king(black_material, self.chessboard_position_to_world("e8"))
 
         from termin.editor.render_request import request_scene_tree_rebuild                                                    
         request_scene_tree_rebuild()
