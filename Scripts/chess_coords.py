@@ -47,9 +47,7 @@ def entity_to_square(entity) -> str | None:
 
 
 def tile_name_to_square(name: str) -> str | None:
-    parts = name.split("_")
-    if len(parts) != 3 or parts[0] != "Tile":
-        return None
-    i = int(parts[1])
-    j = int(parts[2])
-    return ij_to_square(i, j)
+    # Tile names are chess squares directly: "a1", "h8", etc.
+    if len(name) == 2 and name[0] in "abcdefgh" and name[1] in "12345678":
+        return name
+    return None

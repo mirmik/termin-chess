@@ -59,14 +59,12 @@ class ChessGameController(InputComponent):
         print("[Chess] White to move.")
 
     def _create_highlight_materials(self):
-        print("[Chess] Creating highlight materials...")
-        self._highlight_selected = TcMaterial.create("SelectedMaterial")
-        self._highlight_selected.set_color(0.9, 0.9, 0.2, 1.0)
-        print(f"[Chess]   SelectedMaterial created: {self._highlight_selected}")
+        print("[Chess] Loading highlight materials...")
+        self._highlight_selected = TcMaterial.from_name("SelectedMaterial")
+        print(f"[Chess]   SelectedMaterial: {self._highlight_selected}, valid={self._highlight_selected.is_valid if self._highlight_selected else False}")
 
-        self._highlight_valid = TcMaterial.create("ValidMoveMaterial")
-        self._highlight_valid.set_color(0.2, 0.8, 0.3, 1.0)
-        print(f"[Chess]   ValidMoveMaterial created: {self._highlight_valid}")
+        self._highlight_valid = TcMaterial.from_name("ValidMoveMaterial")
+        print(f"[Chess]   ValidMoveMaterial: {self._highlight_valid}, valid={self._highlight_valid.is_valid if self._highlight_valid else False}")
 
     def _scan_board(self):
         print("[Chess] Scanning board tiles...")
@@ -83,7 +81,7 @@ class ChessGameController(InputComponent):
             sq = tile_name_to_square(child.name)
             if sq:
                 self._tiles[sq] = child
-                mr = child.get_component_by_type("MeshRenderer")
+                mr = self._get_mesh_renderer_ref(child)
                 if mr:
                     mat = mr.get_field("material")
                     self._original_materials[sq] = mat
@@ -112,6 +110,11 @@ class ChessGameController(InputComponent):
             else:
                 print(f"[Chess]   WARNING: could not map piece '{child.name}' to square")
         print(f"[Chess]   Scanned {len(self._pieces)} pieces")
+
+    @staticmethod
+    def _get_mesh_renderer_ref(entity):
+        """Get MeshRenderer as TcComponentRef (has get_field/set_field)."""
+        return entity.get_tc_component("MeshRenderer")
 
     def _is_ancestor_of(self, entity, ancestor_name: str) -> bool:
         current = entity.parent
@@ -228,7 +231,7 @@ class ChessGameController(InputComponent):
         self._clear_highlight()
         if self._selected_square and self._selected_square in self._tiles:
             tile = self._tiles[self._selected_square]
-            mr = tile.get_component_by_type("MeshRenderer")
+            mr = self._get_mesh_renderer_ref(tile)
             if mr:
                 mr.set_field("material", self._highlight_selected)
                 print(f"[Chess]   highlight SELECTED: {self._selected_square}")
@@ -239,7 +242,7 @@ class ChessGameController(InputComponent):
             to_name = chess.square_name(move.to_square)
             if to_name in self._tiles:
                 tile = self._tiles[to_name]
-                mr = tile.get_component_by_type("MeshRenderer")
+                mr = self._get_mesh_renderer_ref(tile)
                 if mr:
                     mr.set_field("material", self._highlight_valid)
 
@@ -251,7 +254,7 @@ class ChessGameController(InputComponent):
         for sq, mat in self._original_materials.items():
             if sq in self._tiles:
                 tile = self._tiles[sq]
-                mr = tile.get_component_by_type("MeshRenderer")
+                mr = self._get_mesh_renderer_ref(tile)
                 if mr:
                     mr.set_field("material", mat)
                     restored += 1

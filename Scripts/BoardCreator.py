@@ -56,7 +56,10 @@ class BoardCreatorComponent(PythonComponent):
         self.entity.destroy_children()
         for i in range(-4, 4):
             for j in range(-4, 4):
-                child = self.entity.create_child(name=f"Tile_{i}_{j}")
+                file = chr(i + 4 + ord('a'))
+                rank = j + 5
+                square_name = f"{file}{rank}"
+                child = self.entity.create_child(name=square_name)
                 mr = child.add_component_by_name("MeshRenderer")
             
                 W = 2

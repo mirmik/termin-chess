@@ -1,0 +1,23 @@
+{
+  "uuid": "a1b2c3d4-selected-mat-0001-000000000001",
+  "shader": "CookTorrancePBR",
+  "shader_uuid": "f2fbdec3-6cc4-4a51-9add-8f96494ab198",
+  "uniforms": {
+    "u_color": [
+      0.9,
+      0.85,
+      0.2,
+      1.0
+    ],
+    "u_shininess": 32.0,
+    "u_emission_color": [
+      0.9,
+      0.85,
+      0.1,
+      1.0
+    ],
+    "u_emission_intensity": 0.5,
+    "u_subsurface": 1.0,
+    "u_diffuse_mul": 3.140000104904175
+  }
+}

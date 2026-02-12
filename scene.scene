@@ -48,8 +48,8 @@
         ],
         "children": [
           {
-            "uuid": "1bf92a9d-faae-4bab-a48e-d66074b1ffd0",
-            "name": "Tile_-4_-4",
+            "uuid": "2ac1209d-42da-4cf1-8a38-a5ec3633c1f8",
+            "name": "a1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -108,8 +108,8 @@
             ]
           },
           {
-            "uuid": "f6142b8e-b752-4d8e-896a-a106eb0e1007",
-            "name": "Tile_-4_-3",
+            "uuid": "2eaab726-78b0-4e40-9c88-02b24791e872",
+            "name": "a2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -168,8 +168,8 @@
             ]
           },
           {
-            "uuid": "073ba402-e950-4d0d-9e83-6d52346c232b",
-            "name": "Tile_-4_-2",
+            "uuid": "52090f94-e37b-46ed-b32b-d9e95e9ae18d",
+            "name": "a3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -228,8 +228,8 @@
             ]
           },
           {
-            "uuid": "804eb937-a066-45e9-9167-f0bc7500c37d",
-            "name": "Tile_-4_-1",
+            "uuid": "4498b3bc-4802-4d25-8aff-d7d190c043e2",
+            "name": "a4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -288,8 +288,8 @@
             ]
           },
           {
-            "uuid": "3b687f24-b82c-4196-b09e-e8e40a0b0f8a",
-            "name": "Tile_-4_0",
+            "uuid": "c95277ac-cdfd-4980-a872-69860d4b1351",
+            "name": "a5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -348,8 +348,8 @@
             ]
           },
           {
-            "uuid": "59c9c1f9-2f87-4300-aed3-bd63d380e00f",
-            "name": "Tile_-4_1",
+            "uuid": "e3c70e2c-c90b-4153-8a28-249ae8687cb1",
+            "name": "a6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -408,8 +408,8 @@
             ]
           },
           {
-            "uuid": "e85f33a0-8c65-463c-831f-200e2a309884",
-            "name": "Tile_-4_2",
+            "uuid": "baf35d88-f0f6-4818-a972-9f76bdb2c7a0",
+            "name": "a7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -468,8 +468,8 @@
             ]
           },
           {
-            "uuid": "f95a7d28-e160-49cf-b3e6-32076613164f",
-            "name": "Tile_-4_3",
+            "uuid": "79d5cc42-e01d-45ea-86ba-842e2201e0dc",
+            "name": "a8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -528,8 +528,8 @@
             ]
           },
           {
-            "uuid": "7249effe-ae26-4ab2-855b-c06f8b58f384",
-            "name": "Tile_-3_-4",
+            "uuid": "f43d64e5-346d-4d9d-9f9c-139c4fda3cc8",
+            "name": "b1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -588,8 +588,8 @@
             ]
           },
           {
-            "uuid": "b271ac93-d1d5-4205-bb95-0c22a822711a",
-            "name": "Tile_-3_-3",
+            "uuid": "b0090b90-26a0-4b6c-9aff-9b7c007b59f5",
+            "name": "b2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -648,8 +648,8 @@
             ]
           },
           {
-            "uuid": "6b60191a-8653-4ccb-ae8c-3b39e42ebd97",
-            "name": "Tile_-3_-2",
+            "uuid": "b8bddaec-2ad7-4909-b49c-a5c377e28b27",
+            "name": "b3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -708,8 +708,8 @@
             ]
           },
           {
-            "uuid": "9f6a2a71-3f8d-46fb-a282-1dcaa48ee40f",
-            "name": "Tile_-3_-1",
+            "uuid": "eb96b711-3732-4e91-b219-0e329467274c",
+            "name": "b4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -768,8 +768,8 @@
             ]
           },
           {
-            "uuid": "eefd2975-51f5-40ff-817b-3966aaf6fd49",
-            "name": "Tile_-3_0",
+            "uuid": "2401394f-d9c2-484d-9ffe-10d6e09bfdcb",
+            "name": "b5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -828,8 +828,8 @@
             ]
           },
           {
-            "uuid": "6027baa0-b430-4bd6-b2b8-a05646856634",
-            "name": "Tile_-3_1",
+            "uuid": "32b4dc69-e75a-4a19-b308-4b076f735494",
+            "name": "b6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -888,8 +888,8 @@
             ]
           },
           {
-            "uuid": "828fa9d3-85ea-4306-a50c-6c0f02695963",
-            "name": "Tile_-3_2",
+            "uuid": "748de34d-4f3b-4aae-b9aa-84194681e478",
+            "name": "b7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -948,8 +948,8 @@
             ]
           },
           {
-            "uuid": "91130345-449e-4cf6-96bc-4d9c41b3d0c4",
-            "name": "Tile_-3_3",
+            "uuid": "36c1e11d-1bdb-468f-a481-9653f4eae769",
+            "name": "b8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1008,8 +1008,8 @@
             ]
           },
           {
-            "uuid": "427a97c7-646a-4ec9-b63a-d979a432dc35",
-            "name": "Tile_-2_-4",
+            "uuid": "77cab6c7-0651-453f-bbfa-59417b3db9b1",
+            "name": "c1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1068,8 +1068,8 @@
             ]
           },
           {
-            "uuid": "45df7a89-7d96-40d3-93cd-6f94803f58c2",
-            "name": "Tile_-2_-3",
+            "uuid": "fe9ace1a-7604-495a-863f-ad7a2a95e3a1",
+            "name": "c2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1128,8 +1128,8 @@
             ]
           },
           {
-            "uuid": "b9f08a1d-5a58-47d1-92c0-4a36f2266b37",
-            "name": "Tile_-2_-2",
+            "uuid": "5f9a6865-ebde-45e6-98fe-28533be1053a",
+            "name": "c3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1188,8 +1188,8 @@
             ]
           },
           {
-            "uuid": "05e6c182-7c41-45cf-8ec4-648e03bc50bd",
-            "name": "Tile_-2_-1",
+            "uuid": "7cd354f2-d8fd-4c5e-bcf9-d8668ebc08ee",
+            "name": "c4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1248,8 +1248,8 @@
             ]
           },
           {
-            "uuid": "acdada07-32c1-48c5-8122-fb734867ab4d",
-            "name": "Tile_-2_0",
+            "uuid": "56705341-4ef8-4726-b64f-7a32317f6cad",
+            "name": "c5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1308,8 +1308,8 @@
             ]
           },
           {
-            "uuid": "4d6ccfc9-ad24-49bb-a8fd-49ebb999a866",
-            "name": "Tile_-2_1",
+            "uuid": "52c09f2a-bdeb-48f9-a461-60731d686173",
+            "name": "c6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1368,8 +1368,8 @@
             ]
           },
           {
-            "uuid": "74836da6-4445-4bc6-a767-39afcee4fc1b",
-            "name": "Tile_-2_2",
+            "uuid": "d8b4b427-addb-4da3-abc7-d55c46410999",
+            "name": "c7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1428,8 +1428,8 @@
             ]
           },
           {
-            "uuid": "50cbe4fd-ef7d-48d7-ba01-c2349b6b9a0f",
-            "name": "Tile_-2_3",
+            "uuid": "01a8c3be-934c-4877-ad18-eaca804b3d58",
+            "name": "c8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1488,8 +1488,8 @@
             ]
           },
           {
-            "uuid": "ee07b532-4c21-48b3-8832-6256165e7167",
-            "name": "Tile_-1_-4",
+            "uuid": "00f17fad-cccd-40f7-9426-53db675c7469",
+            "name": "d1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1548,8 +1548,8 @@
             ]
           },
           {
-            "uuid": "29556418-d31d-4f4d-9eb1-81b91c1bc80a",
-            "name": "Tile_-1_-3",
+            "uuid": "04372797-83df-4f30-b7f9-fa774537d045",
+            "name": "d2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1608,8 +1608,8 @@
             ]
           },
           {
-            "uuid": "227e3d6e-9f35-4127-a783-7d7ee1eee50a",
-            "name": "Tile_-1_-2",
+            "uuid": "284ff2f5-1c42-4cb1-a840-8cd09c0039a1",
+            "name": "d3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1668,8 +1668,8 @@
             ]
           },
           {
-            "uuid": "43492216-6611-4485-83e5-3edf0107ea23",
-            "name": "Tile_-1_-1",
+            "uuid": "376038bb-4047-4b37-81e6-af861d7fcb46",
+            "name": "d4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1728,8 +1728,8 @@
             ]
           },
           {
-            "uuid": "85279224-5cb3-4bc4-b7c8-4218b62723f9",
-            "name": "Tile_-1_0",
+            "uuid": "cebd3beb-ff27-4c68-a728-38042871a55f",
+            "name": "d5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1788,8 +1788,8 @@
             ]
           },
           {
-            "uuid": "704510d7-5774-4c1a-999a-f95aa1e37e26",
-            "name": "Tile_-1_1",
+            "uuid": "d1dd1a11-2506-4966-acf8-ec0977b74f45",
+            "name": "d6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1848,8 +1848,8 @@
             ]
           },
           {
-            "uuid": "0a104a67-c395-4bfa-9d6d-131394360d04",
-            "name": "Tile_-1_2",
+            "uuid": "748a3073-b2cc-4b19-b413-1d1c84c27c56",
+            "name": "d7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1908,8 +1908,8 @@
             ]
           },
           {
-            "uuid": "7b1ddbd2-9137-4cea-92e6-4573c9c39ad4",
-            "name": "Tile_-1_3",
+            "uuid": "a09667c5-9cb0-4b88-a817-921fcee16542",
+            "name": "d8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -1968,8 +1968,8 @@
             ]
           },
           {
-            "uuid": "d3e43b96-7a66-41d7-93a4-eb67daf86b55",
-            "name": "Tile_0_-4",
+            "uuid": "6c95b51e-6291-4756-a455-732917ef7fb7",
+            "name": "e1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2028,8 +2028,8 @@
             ]
           },
           {
-            "uuid": "154728a6-7e14-4050-bad5-c4c4985e986b",
-            "name": "Tile_0_-3",
+            "uuid": "85e67c22-97a7-4a3f-be3c-5f8c1ec4ce8a",
+            "name": "e2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2088,8 +2088,8 @@
             ]
           },
           {
-            "uuid": "42d302bc-3993-440c-b77f-731177de668c",
-            "name": "Tile_0_-2",
+            "uuid": "5984a8bb-15df-42b9-b485-e24c746103f9",
+            "name": "e3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2148,8 +2148,8 @@
             ]
           },
           {
-            "uuid": "258e32a4-a3c2-449d-98b8-613016f99c59",
-            "name": "Tile_0_-1",
+            "uuid": "48801bdf-27c6-4ee6-827d-72204141aa9b",
+            "name": "e4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2208,8 +2208,8 @@
             ]
           },
           {
-            "uuid": "cc9e1505-31a9-4168-a884-799f63df2b88",
-            "name": "Tile_0_0",
+            "uuid": "c55256da-3268-4366-ad76-b261d7b65b1f",
+            "name": "e5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2268,8 +2268,8 @@
             ]
           },
           {
-            "uuid": "6e5d2c11-2021-4eb8-9910-e8f0098449d6",
-            "name": "Tile_0_1",
+            "uuid": "3676fe5d-3c1d-433f-9ab6-5fdcf70a77bc",
+            "name": "e6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2328,8 +2328,8 @@
             ]
           },
           {
-            "uuid": "225edb53-08ed-4b30-b134-d0d414fb5d82",
-            "name": "Tile_0_2",
+            "uuid": "5ccd968e-3629-4523-9fa7-85775de09693",
+            "name": "e7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2388,8 +2388,8 @@
             ]
           },
           {
-            "uuid": "59899379-aa41-4184-9119-745b9ebd31c0",
-            "name": "Tile_0_3",
+            "uuid": "5695f193-b234-424c-aa31-28e13b9f9d98",
+            "name": "e8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2448,8 +2448,8 @@
             ]
           },
           {
-            "uuid": "1b0c1423-f9cf-446b-8424-3f181f9c9a78",
-            "name": "Tile_1_-4",
+            "uuid": "6d3326a3-5d1b-46fc-834b-73202b0ab482",
+            "name": "f1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2508,8 +2508,8 @@
             ]
           },
           {
-            "uuid": "262df1d0-6e22-44c0-bcc8-1bda854c9aa1",
-            "name": "Tile_1_-3",
+            "uuid": "9fa51551-d9e7-4dc4-98c6-a5546543ecd2",
+            "name": "f2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2568,8 +2568,8 @@
             ]
           },
           {
-            "uuid": "58aec452-7e18-4d82-bcfc-9a5c9934d4bf",
-            "name": "Tile_1_-2",
+            "uuid": "761275d3-2e3c-40f1-8743-11b34dc535ec",
+            "name": "f3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2628,8 +2628,8 @@
             ]
           },
           {
-            "uuid": "61c68fcf-e8e4-4f24-acaa-fe32f699d34f",
-            "name": "Tile_1_-1",
+            "uuid": "6a4a3d44-31db-4849-a1ad-9d06f089d967",
+            "name": "f4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2688,8 +2688,8 @@
             ]
           },
           {
-            "uuid": "4797a1c5-b05e-47ec-9ae1-48f3151db276",
-            "name": "Tile_1_0",
+            "uuid": "9c4e3aca-8a0a-4b12-8ecc-c59b92fa88fc",
+            "name": "f5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2748,8 +2748,8 @@
             ]
           },
           {
-            "uuid": "e34246cb-26d5-40d2-80ee-047687d7c5cf",
-            "name": "Tile_1_1",
+            "uuid": "44c54075-a048-4e41-b65c-48e6e5214d81",
+            "name": "f6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2808,8 +2808,8 @@
             ]
           },
           {
-            "uuid": "6f66941f-c4dc-4b1f-bd54-12d371c54954",
-            "name": "Tile_1_2",
+            "uuid": "6f884bfa-9206-4ce0-93d1-7c65cb04610f",
+            "name": "f7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2868,8 +2868,8 @@
             ]
           },
           {
-            "uuid": "078f1f2d-650f-4fe5-be04-5b85db21544a",
-            "name": "Tile_1_3",
+            "uuid": "c9a2846a-ea42-4be0-9ef3-c78414140584",
+            "name": "f8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2928,8 +2928,8 @@
             ]
           },
           {
-            "uuid": "87e9694c-c575-4b82-897d-553a429f8e49",
-            "name": "Tile_2_-4",
+            "uuid": "9c517e2f-578a-4f2a-9b8b-8f268ff13559",
+            "name": "g1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -2988,8 +2988,8 @@
             ]
           },
           {
-            "uuid": "2ead7693-bd76-48bb-bad4-4055f595a07c",
-            "name": "Tile_2_-3",
+            "uuid": "93b9c37d-fb6e-4e9a-a225-1e763923fad6",
+            "name": "g2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3048,8 +3048,8 @@
             ]
           },
           {
-            "uuid": "7e09c843-7e33-4547-b11b-81f3ba0f3de8",
-            "name": "Tile_2_-2",
+            "uuid": "747805cc-0214-465d-a086-832f77b8880a",
+            "name": "g3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3108,8 +3108,8 @@
             ]
           },
           {
-            "uuid": "bdb37c7a-29f4-45a3-8875-f9bd0a993a88",
-            "name": "Tile_2_-1",
+            "uuid": "714b876d-bae5-471c-8a25-9244488d1abd",
+            "name": "g4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3168,8 +3168,8 @@
             ]
           },
           {
-            "uuid": "a202cb21-3691-48e7-acea-da66f9174eb6",
-            "name": "Tile_2_0",
+            "uuid": "051f8908-337f-45d3-85e9-037ca18b8613",
+            "name": "g5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3228,8 +3228,8 @@
             ]
           },
           {
-            "uuid": "cbca30f4-bf65-4887-9b91-45e52a7f6ecc",
-            "name": "Tile_2_1",
+            "uuid": "d70e8091-f387-4dfe-ac3f-42f4cc5cb1d2",
+            "name": "g6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3288,8 +3288,8 @@
             ]
           },
           {
-            "uuid": "8139edb7-ca56-4e76-8079-dc39902bf05b",
-            "name": "Tile_2_2",
+            "uuid": "7b3adaae-ba3f-42bf-a885-3cca10c2dde7",
+            "name": "g7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3348,8 +3348,8 @@
             ]
           },
           {
-            "uuid": "f52050b4-86e8-4c61-b981-46a300b46f81",
-            "name": "Tile_2_3",
+            "uuid": "d05d78c4-e425-4290-a504-8431603603db",
+            "name": "g8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3408,8 +3408,8 @@
             ]
           },
           {
-            "uuid": "ee5d39b8-b3d7-4ff3-900b-2ce1361c3c2c",
-            "name": "Tile_3_-4",
+            "uuid": "70dd892a-1d0b-4a45-9026-0fa1e8ec88b9",
+            "name": "h1",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3468,8 +3468,8 @@
             ]
           },
           {
-            "uuid": "3d8ce0c3-741c-44ed-9d6a-909d1f001f0d",
-            "name": "Tile_3_-3",
+            "uuid": "49017d2d-263f-4d8b-8342-bda378c07ee8",
+            "name": "h2",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3528,8 +3528,8 @@
             ]
           },
           {
-            "uuid": "5d58c510-2ff4-4380-802f-61364c9d6289",
-            "name": "Tile_3_-2",
+            "uuid": "9e0713bb-13fd-40a3-a310-440bfccdc446",
+            "name": "h3",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3588,8 +3588,8 @@
             ]
           },
           {
-            "uuid": "2a434c9e-5f70-4cfd-9a1c-9af91cb90679",
-            "name": "Tile_3_-1",
+            "uuid": "ce4173f4-8031-40c3-b33d-66ebfde4d39b",
+            "name": "h4",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3648,8 +3648,8 @@
             ]
           },
           {
-            "uuid": "11cc8941-c08c-41c0-bc22-f708bf5991e9",
-            "name": "Tile_3_0",
+            "uuid": "ece656ff-e357-4206-a7e7-1263b4d6a982",
+            "name": "h5",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3708,8 +3708,8 @@
             ]
           },
           {
-            "uuid": "9cdd88fc-4d14-4927-b093-214d4d27c65e",
-            "name": "Tile_3_1",
+            "uuid": "181d7698-4ef6-4cc1-b3c2-ac31a77fcc93",
+            "name": "h6",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3768,8 +3768,8 @@
             ]
           },
           {
-            "uuid": "f3509fb4-dc60-4498-826b-a042c5312b61",
-            "name": "Tile_3_2",
+            "uuid": "66239249-7a34-40e1-9b62-44cf38ee5150",
+            "name": "h7",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3828,8 +3828,8 @@
             ]
           },
           {
-            "uuid": "0eb35d5b-c756-43f8-aaa4-4537cb0b95bf",
-            "name": "Tile_3_3",
+            "uuid": "0bc8e959-be45-4af2-87c6-23ae45ef41ab",
+            "name": "h8",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -3977,7 +3977,7 @@
         ],
         "children": [
           {
-            "uuid": "5b357338-95e7-4018-9371-5a18a28579b1",
+            "uuid": "12d3f58c-0845-4d23-a7b2-f3dfa04430ab",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4037,7 +4037,7 @@
             ]
           },
           {
-            "uuid": "39d70c00-2d8f-4817-b33d-4eff49e4bea4",
+            "uuid": "0c1904cb-5e1e-4d65-a4e0-1429cf55d5e2",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4097,7 +4097,7 @@
             ]
           },
           {
-            "uuid": "1931dcae-18ad-466b-9e20-83c0a6fd71df",
+            "uuid": "29ca6e31-0fdc-44b6-8e47-952e8cc5d998",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4157,7 +4157,7 @@
             ]
           },
           {
-            "uuid": "d47edf01-0dd8-4941-9567-405e4bfe0364",
+            "uuid": "dedd633c-fb20-42df-80b6-08d00bddb234",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4217,7 +4217,7 @@
             ]
           },
           {
-            "uuid": "2fdf1347-8cd9-43aa-ba36-6ba033dc7f07",
+            "uuid": "a72065b6-fcba-4c8a-8102-b88dc79126a6",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4277,7 +4277,7 @@
             ]
           },
           {
-            "uuid": "5a5e0968-3622-494c-89e9-aad5e7ad3916",
+            "uuid": "6e89e269-aa84-48aa-ba51-7a462e2c7ad6",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4337,7 +4337,7 @@
             ]
           },
           {
-            "uuid": "8d4c5d19-2610-4420-872f-c07a0b3f8266",
+            "uuid": "4de08c49-9af9-449b-bb8c-29c21e4f688c",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4397,7 +4397,7 @@
             ]
           },
           {
-            "uuid": "9d8bced4-ad77-4036-a0ca-0b4778455d05",
+            "uuid": "d84bf682-cf3e-4d0a-8fa7-50bed4ca9421",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4457,7 +4457,7 @@
             ]
           },
           {
-            "uuid": "91ba1eb7-cbe2-4712-9197-8c1dd60e8374",
+            "uuid": "aa206a44-193e-4014-8b09-d7e9583f7530",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4517,7 +4517,7 @@
             ]
           },
           {
-            "uuid": "99514846-c868-4d28-b288-6faacdccaf5f",
+            "uuid": "8a6bb35a-aae0-4439-87b4-f75b7e8b7c29",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4577,7 +4577,7 @@
             ]
           },
           {
-            "uuid": "86ce1651-b0ee-43c2-85f0-df5cfe62d098",
+            "uuid": "ace76dc5-254d-4af0-96b1-d9aef04fdf7b",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4637,7 +4637,7 @@
             ]
           },
           {
-            "uuid": "b318de7b-805b-43b2-a412-5db1de0c1064",
+            "uuid": "ba92d564-7239-4ef9-ad95-556b21d194cd",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4697,7 +4697,7 @@
             ]
           },
           {
-            "uuid": "da27b68b-1519-4d9a-892c-f6088ec6a041",
+            "uuid": "b80292de-4f6c-4ea6-9da8-540ef73389b1",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4757,7 +4757,7 @@
             ]
           },
           {
-            "uuid": "de7ebc5e-da5f-41be-b16e-6f4f7a80b355",
+            "uuid": "c55e1637-97b4-4184-8986-ef6a57843710",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4817,7 +4817,7 @@
             ]
           },
           {
-            "uuid": "a769e0bc-832d-468c-994d-94e7133428f2",
+            "uuid": "86caeed5-36bc-4b54-a4d0-625b03eb0dc9",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4877,7 +4877,7 @@
             ]
           },
           {
-            "uuid": "b3e4508d-4361-4bb4-8fba-034a3ab69fe1",
+            "uuid": "492300e0-d731-4420-b753-8b0fd7c21f5d",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -4937,7 +4937,7 @@
             ]
           },
           {
-            "uuid": "207f9da3-acf4-4f05-81c4-ec54f81446ab",
+            "uuid": "8c0d33c3-c9ae-472e-be79-898264964bad",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -4997,7 +4997,7 @@
             ]
           },
           {
-            "uuid": "f897383b-f883-4fc8-bef2-1278a8b15ac8",
+            "uuid": "b94b8d90-7df1-4134-843c-431cfe62798b",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -5057,7 +5057,7 @@
             ]
           },
           {
-            "uuid": "30f76bdc-eb9b-412c-9fcd-8157e1c703d9",
+            "uuid": "6fac4e39-5b65-47d9-9ef0-5b4287a6ef40",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -5117,7 +5117,7 @@
             ]
           },
           {
-            "uuid": "5e3b1457-bf03-4ffd-b531-759de2cf6612",
+            "uuid": "f27cd16f-6d82-43b1-bee7-cdbc494747b9",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -5177,7 +5177,7 @@
             ]
           },
           {
-            "uuid": "c7d1eeb2-6ccf-4fcb-9c60-237d27265686",
+            "uuid": "f395f24e-fa59-48d8-8983-1ad02a09111c",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -5237,7 +5237,7 @@
             ]
           },
           {
-            "uuid": "616add20-6dfc-4d62-ad93-ff0f62652129",
+            "uuid": "85e28bf2-642e-4422-9571-de5fb82618ac",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -5297,7 +5297,7 @@
             ]
           },
           {
-            "uuid": "370fdca3-debb-4f7a-9b92-f742b84dc819",
+            "uuid": "bb0afab6-6322-4eac-a6a9-7dd0b28eec38",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -5357,7 +5357,7 @@
             ]
           },
           {
-            "uuid": "b7a53a24-a157-46ce-aa85-dd4debfe7622",
+            "uuid": "70772ad4-a5ce-46bb-80d4-1af8fa32a4b6",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -5417,7 +5417,7 @@
             ]
           },
           {
-            "uuid": "0d52c5eb-0d34-4528-865c-6b7ea9339860",
+            "uuid": "3c9f6c9f-c1fa-4b67-a3c8-375656238ec6",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -5477,7 +5477,7 @@
             ]
           },
           {
-            "uuid": "d9d2847a-290a-4914-9026-617b25d79d32",
+            "uuid": "9ab89a40-8790-4bc7-a515-bf5f47641583",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -5537,7 +5537,7 @@
             ]
           },
           {
-            "uuid": "2a621e37-9783-405d-a0cb-dc89fe74ead7",
+            "uuid": "038122c4-7c6d-4c1f-b663-758c87035321",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -5597,7 +5597,7 @@
             ]
           },
           {
-            "uuid": "466e526f-799b-4309-81e4-84e6bc2119e6",
+            "uuid": "bced6143-7e5c-4ae3-b1c9-42b82d583b30",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -5657,7 +5657,7 @@
             ]
           },
           {
-            "uuid": "83371d1a-ba7d-489a-8854-2447c80e1e0e",
+            "uuid": "d95df555-cb21-4501-84ea-8d0beee02daa",
             "name": "Queen",
             "priority": 0.0,
             "visible": true,
@@ -5717,7 +5717,7 @@
             ]
           },
           {
-            "uuid": "7c707df5-0b01-4ecd-a582-b3a1a3cc8727",
+            "uuid": "ce8eed4c-ebf7-4f5c-8071-15eec9501ea3",
             "name": "Queen",
             "priority": 0.0,
             "visible": true,
@@ -5777,7 +5777,7 @@
             ]
           },
           {
-            "uuid": "03a541be-22b9-486b-8d7c-b2d58ad0e307",
+            "uuid": "ae13f879-346d-4ab9-9807-c446e8f1f0b6",
             "name": "King",
             "priority": 0.0,
             "visible": true,
@@ -5837,7 +5837,7 @@
             ]
           },
           {
-            "uuid": "4161fc4c-62fb-4947-bdcd-e9219970489d",
+            "uuid": "80dd026b-d431-4794-a2dc-826c2da10fdb",
             "name": "King",
             "priority": 0.0,
             "visible": true,
@@ -6105,15 +6105,15 @@
         "flags": 0.0,
         "pose": {
           "position": [
-            -4.233420271223546,
-            -12.592570511674971,
-            15.466096397203675
+            -1.982777222863791,
+            -12.749283380675255,
+            15.409776369153175
           ],
           "rotation": [
-            -0.4324835223077646,
-            0.008304107854736346,
-            -0.017308483105873372,
-            0.9014374416106643
+            -0.43248352230776455,
+            0.008304107854736344,
+            -0.017308483105873376,
+            0.9014374416106644
           ]
         },
         "scale": [
@@ -6152,6 +6152,44 @@
               "depth": 0.0,
               "input_manager_type": "simple",
               "layer_mask": "0xffffffffffffffff"
+            }
+          }
+        ]
+      },
+      {
+        "uuid": "4ac2ce0c-f821-4605-8cd6-44040724ab67",
+        "name": "ChessController",
+        "priority": 0.0,
+        "visible": true,
+        "enabled": true,
+        "pickable": true,
+        "selectable": true,
+        "layer": 0.0,
+        "flags": 0.0,
+        "pose": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": [
+          {
+            "type": "ChessGameController",
+            "data": {
+              "display_name": "",
+              "enabled": true
             }
           }
         ]
@@ -6194,15 +6232,15 @@
           "viewport_camera_name": "camera",
           "entities_data": {
             "position": [
-              1.8553276589287606,
-              -21.127657400418887,
-              22.858701325491182
+              -4.358513887650632,
+              -17.451944835507106,
+              24.629179643511357
             ],
             "rotation": [
-              -0.44246445244302124,
-              0.02317948365804893,
-              -0.04690012122900943,
-              0.8952587885580057
+              -0.49372187497645753,
+              0.0414487912314114,
+              -0.07266746671904303,
+              0.8655865913678555
             ],
             "radius": 27.0,
             "editor_entities": {
@@ -6327,6 +6365,7 @@
         ]
       }
     },
+    "selected_entity": "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
     "expanded_entities": [
       "ba5ebc38-adb1-4245-aebb-ea7cca4882f1"
     ]
