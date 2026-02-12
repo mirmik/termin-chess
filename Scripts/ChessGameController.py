@@ -122,6 +122,7 @@ class ChessGameController(InputComponent):
         return False
 
     def on_mouse_button(self, event):
+        print("[Chess] On mouse button")
         if event.button != MouseButton.LEFT or event.action != Action.PRESS:
             return
         if self._state == STATE_GAME_OVER:
