@@ -15,7 +15,7 @@ print("BoardCreatorComponent loaded.")
 def _on_make_board_click(component: "BoardCreatorComponent") -> None:
     """Called when the "Make Board" button is clicked."""
     print("Make Board button clicked.")
-    component.to_python().make_board()
+    component.make_board()
 
 
 class BoardCreatorComponent(PythonComponent):
@@ -74,6 +74,10 @@ class BoardCreatorComponent(PythonComponent):
                 mr.set_field("material", white_or_black)
 
                 child.transform.set_local_position(Vec3(i * W, j * W, 0))
+
+                col = child.add_component_by_name("ColliderComponent")
+                col.set_field("collider_type", "Box")
+                col.set_field("box_size", [1, 1, 1])
 
         from termin.editor.render_request import request_scene_tree_rebuild                                                    
         request_scene_tree_rebuild()

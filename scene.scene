@@ -48,7 +48,7 @@
         ],
         "children": [
           {
-            "uuid": "37bd850c-4f5b-42e4-addb-9f43a49bea95",
+            "uuid": "1bf92a9d-faae-4bab-a48e-d66074b1ffd0",
             "name": "Tile_-4_-4",
             "priority": 0.0,
             "visible": true,
@@ -92,11 +92,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "225540e2-22e7-4850-ad38-65ef7d1cbcb4",
+            "uuid": "f6142b8e-b752-4d8e-896a-a106eb0e1007",
             "name": "Tile_-4_-3",
             "priority": 0.0,
             "visible": true,
@@ -140,11 +152,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "d941c028-9ce3-4c49-beab-8c624777f769",
+            "uuid": "073ba402-e950-4d0d-9e83-6d52346c232b",
             "name": "Tile_-4_-2",
             "priority": 0.0,
             "visible": true,
@@ -188,11 +212,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "cc384bef-1f63-4f4c-9ba4-3b18c0f7cc9a",
+            "uuid": "804eb937-a066-45e9-9167-f0bc7500c37d",
             "name": "Tile_-4_-1",
             "priority": 0.0,
             "visible": true,
@@ -236,11 +272,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "388dc2d4-70cf-4d2e-baaa-91c121882aed",
+            "uuid": "3b687f24-b82c-4196-b09e-e8e40a0b0f8a",
             "name": "Tile_-4_0",
             "priority": 0.0,
             "visible": true,
@@ -284,11 +332,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "c075dcdf-d81b-4c73-8067-8b805f581a97",
+            "uuid": "59c9c1f9-2f87-4300-aed3-bd63d380e00f",
             "name": "Tile_-4_1",
             "priority": 0.0,
             "visible": true,
@@ -332,11 +392,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "e5dd6c55-ac89-4326-b314-e8549d12425d",
+            "uuid": "e85f33a0-8c65-463c-831f-200e2a309884",
             "name": "Tile_-4_2",
             "priority": 0.0,
             "visible": true,
@@ -380,11 +452,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "881e3d60-3a69-44fa-905f-7a2fb795c79c",
+            "uuid": "f95a7d28-e160-49cf-b3e6-32076613164f",
             "name": "Tile_-4_3",
             "priority": 0.0,
             "visible": true,
@@ -428,11 +512,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "7233f11e-bc75-44f0-892c-44263f8684c7",
+            "uuid": "7249effe-ae26-4ab2-855b-c06f8b58f384",
             "name": "Tile_-3_-4",
             "priority": 0.0,
             "visible": true,
@@ -476,11 +572,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "a5c127df-2afb-49fa-9b53-2a12e8f1af5a",
+            "uuid": "b271ac93-d1d5-4205-bb95-0c22a822711a",
             "name": "Tile_-3_-3",
             "priority": 0.0,
             "visible": true,
@@ -524,11 +632,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "24a078e0-15bd-409f-a915-c5289b49ef40",
+            "uuid": "6b60191a-8653-4ccb-ae8c-3b39e42ebd97",
             "name": "Tile_-3_-2",
             "priority": 0.0,
             "visible": true,
@@ -572,11 +692,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "0a171f34-12f8-4f6d-8c59-80344a2f8f6e",
+            "uuid": "9f6a2a71-3f8d-46fb-a282-1dcaa48ee40f",
             "name": "Tile_-3_-1",
             "priority": 0.0,
             "visible": true,
@@ -620,11 +752,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "cf074ee5-c41f-44ae-b449-d6cf93c6109d",
+            "uuid": "eefd2975-51f5-40ff-817b-3966aaf6fd49",
             "name": "Tile_-3_0",
             "priority": 0.0,
             "visible": true,
@@ -668,11 +812,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "dd2fd2ef-2801-4d74-9add-a8a40c3712db",
+            "uuid": "6027baa0-b430-4bd6-b2b8-a05646856634",
             "name": "Tile_-3_1",
             "priority": 0.0,
             "visible": true,
@@ -716,11 +872,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "3f60c003-7f44-41b3-8e88-83214e93be2b",
+            "uuid": "828fa9d3-85ea-4306-a50c-6c0f02695963",
             "name": "Tile_-3_2",
             "priority": 0.0,
             "visible": true,
@@ -764,11 +932,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "c2901aea-9177-4eeb-9407-8f603ea13c7d",
+            "uuid": "91130345-449e-4cf6-96bc-4d9c41b3d0c4",
             "name": "Tile_-3_3",
             "priority": 0.0,
             "visible": true,
@@ -812,11 +992,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "02fc8181-4132-45cf-bab8-f0084bae330d",
+            "uuid": "427a97c7-646a-4ec9-b63a-d979a432dc35",
             "name": "Tile_-2_-4",
             "priority": 0.0,
             "visible": true,
@@ -860,11 +1052,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "3f4ef8d0-c556-4c1a-9d4b-7a9cedb619ef",
+            "uuid": "45df7a89-7d96-40d3-93cd-6f94803f58c2",
             "name": "Tile_-2_-3",
             "priority": 0.0,
             "visible": true,
@@ -908,11 +1112,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "b39a70f4-cda5-4387-9db3-90a861c3b6a0",
+            "uuid": "b9f08a1d-5a58-47d1-92c0-4a36f2266b37",
             "name": "Tile_-2_-2",
             "priority": 0.0,
             "visible": true,
@@ -956,11 +1172,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "11ae71d7-042d-4162-b86b-fe65221754d5",
+            "uuid": "05e6c182-7c41-45cf-8ec4-648e03bc50bd",
             "name": "Tile_-2_-1",
             "priority": 0.0,
             "visible": true,
@@ -1004,11 +1232,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "b2c5c97f-6a8c-46c8-bf96-70a05a26416b",
+            "uuid": "acdada07-32c1-48c5-8122-fb734867ab4d",
             "name": "Tile_-2_0",
             "priority": 0.0,
             "visible": true,
@@ -1052,11 +1292,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "d4b242d9-df33-4b57-9f39-bdc150119602",
+            "uuid": "4d6ccfc9-ad24-49bb-a8fd-49ebb999a866",
             "name": "Tile_-2_1",
             "priority": 0.0,
             "visible": true,
@@ -1100,11 +1352,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "d65f8141-eb88-492a-9e79-ca78a00be474",
+            "uuid": "74836da6-4445-4bc6-a767-39afcee4fc1b",
             "name": "Tile_-2_2",
             "priority": 0.0,
             "visible": true,
@@ -1148,11 +1412,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "bd264d9c-5a88-44f9-81b1-ba12c2501499",
+            "uuid": "50cbe4fd-ef7d-48d7-ba01-c2349b6b9a0f",
             "name": "Tile_-2_3",
             "priority": 0.0,
             "visible": true,
@@ -1196,11 +1472,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "af96da9a-1ee3-443c-9c8e-b5fc9a997157",
+            "uuid": "ee07b532-4c21-48b3-8832-6256165e7167",
             "name": "Tile_-1_-4",
             "priority": 0.0,
             "visible": true,
@@ -1244,11 +1532,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "bfbef419-47e8-4208-99cc-1a5b1c2ff4cb",
+            "uuid": "29556418-d31d-4f4d-9eb1-81b91c1bc80a",
             "name": "Tile_-1_-3",
             "priority": 0.0,
             "visible": true,
@@ -1292,11 +1592,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "c5ce65e3-b129-4f0e-b8d4-0a526d7ba92d",
+            "uuid": "227e3d6e-9f35-4127-a783-7d7ee1eee50a",
             "name": "Tile_-1_-2",
             "priority": 0.0,
             "visible": true,
@@ -1340,11 +1652,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "3a9d4681-8559-491e-a5a4-7a42d36e0d98",
+            "uuid": "43492216-6611-4485-83e5-3edf0107ea23",
             "name": "Tile_-1_-1",
             "priority": 0.0,
             "visible": true,
@@ -1388,11 +1712,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "3d737bee-9c9a-4c54-af07-a6dc825009bc",
+            "uuid": "85279224-5cb3-4bc4-b7c8-4218b62723f9",
             "name": "Tile_-1_0",
             "priority": 0.0,
             "visible": true,
@@ -1436,11 +1772,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "ed503d73-a9c7-41ce-ab0b-103e7a1ed6b7",
+            "uuid": "704510d7-5774-4c1a-999a-f95aa1e37e26",
             "name": "Tile_-1_1",
             "priority": 0.0,
             "visible": true,
@@ -1484,11 +1832,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "9151a52d-eba2-425a-a928-372b7840e866",
+            "uuid": "0a104a67-c395-4bfa-9d6d-131394360d04",
             "name": "Tile_-1_2",
             "priority": 0.0,
             "visible": true,
@@ -1532,11 +1892,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "9025d939-ec6a-4857-b618-95f0366ba7c7",
+            "uuid": "7b1ddbd2-9137-4cea-92e6-4573c9c39ad4",
             "name": "Tile_-1_3",
             "priority": 0.0,
             "visible": true,
@@ -1580,11 +1952,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "bc4cf5a8-ee77-4297-9f39-c3187aab7e0a",
+            "uuid": "d3e43b96-7a66-41d7-93a4-eb67daf86b55",
             "name": "Tile_0_-4",
             "priority": 0.0,
             "visible": true,
@@ -1628,11 +2012,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "d05744bd-c14c-4437-a4aa-279b15ce62d2",
+            "uuid": "154728a6-7e14-4050-bad5-c4c4985e986b",
             "name": "Tile_0_-3",
             "priority": 0.0,
             "visible": true,
@@ -1676,11 +2072,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "1b577a09-ce7c-416e-b664-86300f043adf",
+            "uuid": "42d302bc-3993-440c-b77f-731177de668c",
             "name": "Tile_0_-2",
             "priority": 0.0,
             "visible": true,
@@ -1724,11 +2132,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "5b7e9c1c-cab1-442f-9b7b-ca704a2c4265",
+            "uuid": "258e32a4-a3c2-449d-98b8-613016f99c59",
             "name": "Tile_0_-1",
             "priority": 0.0,
             "visible": true,
@@ -1772,11 +2192,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "84bc6e52-390f-40ef-b346-1f824a5962a5",
+            "uuid": "cc9e1505-31a9-4168-a884-799f63df2b88",
             "name": "Tile_0_0",
             "priority": 0.0,
             "visible": true,
@@ -1820,11 +2252,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "d8fec2a2-af16-410a-919b-7bdbc8bd404c",
+            "uuid": "6e5d2c11-2021-4eb8-9910-e8f0098449d6",
             "name": "Tile_0_1",
             "priority": 0.0,
             "visible": true,
@@ -1868,11 +2312,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "7aaf9eb3-be5f-4232-a5c1-b4f01a1695f2",
+            "uuid": "225edb53-08ed-4b30-b134-d0d414fb5d82",
             "name": "Tile_0_2",
             "priority": 0.0,
             "visible": true,
@@ -1916,11 +2372,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "155795c4-6d66-4fff-824a-daca071b1681",
+            "uuid": "59899379-aa41-4184-9119-745b9ebd31c0",
             "name": "Tile_0_3",
             "priority": 0.0,
             "visible": true,
@@ -1964,11 +2432,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "cab43488-13d6-4ab9-976f-a9b2853ea49a",
+            "uuid": "1b0c1423-f9cf-446b-8424-3f181f9c9a78",
             "name": "Tile_1_-4",
             "priority": 0.0,
             "visible": true,
@@ -2012,11 +2492,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "96395f03-a02e-42a2-b8dd-6c7ff88201c2",
+            "uuid": "262df1d0-6e22-44c0-bcc8-1bda854c9aa1",
             "name": "Tile_1_-3",
             "priority": 0.0,
             "visible": true,
@@ -2060,11 +2552,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "36354a4a-0c05-43a3-b4ac-55f9eafa9480",
+            "uuid": "58aec452-7e18-4d82-bcfc-9a5c9934d4bf",
             "name": "Tile_1_-2",
             "priority": 0.0,
             "visible": true,
@@ -2108,11 +2612,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "33f384d3-2186-4599-a3e1-185b63191d9a",
+            "uuid": "61c68fcf-e8e4-4f24-acaa-fe32f699d34f",
             "name": "Tile_1_-1",
             "priority": 0.0,
             "visible": true,
@@ -2156,11 +2672,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "4f68e45b-6de7-4ee1-9354-da7d4e6efe81",
+            "uuid": "4797a1c5-b05e-47ec-9ae1-48f3151db276",
             "name": "Tile_1_0",
             "priority": 0.0,
             "visible": true,
@@ -2204,11 +2732,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "61825582-08ca-4b6c-ac34-c70f4de5a99c",
+            "uuid": "e34246cb-26d5-40d2-80ee-047687d7c5cf",
             "name": "Tile_1_1",
             "priority": 0.0,
             "visible": true,
@@ -2252,11 +2792,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "4d8df7ba-74f6-4b07-8a75-8598e4831945",
+            "uuid": "6f66941f-c4dc-4b1f-bd54-12d371c54954",
             "name": "Tile_1_2",
             "priority": 0.0,
             "visible": true,
@@ -2300,11 +2852,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "056ec80d-39e3-49e5-9741-f465269e0173",
+            "uuid": "078f1f2d-650f-4fe5-be04-5b85db21544a",
             "name": "Tile_1_3",
             "priority": 0.0,
             "visible": true,
@@ -2348,11 +2912,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "2bf92da0-efc8-4739-bd2c-d121afea67b4",
+            "uuid": "87e9694c-c575-4b82-897d-553a429f8e49",
             "name": "Tile_2_-4",
             "priority": 0.0,
             "visible": true,
@@ -2396,11 +2972,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "592fc292-123b-472a-bc6b-8fa209901535",
+            "uuid": "2ead7693-bd76-48bb-bad4-4055f595a07c",
             "name": "Tile_2_-3",
             "priority": 0.0,
             "visible": true,
@@ -2444,11 +3032,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "8942d578-0a7c-4148-a982-69586dd00dc6",
+            "uuid": "7e09c843-7e33-4547-b11b-81f3ba0f3de8",
             "name": "Tile_2_-2",
             "priority": 0.0,
             "visible": true,
@@ -2492,11 +3092,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "ffcf5812-0acf-4c87-bacb-29445b3f79e5",
+            "uuid": "bdb37c7a-29f4-45a3-8875-f9bd0a993a88",
             "name": "Tile_2_-1",
             "priority": 0.0,
             "visible": true,
@@ -2540,11 +3152,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "814e5d8c-ca0f-4473-913d-ccfe0ed9c40d",
+            "uuid": "a202cb21-3691-48e7-acea-da66f9174eb6",
             "name": "Tile_2_0",
             "priority": 0.0,
             "visible": true,
@@ -2588,11 +3212,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "a81c1fb2-eb5b-4926-a663-6a82a2e36723",
+            "uuid": "cbca30f4-bf65-4887-9b91-45e52a7f6ecc",
             "name": "Tile_2_1",
             "priority": 0.0,
             "visible": true,
@@ -2636,11 +3272,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "31c4affb-d383-4f65-813b-63cf1428dcbc",
+            "uuid": "8139edb7-ca56-4e76-8079-dc39902bf05b",
             "name": "Tile_2_2",
             "priority": 0.0,
             "visible": true,
@@ -2684,11 +3332,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "44fc6e30-57a8-467e-8bc0-00ada367d0d4",
+            "uuid": "f52050b4-86e8-4c61-b981-46a300b46f81",
             "name": "Tile_2_3",
             "priority": 0.0,
             "visible": true,
@@ -2732,11 +3392,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "2b80cfff-033e-44c4-b9c7-938def704934",
+            "uuid": "ee5d39b8-b3d7-4ff3-900b-2ce1361c3c2c",
             "name": "Tile_3_-4",
             "priority": 0.0,
             "visible": true,
@@ -2780,11 +3452,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "6cb864c3-60ba-416b-ba41-181da8e8f1d4",
+            "uuid": "3d8ce0c3-741c-44ed-9d6a-909d1f001f0d",
             "name": "Tile_3_-3",
             "priority": 0.0,
             "visible": true,
@@ -2828,11 +3512,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "68c0d36c-ff37-4078-bec4-06ee344f22a0",
+            "uuid": "5d58c510-2ff4-4380-802f-61364c9d6289",
             "name": "Tile_3_-2",
             "priority": 0.0,
             "visible": true,
@@ -2876,11 +3572,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "07866367-40a5-42ba-a6ea-d78fd3c8633b",
+            "uuid": "2a434c9e-5f70-4cfd-9a1c-9af91cb90679",
             "name": "Tile_3_-1",
             "priority": 0.0,
             "visible": true,
@@ -2924,11 +3632,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "8836a787-6dd8-406b-9c06-59d0557b705d",
+            "uuid": "11cc8941-c08c-41c0-bc22-f708bf5991e9",
             "name": "Tile_3_0",
             "priority": 0.0,
             "visible": true,
@@ -2972,11 +3692,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "01d3c441-7897-4b5f-81d2-ee549a519023",
+            "uuid": "9cdd88fc-4d14-4927-b093-214d4d27c65e",
             "name": "Tile_3_1",
             "priority": 0.0,
             "visible": true,
@@ -3020,11 +3752,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "8737aaf4-0faa-4fab-b0b9-7b0634eb6336",
+            "uuid": "f3509fb4-dc60-4498-826b-a042c5312b61",
             "name": "Tile_3_2",
             "priority": 0.0,
             "visible": true,
@@ -3068,11 +3812,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "bf277737-be73-4640-8584-94e0d524035c",
+            "uuid": "0eb35d5b-c756-43f8-aaa4-4537cb0b95bf",
             "name": "Tile_3_3",
             "priority": 0.0,
             "visible": true,
@@ -3115,6 +3871,18 @@
                   },
                   "cast_shadow": true,
                   "_override_material": false
+                }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
                 }
               }
             ]
@@ -3209,7 +3977,7 @@
         ],
         "children": [
           {
-            "uuid": "1e7b884f-be47-438b-b082-70ca5c7b58f0",
+            "uuid": "5b357338-95e7-4018-9371-5a18a28579b1",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3253,11 +4021,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "2cdd115f-a177-4c51-999a-578f7b9ed799",
+            "uuid": "39d70c00-2d8f-4817-b33d-4eff49e4bea4",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3301,11 +4081,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "195fe8d8-a6cb-4316-8ed3-e0aa4e389a7b",
+            "uuid": "1931dcae-18ad-466b-9e20-83c0a6fd71df",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3349,11 +4141,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "15abdab7-2376-483c-905f-cb8bfda22417",
+            "uuid": "d47edf01-0dd8-4941-9567-405e4bfe0364",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3397,11 +4201,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "010defa8-d852-4e26-a69f-d074d76aefed",
+            "uuid": "2fdf1347-8cd9-43aa-ba36-6ba033dc7f07",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3445,11 +4261,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "16c9a439-3fac-454f-8b41-da08e3ff1fe5",
+            "uuid": "5a5e0968-3622-494c-89e9-aad5e7ad3916",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3460,9 +4288,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                12.096038818359375,
-                0.14661002159118652,
-                2.478128635630128e-07
+                -4.0,
+                4.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3493,11 +4321,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "0c0e8de4-614b-4b87-aadb-fbc246ebaf5c",
+            "uuid": "8d4c5d19-2610-4420-872f-c07a0b3f8266",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3508,9 +4348,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                11.155680656433105,
-                -3.14882755279541,
-                1.8214715282738325e-06
+                -2.0,
+                -6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3541,11 +4381,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "b45395f4-ff0a-430a-8b1e-122f1d321429",
+            "uuid": "9d8bced4-ad77-4036-a0ca-0b4778455d05",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3556,9 +4408,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                -2.0906341075897217,
-                0.1801513433456421,
-                -6.746361123077804e-07
+                -2.0,
+                4.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3589,11 +4441,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "40a10da1-ec18-48d7-b424-993a0f4896c3",
+            "uuid": "91ba1eb7-cbe2-4712-9197-8c1dd60e8374",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3637,11 +4501,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "9b2bb79a-35fb-4481-99b6-b036e8c45f29",
+            "uuid": "99514846-c868-4d28-b288-6faacdccaf5f",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3652,9 +4528,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                9.499604225158691,
-                1.6527752876281738,
-                -9.73947180682444e-07
+                0.0,
+                4.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3685,11 +4561,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "656cca51-85f3-4879-97c1-b3260949e9a4",
+            "uuid": "86ce1651-b0ee-43c2-85f0-df5cfe62d098",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3700,9 +4588,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                0.010514378547668457,
-                0.19855070114135742,
-                1.2185564628452994e-06
+                2.0,
+                -6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3733,11 +4621,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "74a13ea9-9ce2-4ab5-99da-eb819e4aaa03",
+            "uuid": "b318de7b-805b-43b2-a412-5db1de0c1064",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3781,11 +4681,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "b675553b-687d-447f-bf67-a548b08eed24",
+            "uuid": "da27b68b-1519-4d9a-892c-f6088ec6a041",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3796,9 +4708,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                4.0035400390625,
-                -3.923717737197876,
-                3.8126404433569405e-07
+                4.0,
+                -6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3829,11 +4741,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "2f2bcecb-0ef8-40a7-936b-2871b5d3756c",
+            "uuid": "de7ebc5e-da5f-41be-b16e-6f4f7a80b355",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3877,11 +4801,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "48caa7b0-475c-4f86-83d4-cf7462bc9892",
+            "uuid": "a769e0bc-832d-468c-994d-94e7133428f2",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3892,9 +4828,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                6.040557384490967,
-                -3.9542462825775146,
-                -9.025632152770413e-08
+                6.0,
+                -6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -3925,11 +4861,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "e7665df5-5fde-4c32-89c5-a3ff98186be0",
+            "uuid": "b3e4508d-4361-4bb4-8fba-034a3ab69fe1",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -3973,12 +4921,24 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "e212902a-6ebf-4032-937f-a6f53b3e8723",
-            "name": "Rock",
+            "uuid": "207f9da3-acf4-4f05-81c4-ec54f81446ab",
+            "name": "Rook",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -4021,12 +4981,24 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "a5e51804-c3b5-460c-bad9-0b12f276f2d4",
-            "name": "Rock",
+            "uuid": "f897383b-f883-4fc8-bef2-1278a8b15ac8",
+            "name": "Rook",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -4069,12 +5041,24 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "8982fef7-41af-49d4-aecf-c96a0e518db3",
-            "name": "Rock",
+            "uuid": "30f76bdc-eb9b-412c-9fcd-8157e1c703d9",
+            "name": "Rook",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -4117,12 +5101,24 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "36a5b7f9-5aed-45d4-8611-e6b887d88d10",
-            "name": "Rock",
+            "uuid": "5e3b1457-bf03-4ffd-b531-759de2cf6612",
+            "name": "Rook",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -4165,59 +5161,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
-              }
-            ]
-          },
-          {
-            "uuid": "5a8b089b-3a31-4f69-8139-d30f8a60c2c0",
-            "name": "Knight",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                -3.9394185543060303,
-                -4.055757522583008,
-                5.144526085132384e-07
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                -0.9978035688400269,
-                0.06624118983745575
-              ]
-            },
-            "scale": [
-              0.05,
-              0.05,
-              0.05
-            ],
-            "components": [
+              },
               {
-                "type": "MeshRenderer",
+                "type": "ColliderComponent",
                 "data": {
                   "enabled": true,
-                  "mesh": {
-                    "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
-                    "name": "Hex_Knight"
-                  },
-                  "material": {
-                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
-                    "name": "WhiteFigure",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "_override_material": false
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
                 }
               }
             ]
           },
           {
-            "uuid": "0579b960-66be-442c-8f1b-e557f372674e",
+            "uuid": "c7d1eeb2-6ccf-4fcb-9c60-237d27265686",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -4228,15 +5188,15 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                8.893742561340332,
-                -0.1289999932050705,
+                -6.0,
+                -8.0,
                 0.0
               ],
               "rotation": [
                 0.0,
                 0.0,
-                -0.9975565671920776,
-                0.06986305862665176
+                0.0,
+                1.0
               ]
             },
             "scale": [
@@ -4261,11 +5221,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "fd6fe938-a159-41a2-9274-b11cd473dcd9",
+            "uuid": "616add20-6dfc-4d62-ad93-ff0f62652129",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -4276,9 +5248,69 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                10.682219505310059,
-                -1.4319995641708374,
-                -1.0574990483291913e-06
+                4.0,
+                -8.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
+                    "name": "Hex_Knight"
+                  },
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "_override_material": false
+                }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "370fdca3-debb-4f7a-9b92-f742b84dc819",
+            "name": "Knight",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                -6.0,
+                6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -4309,11 +5341,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "ec953952-536e-4e23-8963-7a7cd5e1cad3",
+            "uuid": "b7a53a24-a157-46ce-aa85-dd4debfe7622",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -4324,9 +5368,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                4.068345546722412,
-                -1.8768978118896484,
-                2.9850345981685678e-06
+                4.0,
+                6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -4357,11 +5401,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "51b40bf2-0dac-449f-a045-bbf4b897cda4",
+            "uuid": "0d52c5eb-0d34-4528-865c-6b7ea9339860",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -4405,11 +5461,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "2c07f67f-7574-42fe-981c-7aadfe45804f",
+            "uuid": "d9d2847a-290a-4914-9026-617b25d79d32",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -4453,11 +5521,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "f98b4106-37d5-4557-9a60-4bd2f7197623",
+            "uuid": "2a621e37-9783-405d-a0cb-dc89fe74ead7",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -4468,9 +5548,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                2.1155903339385986,
-                -0.05164694786071777,
-                -4.2762019347719615e-07
+                -4.0,
+                6.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -4501,11 +5581,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "206ca295-e045-43b8-a10d-665f52e6ae4b",
+            "uuid": "466e526f-799b-4309-81e4-84e6bc2119e6",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -4549,11 +5641,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "72ef51a9-c4f6-41de-964c-b04d65267085",
+            "uuid": "83371d1a-ba7d-489a-8854-2447c80e1e0e",
             "name": "Queen",
             "priority": 0.0,
             "visible": true,
@@ -4564,9 +5668,9 @@
             "flags": 0.0,
             "pose": {
               "position": [
-                -1.9484710693359375,
-                -2.0030012130737305,
-                1.4723574395247851e-06
+                -2.0,
+                -8.0,
+                0.0
               ],
               "rotation": [
                 0.0,
@@ -4597,11 +5701,23 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "92131a73-58ad-4bb9-bb91-190d78c759ea",
+            "uuid": "7c707df5-0b01-4ecd-a582-b3a1a3cc8727",
             "name": "Queen",
             "priority": 0.0,
             "visible": true,
@@ -4645,12 +5761,24 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "b7aa937b-a194-4af7-a10a-454631b5ccc3",
-            "name": "Unit",
+            "uuid": "03a541be-22b9-486b-8d7c-b2d58ad0e307",
+            "name": "King",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -4693,12 +5821,24 @@
                   "cast_shadow": true,
                   "_override_material": false
                 }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
+                }
               }
             ]
           },
           {
-            "uuid": "c8e63620-9462-4a4f-b3f3-5c6bbab55571",
-            "name": "Unit",
+            "uuid": "4161fc4c-62fb-4947-bdcd-e9219970489d",
+            "name": "King",
             "priority": 0.0,
             "visible": true,
             "enabled": true,
@@ -4740,6 +5880,18 @@
                   },
                   "cast_shadow": true,
                   "_override_material": false
+                }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "collider_type": "Box",
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ]
                 }
               }
             ]
@@ -4895,7 +6047,7 @@
       },
       {
         "uuid": "53895ce7-e1da-4cb8-9677-898e450cd8e0",
-        "name": "entity1",
+        "name": "MissedTable",
         "priority": 0.0,
         "visible": true,
         "enabled": true,
@@ -4931,12 +6083,75 @@
                 "name": "Cube"
               },
               "material": {
-                "uuid": "mat-0000000000000006",
+                "uuid": "11ad46ba-1f33-43e6-a637-30bfbb165ea9",
                 "name": "WoodMaterial",
                 "type": "uuid"
               },
               "cast_shadow": true,
               "_override_material": false
+            }
+          }
+        ]
+      },
+      {
+        "uuid": "62dc098a-2260-42c4-a534-f8b8542cb81b",
+        "name": "GameCamera",
+        "priority": 0.0,
+        "visible": true,
+        "enabled": true,
+        "pickable": true,
+        "selectable": true,
+        "layer": 0.0,
+        "flags": 0.0,
+        "pose": {
+          "position": [
+            -4.233420271223546,
+            -12.592570511674971,
+            15.466096397203675
+          ],
+          "rotation": [
+            -0.4324835223077646,
+            0.008304107854736346,
+            -0.017308483105873372,
+            0.9014374416106643
+          ]
+        },
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": [
+          {
+            "type": "CameraComponent",
+            "data": {
+              "near_clip": 0.1,
+              "far_clip": 100.0,
+              "ortho_size": 5.0,
+              "fov_x_degrees": 90.0,
+              "fov_y_degrees": 45.0,
+              "fov_mode": "FixHorizontal"
+            }
+          },
+          {
+            "type": "OrbitCameraController",
+            "data": {
+              "radius": 15.0,
+              "min_radius": 1.0,
+              "max_radius": 100.0
+            }
+          },
+          {
+            "type": "CameraViewportComponent",
+            "data": {
+              "target_display": "Display 0",
+              "rect_x": 0.0,
+              "rect_y": 0.0,
+              "rect_w": 1.0,
+              "rect_h": 1.0,
+              "depth": 0.0,
+              "input_manager_type": "simple",
+              "layer_mask": "0xffffffffffffffff"
             }
           }
         ]
@@ -4979,17 +6194,17 @@
           "viewport_camera_name": "camera",
           "entities_data": {
             "position": [
-              1.329047276833214,
-              -26.63031958728125,
-              13.309775849956885
+              1.8553276589287606,
+              -21.127657400418887,
+              22.858701325491182
             ],
             "rotation": [
-              -0.25363256689911784,
-              -0.007975929291905904,
-              0.030402434158678476,
-              0.9667898414636567
+              -0.44246445244302124,
+              0.02317948365804893,
+              -0.04690012122900943,
+              0.8952587885580057
             ],
-            "radius": 29.0,
+            "radius": 27.0,
             "editor_entities": {
               "camera": [
                 {
@@ -5006,7 +6221,7 @@
                 {
                   "type": "OrbitCameraController",
                   "data": {
-                    "radius": 29.0,
+                    "radius": 27.0,
                     "min_radius": 1.0,
                     "max_radius": 100.0
                   }
@@ -5049,17 +6264,17 @@
   "editor": {
     "camera": {
       "position": [
-        11.041466657133757,
-        -21.631826424952735,
-        16.52620266652721
+        -4.358513887650632,
+        -17.451944835507106,
+        24.629179643511357
       ],
       "rotation": [
-        -0.3070569860774998,
-        -0.07998907598763301,
-        0.2390621485879378,
-        0.9176965969949793
+        -0.49372187497645753,
+        0.0414487912314114,
+        -0.07266746671904303,
+        0.8655865913678555
       ],
-      "radius": 29.0,
+      "radius": 27.0,
       "editor_entities": {
         "camera": [
           {
@@ -5076,7 +6291,7 @@
           {
             "type": "OrbitCameraController",
             "data": {
-              "radius": 29.0,
+              "radius": 27.0,
               "min_radius": 1.0,
               "max_radius": 100.0
             }

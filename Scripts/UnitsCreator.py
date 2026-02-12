@@ -25,7 +25,7 @@ class UnitsCreator(PythonComponent):
         "Make Units": InspectField(
             label="Make Units",
             kind="button",
-            action=lambda component: component.to_python().make_units(),
+            action=lambda component: component.make_units(),
             is_serializable=False,
         ),
     }
@@ -68,6 +68,10 @@ class UnitsCreator(PythonComponent):
         pawn_mr.set_field("material", material)
         pawn.transform.set_local_position(Vec3(xpos, ypos, zpos))
 
+        col = pawn.add_component_by_name("ColliderComponent")
+        col.set_field("collider_type", "Box")
+        col.set_field("box_size", [20, 20, 40])
+
     def make_pawn(self, material, position):
         pawn_mesh = TcMesh.from_name("Hex_Pawn")
         self.make_unit(material, pawn_mesh, position, name="Pawn")
@@ -92,6 +96,27 @@ class UnitsCreator(PythonComponent):
     def make_king(self, material, position):
         king_mesh = TcMesh.from_name("Hex_King")
         self.make_unit(material, king_mesh, position, name="King")
+
+    PIECE_MESHES = {
+        "pawn": "Hex_Pawn",
+        "rook": "Hex_Rook",
+        "knight": "Hex_Knight",
+        "bishop": "Hex_Bishop",
+        "queen": "Hex_Queen",
+        "king": "Hex_King",
+    }
+
+    def create_piece(self, piece_type: str, is_white: bool, square: str):
+        """Create a single piece for promotion or other runtime needs.
+        piece_type: 'pawn','rook','knight','bishop','queen','king'
+        """
+        mesh = TcMesh.from_name(self.PIECE_MESHES[piece_type])
+        material = TcMaterial.from_name("WhiteFigure" if is_white else "BlackFigure")
+        pos = self.chessboard_position_to_world(square)
+        name = piece_type.capitalize()
+        self.make_unit(material, mesh, pos, name=name)
+        children = self.entity.children()
+        return children[-1] if children else None
 
     def make_units(self):
         print("Make Units button clicked.")

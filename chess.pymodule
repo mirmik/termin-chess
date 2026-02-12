@@ -1,0 +1,5 @@
+{
+    "name": "chess",
+    "root": ".",
+    "packages": ["Scripts"]
+}
