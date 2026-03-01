@@ -52,11 +52,64 @@ class ChessGameController(InputComponent):
         self._create_highlight_materials()
         self._scan_board()
         self._scan_pieces()
+        self._find_ui()
 
         print(f"[Chess] Init complete. tiles={len(self._tiles)}, pieces={len(self._pieces)}")
         print(f"[Chess] Tiles: {sorted(self._tiles.keys())}")
         print(f"[Chess] Pieces: {sorted(self._pieces.keys())}")
         print("[Chess] White to move.")
+
+    def _find_ui(self):
+        """Find ChessUIComponent in scene for status updates."""
+        self._ui_component = None
+        scene = self.entity.scene
+        comps = scene.get_components_of_type("ChessUIComponent")
+        if comps:
+            self._ui_component = comps[0]
+            print("[Chess] Found ChessUIComponent for status updates")
+        else:
+            print("[Chess] ChessUIComponent not found (no UI status updates)")
+
+    # --- Public API (called by UI) ---
+
+    def get_fen(self) -> str:
+        return self._board.fen()
+
+    def get_board(self):
+        return self._board
+
+    def new_game(self):
+        """Reset the board and pieces to starting position."""
+        print("[Chess] === NEW GAME ===")
+        self._clear_selection()
+        self._board = chess.Board()
+        self._state = STATE_IDLE
+
+        # Destroy all piece entities
+        for sq, entity in list(self._pieces.items()):
+            scene = entity.scene
+            if scene:
+                scene.remove(entity)
+        self._pieces.clear()
+
+        # Recreate pieces via UnitsCreator
+        scene = self.entity.scene
+        units_entity = scene.find_entity_by_name("ChessUnits")
+        if units_entity:
+            from Scripts.UnitsCreator import UnitsCreator
+            uc = units_entity.get_component(UnitsCreator)
+            if uc:
+                uc.make_units()
+                print("[Chess] Pieces recreated via UnitsCreator.make_units()")
+            else:
+                print("[Chess] WARNING: UnitsCreator not found on ChessUnits!")
+        else:
+            print("[Chess] WARNING: ChessUnits entity not found!")
+
+        # Re-scan pieces
+        self._scan_pieces()
+        self._notify_ui()
+        print(f"[Chess] New game started. pieces={len(self._pieces)}")
 
     def _create_highlight_materials(self):
         print("[Chess] Loading highlight materials...")
@@ -302,6 +355,23 @@ class ChessGameController(InputComponent):
             print(f"[Chess] CHECK! {turn_str} to move.")
         else:
             print(f"[Chess] {turn_str} to move.")
+
+        self._notify_ui()
+
+    def _notify_ui(self):
+        """Push status to ChessUIComponent."""
+        if self._ui_component is None:
+            return
+        turn = "White to move" if self._board.turn else "Black to move"
+        status = ""
+        if self._board.is_checkmate():
+            winner = "Black wins!" if self._board.turn else "White wins!"
+            status = f"Checkmate! {winner}"
+        elif self._board.is_stalemate():
+            status = "Stalemate! Draw."
+        elif self._board.is_check():
+            status = "Check!"
+        self._ui_component.update_status(turn, status)
 
     def _move_piece_entity(self, from_sq: str, to_sq: str):
         if from_sq not in self._pieces:

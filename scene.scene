@@ -6193,6 +6193,44 @@
             }
           }
         ]
+      },
+      {
+        "uuid": "1e357e19-bade-4def-8c7d-860d43141dc0",
+        "name": "ChessUI",
+        "priority": 0.0,
+        "visible": true,
+        "enabled": true,
+        "pickable": true,
+        "selectable": true,
+        "layer": 0.0,
+        "flags": 0.0,
+        "pose": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "components": [
+          {
+            "type": "ChessUIComponent",
+            "data": {
+              "display_name": "",
+              "enabled": true
+            }
+          }
+        ]
       }
     ],
     "layer_names": {},
@@ -6365,7 +6403,7 @@
         ]
       }
     },
-    "selected_entity": "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
+    "selected_entity": "1e357e19-bade-4def-8c7d-860d43141dc0",
     "expanded_entities": [
       "ba5ebc38-adb1-4245-aebb-ea7cca4882f1"
     ]

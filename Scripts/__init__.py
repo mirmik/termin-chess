@@ -1,3 +1,4 @@
 from Scripts.BoardCreator import BoardCreatorComponent
 from Scripts.UnitsCreator import UnitsCreator
 from Scripts.ChessGameController import ChessGameController
+from Scripts.ChessUIComponent import ChessUIComponent
