@@ -2,22 +2,19 @@
 
 from __future__ import annotations
 
+import random
+
 import chess
 
 from termin.visualization.core.python_component import InputComponent
 from termin.visualization.core.input_events import MouseButton, Action
 from termin.collision import CollisionWorld
 from termin.materials import TcMaterial
-from termin.mesh import TcMesh
-from termin.geombase._geom_native import Vec3
 
 from Scripts.chess_coords import (
-    ij_to_square,
-    square_to_ij,
     square_to_world,
     entity_to_square,
     tile_name_to_square,
-    W,
 )
 
 print("[Chess] ChessGameController module loaded.")
@@ -25,6 +22,15 @@ print("[Chess] ChessGameController module loaded.")
 STATE_IDLE = "idle"
 STATE_SELECTED = "piece_selected"
 STATE_GAME_OVER = "game_over"
+
+BOT_PIECE_VALUES = {
+    chess.PAWN: 100,
+    chess.KNIGHT: 320,
+    chess.BISHOP: 330,
+    chess.ROOK: 500,
+    chess.QUEEN: 900,
+    chess.KING: 0,
+}
 
 
 class ChessGameController(InputComponent):
@@ -43,6 +49,9 @@ class ChessGameController(InputComponent):
         self._highlight_valid: TcMaterial | None = None
         self._board_entity = None
         self._units_entity = None
+        self._bot_enabled = True
+        self._bot_color = chess.BLACK
+        self._bot_is_moving = False
 
     def start(self) -> None:
         print("[Chess] ChessGameController.start() called")
@@ -59,6 +68,7 @@ class ChessGameController(InputComponent):
         print(f"[Chess] Tiles: {sorted(self._tiles.keys())}")
         print(f"[Chess] Pieces: {sorted(self._pieces.keys())}")
         print("[Chess] White to move.")
+        self._maybe_make_bot_move()
 
     def _find_ui(self):
         """Find ChessUIComponent in scene for status updates."""
@@ -111,6 +121,7 @@ class ChessGameController(InputComponent):
         self._scan_pieces()
         self._notify_ui()
         print(f"[Chess] New game started. pieces={len(self._pieces)}")
+        self._maybe_make_bot_move()
 
     def _create_highlight_materials(self):
         print("[Chess] Loading highlight materials...")
@@ -185,6 +196,9 @@ class ChessGameController(InputComponent):
         if self._state == STATE_GAME_OVER:
             print("[Chess] Game is over, ignoring click.")
             return
+        if self._is_bot_turn():
+            print("[Chess] Bot turn, ignoring player click.")
+            return
 
         print(f"[Chess] --- LEFT CLICK at pixel ({event.x:.0f}, {event.y:.0f}) ---")
 
@@ -247,6 +261,10 @@ class ChessGameController(InputComponent):
         self._handle_click(square)
 
     def _handle_click(self, square: str):
+        if self._is_bot_turn():
+            print(f"[Chess]   ignoring click on {square}: bot turn")
+            return
+
         sq_index = chess.parse_square(square)
         piece = self._board.piece_at(sq_index)
         turn_str = "WHITE" if self._board.turn else "BLACK"
@@ -285,11 +303,16 @@ class ChessGameController(InputComponent):
         self._apply_highlight()
 
     def _find_valid_move(self, from_sq: str, to_sq: str) -> chess.Move | None:
+        matching_moves = []
         for move in self._valid_moves:
             if (chess.square_name(move.from_square) == from_sq and
                     chess.square_name(move.to_square) == to_sq):
+                matching_moves.append(move)
+
+        for move in matching_moves:
+            if move.promotion == chess.QUEEN:
                 return move
-        return None
+        return matching_moves[0] if matching_moves else None
 
     def _apply_highlight(self):
         self._clear_highlight()
@@ -331,7 +354,7 @@ class ChessGameController(InputComponent):
         self._valid_moves = []
         self._state = STATE_IDLE
 
-    def _execute_move(self, move: chess.Move):
+    def _execute_move(self, move: chess.Move, trigger_bot: bool = True):
         from_sq = chess.square_name(move.from_square)
         to_sq = chess.square_name(move.to_square)
         print(f"[Chess] === EXECUTING MOVE: {move.uci()} ({from_sq} -> {to_sq}) ===")
@@ -368,6 +391,84 @@ class ChessGameController(InputComponent):
             print(f"[Chess] {turn_str} to move.")
 
         self._notify_ui()
+        if trigger_bot:
+            self._maybe_make_bot_move()
+
+    def _is_bot_turn(self) -> bool:
+        return (
+            self._bot_enabled and
+            self._board.turn == self._bot_color and
+            self._state != STATE_GAME_OVER
+        )
+
+    def _maybe_make_bot_move(self) -> None:
+        if not self._is_bot_turn():
+            return
+        if self._bot_is_moving:
+            print("[ChessBot] Bot move already in progress, skipping nested call.")
+            return
+
+        self._bot_is_moving = True
+        try:
+            move = self._choose_bot_move()
+            if move is None:
+                print("[ChessBot] No legal move found.")
+                return
+            print(f"[ChessBot] Selected move: {move.uci()}")
+            self._execute_move(move, trigger_bot=False)
+        finally:
+            self._bot_is_moving = False
+
+    def _choose_bot_move(self) -> chess.Move | None:
+        legal_moves = list(self._board.legal_moves)
+        if not legal_moves:
+            return None
+
+        best_score = None
+        best_moves: list[chess.Move] = []
+        for move in legal_moves:
+            score = self._score_bot_move(move)
+            if best_score is None or score > best_score:
+                best_score = score
+                best_moves = [move]
+            elif score == best_score:
+                best_moves.append(move)
+
+        return random.choice(best_moves)
+
+    def _score_bot_move(self, move: chess.Move) -> int:
+        score = 0
+
+        if self._move_is_checkmate(move):
+            return 1_000_000
+
+        if self._board.is_capture(move):
+            captured_piece = self._captured_piece_for_move(move)
+            moving_piece = self._board.piece_at(move.from_square)
+            if captured_piece is not None:
+                score += BOT_PIECE_VALUES[captured_piece.piece_type] * 10
+            if moving_piece is not None:
+                score -= BOT_PIECE_VALUES[moving_piece.piece_type]
+
+        if move.promotion:
+            score += BOT_PIECE_VALUES[move.promotion]
+
+        if self._board.gives_check(move):
+            score += 75
+
+        return score
+
+    def _move_is_checkmate(self, move: chess.Move) -> bool:
+        self._board.push(move)
+        is_checkmate = self._board.is_checkmate()
+        self._board.pop()
+        return is_checkmate
+
+    def _captured_piece_for_move(self, move: chess.Move) -> chess.Piece | None:
+        if self._board.is_en_passant(move):
+            direction = -8 if self._board.turn == chess.WHITE else 8
+            return self._board.piece_at(move.to_square + direction)
+        return self._board.piece_at(move.to_square)
 
     def _notify_ui(self):
         """Push status to ChessUIComponent."""
@@ -454,17 +555,18 @@ class ChessGameController(InputComponent):
         self._capture_piece(from_sq)
 
         is_white = self._board.turn
-        print(f"[Chess]   promotion: creating queen at {to_sq}, is_white={is_white}")
+        piece_type = chess.piece_name(move.promotion)
+        print(f"[Chess]   promotion: creating {piece_type} at {to_sq}, is_white={is_white}")
         scene = self.entity.scene
         units_entity = scene.find_entity_by_name("ChessUnits")
         if units_entity:
             from Scripts.UnitsCreator import UnitsCreator
             uc = units_entity.get_component(UnitsCreator)
             if uc:
-                new_entity = uc.create_piece("queen", is_white, to_sq)
+                new_entity = uc.create_piece(piece_type, is_white, to_sq)
                 if new_entity:
                     self._pieces[to_sq] = new_entity
-                    print(f"[Chess]   promotion: queen entity created: '{new_entity.name}'")
+                    print(f"[Chess]   promotion: {piece_type} entity created: '{new_entity.name}'")
                 else:
                     print("[Chess]   WARNING: create_piece returned None!")
             else:
