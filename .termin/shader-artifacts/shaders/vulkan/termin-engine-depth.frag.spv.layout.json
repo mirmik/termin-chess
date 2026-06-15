@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "language": "slang",
-  "target": "vulkan",
-  "stage": "fragment",
-  "resources": [
-    {"name": "per_frame", "kind": "constant_buffer", "scope": "frame", "set": 0, "binding": 2, "stage_mask": 2, "size": 144, "fields": [{"name":"u_view","type":"Mat4","offset":0,"size":64}, {"name":"u_projection","type":"Mat4","offset":64,"size":64}, {"name":"u_near","type":"Float","offset":128,"size":4}, {"name":"u_far","type":"Float","offset":132,"size":4}, {"name":"u_depth_encoding","type":"Float","offset":136,"size":4}]}
-  ]
-}

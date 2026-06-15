@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "language": "glsl",
-  "target": "vulkan",
-  "stage": "vertex",
-  "resources": [
-    {"name": "material", "kind": "constant_buffer", "scope": "material", "set": 0, "binding": 1, "stage_mask": 1, "size": 0}
-  ]
-}

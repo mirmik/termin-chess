@@ -1,8 +1,0 @@
-layout_schema=2
-source_hash=5b1c374e15d703f3
-language=slang
-target=vulkan
-stage=vertex
-entry=vs_main
-shader_uuid=termin-engine-depth
-shader_version=2

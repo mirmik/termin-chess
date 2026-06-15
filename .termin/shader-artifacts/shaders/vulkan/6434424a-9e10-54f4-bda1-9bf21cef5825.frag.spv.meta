@@ -1,8 +1,0 @@
-layout_schema=2
-source_hash=a2b5dea65eb3d467
-language=slang
-target=vulkan
-stage=fragment
-entry=main
-shader_uuid=6434424a-9e10-54f4-bda1-9bf21cef5825
-shader_version=2

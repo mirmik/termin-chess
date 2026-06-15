@@ -1,8 +1,0 @@
-layout_schema=2
-source_hash=c2d42a14eb22477e
-language=slang
-target=vulkan
-stage=fragment
-entry=fs_main
-shader_uuid=termin-engine-bloom-composite
-shader_version=2

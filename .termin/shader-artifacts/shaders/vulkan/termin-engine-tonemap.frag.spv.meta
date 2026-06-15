@@ -1,8 +1,0 @@
-layout_schema=2
-source_hash=6c022573605061a2
-language=slang
-target=vulkan
-stage=fragment
-entry=fs_main
-shader_uuid=termin-engine-tonemap
-shader_version=2

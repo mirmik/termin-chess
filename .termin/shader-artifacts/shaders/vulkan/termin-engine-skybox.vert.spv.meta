@@ -1,8 +1,0 @@
-layout_schema=2
-source_hash=eef628c2e5ecc91d
-language=glsl
-target=vulkan
-stage=vertex
-entry=main
-shader_uuid=termin-engine-skybox
-shader_version=2

@@ -1,8 +1,0 @@
-layout_schema=2
-source_hash=a52d7de31cfa611c
-language=slang
-target=vulkan
-stage=vertex
-entry=vs_main
-shader_uuid=termin-engine-fsq
-shader_name=FullscreenQuadEngineVS

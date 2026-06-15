@@ -1,9 +1,0 @@
-{
-  "version": 1,
-  "language": "slang",
-  "target": "vulkan",
-  "stage": "fragment",
-  "resources": [
-    {"name": "u_push", "kind": "constant_buffer", "scope": "draw", "set": 0, "binding": 24, "stage_mask": 2, "size": 80, "fields": [{"name":"mvp","type":"Mat4","offset":0,"size":64}, {"name":"color","type":"Vec4","offset":64,"size":16}]}
-  ]
-}
