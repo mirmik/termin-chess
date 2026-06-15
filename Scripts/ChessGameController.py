@@ -6,6 +6,7 @@ import chess
 
 from termin.visualization.core.python_component import InputComponent
 from termin.visualization.core.input_events import MouseButton, Action
+from termin.collision import CollisionWorld
 from termin.materials import TcMaterial
 from termin.mesh import TcMesh
 from termin.geombase._geom_native import Vec3
@@ -194,16 +195,26 @@ class ChessGameController(InputComponent):
         print(f"[Chess]   ray origin=({ray.origin.x:.2f},{ray.origin.y:.2f},{ray.origin.z:.2f}) dir=({ray.direction.x:.2f},{ray.direction.y:.2f},{ray.direction.z:.2f})")
 
         scene = event.viewport.scene
-        hit = scene.raycast(ray)
+        collision_world = CollisionWorld.from_scene(scene)
+        if collision_world is None:
+            print("[Chess]   ERROR: scene has no CollisionWorld extension")
+            return
 
-        if hit is None or not hit.valid:
+        hit = collision_world.raycast_closest(ray)
+        if hit is None or not hit.hit():
             print("[Chess]   raycast: no hit -> clearing selection")
             self._clear_selection()
             return
 
-        hit_entity = hit.entity
+        try:
+            hit_entity = hit.collider.transform().entity
+        except Exception as exc:
+            print(f"[Chess]   ERROR: raycast hit collider has no attached entity: {exc}")
+            self._clear_selection()
+            return
+
         if hit_entity is None:
-            print("[Chess]   raycast: hit.valid but hit.entity is None -> clearing selection")
+            print("[Chess]   raycast: hit valid but attached entity is None -> clearing selection")
             self._clear_selection()
             return
 
