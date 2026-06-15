@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "language": "slang",
+  "target": "vulkan",
+  "stage": "fragment",
+  "resources": [
+    {"name": "u_params", "kind": "constant_buffer", "scope": "draw", "set": 0, "binding": 24, "stage_mask": 2, "size": 16, "fields": [{"name":"exposure","type":"Float","offset":0,"size":4}, {"name":"method","type":"Int","offset":4,"size":4}]},
+    {"name": "u_input", "kind": "texture", "scope": "transient", "set": 0, "binding": 32, "stage_mask": 2, "size": 0}
+  ]
+}

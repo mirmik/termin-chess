@@ -5,10 +5,10 @@ BoardCreatorComponent component.
 from __future__ import annotations
 
 from termin.visualization.core.python_component import PythonComponent
-from termin.editor.inspect_field import InspectField
+from termin.inspect import InspectField
 from termin.geombase._geom_native import Vec3, Vec4
-from termin.visualization.core.mesh import TcMesh
-from termin.visualization.core.material import TcMaterial
+from termin.mesh import TcMesh
+from termin.materials import TcMaterial
 
 print("BoardCreatorComponent loaded.")
 
@@ -60,8 +60,9 @@ class BoardCreatorComponent(PythonComponent):
                 rank = j + 5
                 square_name = f"{file}{rank}"
                 child = self.entity.create_child(name=square_name)
+                mesh_component = child.add_component_by_name("MeshComponent")
                 mr = child.add_component_by_name("MeshRenderer")
-            
+
                 W = 2
                 H = 0.5
 
@@ -73,7 +74,7 @@ class BoardCreatorComponent(PythonComponent):
 
                 white_or_black = white_material if (i + j) % 2 == 0 else black_material
 
-                mr.set_field("mesh", mesh)
+                mesh_component.set_field("mesh", mesh)
                 mr.set_field("material", white_or_black)
 
                 child.transform.set_local_position(Vec3(i * W, j * W, 0))
@@ -82,7 +83,7 @@ class BoardCreatorComponent(PythonComponent):
                 col.set_field("collider_type", "Box")
                 col.set_field("box_size", [1, 1, 1])
 
-        from termin.editor.render_request import request_scene_tree_rebuild                                                    
+        from termin.editor_core.render_request import request_scene_tree_rebuild
         request_scene_tree_rebuild()
 
         print("Board created.")

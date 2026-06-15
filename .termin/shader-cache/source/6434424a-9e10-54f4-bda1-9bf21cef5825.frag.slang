@@ -1,90 +1,26 @@
-@program CookTorrancePBR
-@language slang
-@features lighting_ubo
-
-// ============================================================
-// Cook-Torrance PBR Shader
-// ============================================================
-//
-// Physically-based rendering with metallic-roughness workflow.
-//
-// BRDF: f = kD * (albedo/PI) + (D * G * F) / (4 * NdotV * NdotL)
-//
-// TODO: IBL - Image-Based Lighting (environment cubemap)
-// TODO: Clearcoat layer
-//
-// ============================================================
-
-@phases opaque, transparent
-
-@settings transparent
-@glDepthMask false
-@glBlend true
-@glCull true
-
-@property Color u_color = Color(1.0, 1.0, 1.0, 1.0)
-@property Float u_metallic = 0.0 range(0.0, 1.0)
-@property Float u_roughness = 0.5 range(0.0, 1.0)
-@property Float u_subsurface = 0.0 range(0.0, 1.0)
-@property Float u_diffuse_mul = 1.0 range(0.1, 10.0)
-@property Color u_emission_color = Color(0.0, 0.0, 0.0, 1.0)
-@property Float u_emission_intensity = 0.0 range(0.0, 100.0)
-@property Texture2D u_albedo_texture = "white"
-@property Texture2D u_normal_texture = "normal"
-@property Texture2D u_metallic_roughness_texture = "white"
-@property Texture2D u_occlusion_texture = "white"
-@property Texture2D u_emissive_texture = "white"
-@property Float u_normal_strength = 1.0 range(0.0, 2.0)
-
-@stage vertex
-struct VertexInput {
-    float3 position : POSITION;
-    float3 normal : NORMAL;
-    float2 uv : TEXCOORD0;
-    float4 tangent : TANGENT;
+import termin_prelude;
+struct MaterialParams {
+    float4 u_color;
+    float u_metallic;
+    float u_roughness;
+    float u_subsurface;
+    float u_diffuse_mul;
+    float4 u_emission_color;
+    float u_emission_intensity;
+    float u_normal_strength;
 };
-
-struct VertexOutput {
-    float4 position : SV_Position;
-    float3 world_pos : TEXCOORD0;
-    float3 normal_world : TEXCOORD1;
-    float2 uv : TEXCOORD2;
-    float3 tangent_world : TEXCOORD3;
-    float3 bitangent_world : TEXCOORD4;
-    float tbn_valid : TEXCOORD5;
-};
-
-[shader("vertex")]
-VertexOutput main(VertexInput input) {
-    VertexOutput output;
-    float4 world = mul(u_model, float4(input.position, 1.0));
-    float3x3 normal_matrix = (float3x3)u_model;
-    float3 N = normalize(mul(normal_matrix, input.normal));
-
-    output.world_pos = world.xyz;
-    output.normal_world = N;
-    output.uv = input.uv;
-    output.tangent_world = float3(0.0, 0.0, 0.0);
-    output.bitangent_world = float3(0.0, 0.0, 0.0);
-    output.tbn_valid = 0.0;
-
-    float tangent_len = length(input.tangent.xyz);
-    if (tangent_len > 0.001) {
-        float3 T = normalize(mul(normal_matrix, input.tangent.xyz));
-        T = normalize(T - dot(T, N) * N);
-        float3 B = cross(N, T) * input.tangent.w;
-
-        output.tangent_world = T;
-        output.bitangent_world = B;
-        output.tbn_valid = 1.0;
-    }
-
-    output.position = mul(u_projection, mul(u_view, world));
-    return output;
-}
-@endstage
-
-@stage fragment
+[[TerminScope("material")]]
+ConstantBuffer<MaterialParams> material;
+[[TerminScope("material")]]
+Sampler2D u_albedo_texture;
+[[TerminScope("material")]]
+Sampler2D u_normal_texture;
+[[TerminScope("material")]]
+Sampler2D u_metallic_roughness_texture;
+[[TerminScope("material")]]
+Sampler2D u_occlusion_texture;
+[[TerminScope("material")]]
+Sampler2D u_emissive_texture;
 import termin_lighting;
 import termin_shadows;
 
@@ -245,51 +181,3 @@ FragmentOutput main(FragmentInput input) {
     output.color = float4(color, alpha);
     return output;
 }
-@endstage
-
-// ============================================================
-// Shadow caster phase
-// ============================================================
-
-@phase shadow
-@priority 0
-@glDepthTest true
-@glDepthMask true
-@glCull true
-
-@stage vertex
-struct ShadowVertexInput {
-    float3 position : POSITION;
-};
-
-struct ShadowVertexOutput {
-    float4 position : SV_Position;
-};
-
-[shader("vertex")]
-ShadowVertexOutput main(ShadowVertexInput input) {
-    ShadowVertexOutput output;
-    float4 world = mul(u_model, float4(input.position, 1.0));
-    output.position = mul(u_projection, mul(u_view, world));
-    return output;
-}
-@endstage
-
-@stage fragment
-struct ShadowFragmentInput {
-    float4 position : SV_Position;
-};
-
-struct ShadowFragmentOutput {
-    float4 color : SV_Target0;
-};
-
-[shader("fragment")]
-ShadowFragmentOutput main(ShadowFragmentInput input) {
-    ShadowFragmentOutput output;
-    output.color = float4(input.position.z, 0.0, 0.0, 1.0);
-    return output;
-}
-@endstage
-
-@endphase

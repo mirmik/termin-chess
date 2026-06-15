@@ -1,11 +1,12 @@
 # Editor Camera UI - viewport controls overlay
 #
 # Layout:
-#   - Bottom-left: Colliders visibility toggle
+#   - Bottom-left: Colliders/NavMesh visibility toggles
 #   - Top-right: Camera mode buttons (Ortho, Wireframe)
 #
 # Widget names for binding:
 #   - colliders_btn: Toggle collider gizmos visibility
+#   - navmesh_btn: Toggle navmesh debug visibility
 #   - ortho_btn: Toggle orthographic camera mode
 #   - wireframe_btn: Toggle wireframe rendering
 
@@ -19,7 +20,7 @@ root:
   height: 100%
 
   children:
-    # Bottom-left: Colliders toggle
+    # Bottom-left: debug visibility toggles
     - type: Panel
       name: bottom_left_panel
       anchor: bottom-left
@@ -27,16 +28,31 @@ root:
       background_color: [0, 0, 0, 0]
 
       children:
-        - type: IconButton
-          name: colliders_btn
-          icon: "C"
-          tooltip: "Toggle Colliders"
-          size: 26
-          font_size: 14
-          background_color: [0.15, 0.15, 0.15, 0.85]
-          hover_color: [0.25, 0.25, 0.25, 0.95]
-          active_color: [0.2, 0.5, 0.8, 0.95]
-          border_radius: 4
+        - type: HStack
+          spacing: 4
+
+          children:
+            - type: IconButton
+              name: colliders_btn
+              icon: "C"
+              tooltip: "Toggle Colliders"
+              size: 26
+              font_size: 14
+              background_color: [0.15, 0.15, 0.15, 0.85]
+              hover_color: [0.25, 0.25, 0.25, 0.95]
+              active_color: [0.2, 0.5, 0.8, 0.95]
+              border_radius: 4
+
+            - type: IconButton
+              name: navmesh_btn
+              icon: "N"
+              tooltip: "Toggle NavMesh"
+              size: 26
+              font_size: 14
+              background_color: [0.15, 0.15, 0.15, 0.85]
+              hover_color: [0.25, 0.25, 0.25, 0.95]
+              active_color: [0.2, 0.5, 0.8, 0.95]
+              border_radius: 4
 
     # Top-right: Camera controls
     - type: Panel

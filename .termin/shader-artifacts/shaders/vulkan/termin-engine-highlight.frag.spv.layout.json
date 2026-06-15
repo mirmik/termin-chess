@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "language": "slang",
+  "target": "vulkan",
+  "stage": "fragment",
+  "resources": [
+    {"name": "u_color", "kind": "texture", "scope": "transient", "set": 0, "binding": 32, "stage_mask": 2, "size": 0},
+    {"name": "u_id", "kind": "texture", "scope": "transient", "set": 0, "binding": 33, "stage_mask": 2, "size": 0},
+    {"name": "u_params", "kind": "constant_buffer", "scope": "draw", "set": 0, "binding": 24, "stage_mask": 2, "size": 48, "fields": [{"name":"selected_color","type":"Vec3","offset":0,"size":12}, {"name":"enabled","type":"Float","offset":12,"size":4}, {"name":"outline_color","type":"Vec3","offset":16,"size":12}, {"name":"_pad0","type":"Float","offset":28,"size":4}, {"name":"texel_size","type":"Vec2","offset":32,"size":8}]}
+  ]
+}

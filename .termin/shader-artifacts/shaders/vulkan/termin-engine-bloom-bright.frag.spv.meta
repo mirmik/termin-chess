@@ -1,0 +1,8 @@
+layout_schema=2
+source_hash=a38799156c01c210
+language=slang
+target=vulkan
+stage=fragment
+entry=fs_main
+shader_uuid=termin-engine-bloom-bright
+shader_version=2

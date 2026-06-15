@@ -5,10 +5,10 @@ UnitsCreator component.
 from __future__ import annotations
 
 from termin.visualization.core.python_component import PythonComponent
-from termin.editor.inspect_field import InspectField
+from termin.inspect import InspectField
 from termin.geombase._geom_native import Vec3, Vec4
-from termin.visualization.core.mesh import TcMesh
-from termin.visualization.core.material import TcMaterial
+from termin.mesh import TcMesh
+from termin.materials import TcMaterial
 
 W = 2
 H = 0.5
@@ -58,13 +58,14 @@ class UnitsCreator(PythonComponent):
     def make_unit(self, material, mesh, position, name="Unit"):
         xpos = position.x * W
         ypos = position.y * W
-        zpos = position.z * H 
+        zpos = position.z * H
 
         pawn_mesh = mesh
         pawn = self.entity.create_child(name=name)
         pawn.transform.set_local_scale(UnitsCreator.SCALE)
+        pawn_mesh_component = pawn.add_component_by_name("MeshComponent")
         pawn_mr = pawn.add_component_by_name("MeshRenderer")
-        pawn_mr.set_field("mesh", pawn_mesh)
+        pawn_mesh_component.set_field("mesh", pawn_mesh)
         pawn_mr.set_field("material", material)
         pawn.transform.set_local_position(Vec3(xpos, ypos, zpos))
 
@@ -75,16 +76,16 @@ class UnitsCreator(PythonComponent):
     def make_pawn(self, material, position):
         pawn_mesh = TcMesh.from_name("Hex_Pawn")
         self.make_unit(material, pawn_mesh, position, name="Pawn")
-    
+
     def make_rook(self, material, position):
         rook_mesh = TcMesh.from_name("Hex_Rook")
         print(f"Making rook at {position}: {rook_mesh}")
         self.make_unit(material, rook_mesh, position, name="Rook")
-    
+
     def make_knight(self, material, position):
         knight_mesh = TcMesh.from_name("Hex_Knight")
         self.make_unit(material, knight_mesh, position, name="Knight")
-    
+
     def make_bishop(self, material, position):
         bishop_mesh = TcMesh.from_name("Hex_Bishop")
         self.make_unit(material, bishop_mesh, position, name="Bishop")
@@ -154,5 +155,5 @@ class UnitsCreator(PythonComponent):
         self.make_king(white_material, self.chessboard_position_to_world("e1"))
         self.make_king(black_material, self.chessboard_position_to_world("e8"))
 
-        from termin.editor.render_request import request_scene_tree_rebuild                                                    
+        from termin.editor_core.render_request import request_scene_tree_rebuild
         request_scene_tree_rebuild()

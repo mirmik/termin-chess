@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "language": "slang",
+  "target": "vulkan",
+  "stage": "vertex",
+  "resources": [
+    {"name": "per_frame", "kind": "constant_buffer", "scope": "frame", "set": 0, "binding": 2, "stage_mask": 1, "size": 144, "fields": [{"name":"u_view","type":"Mat4","offset":0,"size":64}, {"name":"u_projection","type":"Mat4","offset":64,"size":64}, {"name":"u_near","type":"Float","offset":128,"size":4}, {"name":"u_far","type":"Float","offset":132,"size":4}, {"name":"u_depth_encoding","type":"Float","offset":136,"size":4}]},
+    {"name": "depth_draw", "kind": "constant_buffer", "scope": "draw", "set": 0, "binding": 24, "stage_mask": 1, "size": 64, "fields": [{"name":"u_model","type":"Mat4","offset":0,"size":64}]}
+  ]
+}

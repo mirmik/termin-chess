@@ -6,8 +6,8 @@ import chess
 
 from termin.visualization.core.python_component import InputComponent
 from termin.visualization.core.input_events import MouseButton, Action
-from termin.visualization.core.material import TcMaterial
-from termin.visualization.core.mesh import TcMesh
+from termin.materials import TcMaterial
+from termin.mesh import TcMesh
 from termin.geombase._geom_native import Vec3
 
 from Scripts.chess_coords import (

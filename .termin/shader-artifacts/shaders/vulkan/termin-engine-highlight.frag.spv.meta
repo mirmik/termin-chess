@@ -1,0 +1,8 @@
+layout_schema=2
+source_hash=55830870f46d5391
+language=slang
+target=vulkan
+stage=fragment
+entry=fs_main
+shader_uuid=termin-engine-highlight
+shader_version=2
