@@ -1,3 +1,8 @@
 {
-  "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd"
+  "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
+  "scale": 1.0,
+  "axis_x": "x",
+  "axis_y": "y",
+  "axis_z": "z",
+  "flip_uv_v": false
 }
