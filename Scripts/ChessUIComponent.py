@@ -179,8 +179,9 @@ class ChessUIComponent(UIComponent):
 
     def _on_exit(self):
         print("[ChessUI] 'Exit' clicked")
-        import sys
-        sys.exit(0)
+        from termin.player import request_quit
+        if not request_quit(0):
+            print("[ChessUI] Player runtime is not active; exit request ignored")
 
     # --- Status update (called by game controller) ---
 
