@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "dev": {
+      "target": "desktop",
+      "entry_scene": "scene2.scene",
+      "output_dir": "dist/Chess"
+    }
+  }
+}
