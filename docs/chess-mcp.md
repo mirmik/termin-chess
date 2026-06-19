@@ -43,9 +43,9 @@ When `CHESS_MCP=1` is set, the built-in bot is disabled unless
 agent: the local player owns white, and the black MCP seat owns black.
 
 `CHESS_GAME_MODE` can force `local_sandbox`, `human_vs_agent`,
-`agent_vs_agent`, or `human_vs_bot` until the in-game start menu owns this
-choice. `CHESS_AGENT_SIDE` is used by `human_vs_agent`; `CHESS_BOT_COLOR` is
-used by `human_vs_bot`.
+`agent_vs_agent`, or `human_vs_bot` for automated runs that should bypass the
+in-game start menu. `CHESS_AGENT_SIDE` is used by `human_vs_agent`;
+`CHESS_BOT_COLOR` is used by `human_vs_bot`.
 
 Without `CHESS_MCP=1` and without an explicit `CHESS_GAME_MODE`, Chess starts
 at the in-game menu. MCP-backed menu choices start the game MCP server from the
@@ -64,7 +64,8 @@ the running game MCP process.
 
 ## Resources
 
-- `chess://game/connection`: endpoint, caller seat, mode and connection hints.
+- `chess://game/connection`: endpoint, caller seat, mode, side ownership and
+  connection hints.
 - `chess://game/help`: short Markdown usage guide for connected agents.
 - `chess://game/state`: JSON position snapshot.
 - `chess://game/pgn`: PGN for the current game.
@@ -77,7 +78,8 @@ user or another actor moves.
 ## Tools
 
 - `get_state`: current FEN, board ASCII, side to move, side owner for the turn,
-  legal moves, status, board-input gate and counters.
+  legal moves, selection/promotion state, last/check/capture UI state,
+  board-input gate and counters.
 - `get_connection_info`: endpoint, caller seat, mode, live seat status and
   connection hints.
 - `legal_moves`: legal moves in UCI and SAN plus caller/turn ownership.
@@ -92,6 +94,35 @@ user or another actor moves.
 
 In-game reset starts a new MCP session id, clears live seat connection status,
 and rewrites the session file. Seat tokens stay stable for the running server.
+
+## State Payload
+
+`get_state` and `chess://game/state` return the same caller-aware snapshot.
+Important fields for agents:
+
+- `fen`: full FEN string.
+- `board_ascii`: simple text board.
+- `turn`: `white` or `black`.
+- `turn_owner`: owner, label and actor for the side to move.
+- `legal_moves[]`: UCI/SAN moves for the side to move, with `from`, `to`,
+  optional `promotion`, `capture`, and `check`.
+- `caller_side`, `caller_can_move`, `caller_error`: authorization state for
+  the request token.
+- `selected_square`, `selected_legal_moves[]`, `selection_hint`: local UI
+  selection state. Agents usually treat this as display context, not as an
+  input requirement.
+- `pending_promotion`: `{"pending": false}` normally, or a target square plus
+  `choices[]` while the local human is choosing queen/rook/bishop/knight.
+- `last_move` and `last_move_squares`: last move event and origin/destination
+  highlight squares.
+- `check_square`: checked king square, or `null`.
+- `captured`: captured-piece summary grouped by capturing side.
+- `status`, `check`, `checkmate`, `stalemate`, `game_over`: game result state.
+- `mode`, `side_owners`, `human_sides`, `agent_sides`, `local_bot_sides`:
+  current mode and ownership model.
+- `board_input_enabled`, `board_input_error`: whether the in-window human can
+  move now.
+- `next_event_id`: event cursor for `wait_for_move`.
 
 ## Curl Examples
 
@@ -206,4 +237,13 @@ curl -s "$URL" \
   -H "Authorization: Bearer $BLACK_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":7,"method":"resources/read","params":{"uri":"chess://game/connection"}}'
+```
+
+Read recent events:
+
+```bash
+curl -s "$URL" \
+  -H "Authorization: Bearer $BLACK_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":8,"method":"resources/read","params":{"uri":"chess://game/events"}}'
 ```

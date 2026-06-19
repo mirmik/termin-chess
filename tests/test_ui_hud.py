@@ -88,6 +88,7 @@ def test_hud_text_helpers_format_mode_ownership_turn_status_and_last_move() -> N
         "status": "check",
         "game_over": False,
         "side_owners": {"white": "human", "black": "agent"},
+        "human_sides": ["white"],
         "last_move": {"type": "move", "san": "e4", "actor": "human"},
         "captured": {
             "by_white": [{"piece": "pawn", "symbol": "P", "count": 2}],
@@ -100,6 +101,25 @@ def test_hud_text_helpers_format_mode_ownership_turn_status_and_last_move() -> N
     assert ChessUIComponent._status_text(info) == "Check!"
     assert ChessUIComponent._last_move_text(info) == "Last move: e4 by human"
     assert ChessUIComponent._captures_text(info) == "Captured W: Px2 | B: R"
+    assert ChessUIComponent._board_hint_text(info) == "Board: white view"
+    assert ChessUIComponent._files_text(info) == "Files: a b c d e f g h"
+    assert ChessUIComponent._ranks_text(info) == "Ranks: 1 2 3 4 5 6 7 8"
+
+
+def test_hud_coordinate_helpers_follow_local_player_orientation() -> None:
+    black_human = {"human_sides": ["black"]}
+    sandbox = {"human_sides": ["white", "black"]}
+    agent_only = {"human_sides": []}
+
+    assert ChessUIComponent._board_hint_text(black_human) == "Board: black view"
+    assert ChessUIComponent._files_text(black_human) == "Files: h g f e d c b a"
+    assert ChessUIComponent._ranks_text(black_human) == "Ranks: 8 7 6 5 4 3 2 1"
+
+    assert ChessUIComponent._board_hint_text(sandbox) == "Board: sandbox white view"
+    assert ChessUIComponent._files_text(sandbox) == "Files: a b c d e f g h"
+    assert ChessUIComponent._ranks_text(sandbox) == "Ranks: 1 2 3 4 5 6 7 8"
+
+    assert ChessUIComponent._board_hint_text(agent_only) == "Board: default white view"
 
 
 def test_hud_status_text_formats_game_over_results() -> None:

@@ -22,6 +22,8 @@ class ChessUIComponent(UIComponent):
         self._last_move_label: Label | None = None
         self._captures_label: Label | None = None
         self._board_hint_label: Label | None = None
+        self._files_label: Label | None = None
+        self._ranks_label: Label | None = None
         self._connection_labels: dict[str, Label] = {}
         self._promotion_panel_visible = False
         self._game_controller = None
@@ -51,6 +53,8 @@ class ChessUIComponent(UIComponent):
         self._last_move_label = None
         self._captures_label = None
         self._board_hint_label = None
+        self._files_label = None
+        self._ranks_label = None
         self._connection_labels = {}
         self._promotion_panel_visible = False
         if self._game_controller is not None and self._game_controller.is_start_menu_visible():
@@ -199,13 +203,31 @@ class ChessUIComponent(UIComponent):
         stack.add_child(self._captures_label)
 
         self._board_hint_label = Label()
-        self._board_hint_label.text = "Board: files a-h, ranks 1-8"
+        self._board_hint_label.text = "Board: white view"
         self._board_hint_label.font_size = 11
         self._board_hint_label.color = (0.62, 0.66, 0.74, 1.0)
         self._board_hint_label.alignment = "center"
         self._board_hint_label.preferred_width = px(content_width)
         self._board_hint_label.preferred_height = px(18)
         stack.add_child(self._board_hint_label)
+
+        self._files_label = Label()
+        self._files_label.text = "Files: a b c d e f g h"
+        self._files_label.font_size = 11
+        self._files_label.color = (0.62, 0.66, 0.74, 1.0)
+        self._files_label.alignment = "center"
+        self._files_label.preferred_width = px(content_width)
+        self._files_label.preferred_height = px(18)
+        stack.add_child(self._files_label)
+
+        self._ranks_label = Label()
+        self._ranks_label.text = "Ranks: 1 2 3 4 5 6 7 8"
+        self._ranks_label.font_size = 11
+        self._ranks_label.color = (0.62, 0.66, 0.74, 1.0)
+        self._ranks_label.alignment = "center"
+        self._ranks_label.preferred_width = px(content_width)
+        self._ranks_label.preferred_height = px(18)
+        stack.add_child(self._ranks_label)
 
         promotion_info = self._promotion_info()
         if bool(promotion_info["pending"]):
@@ -535,6 +557,12 @@ class ChessUIComponent(UIComponent):
             self._last_move_label.text = self._last_move_text(info)
         if self._captures_label is not None:
             self._captures_label.text = self._captures_text(info)
+        if self._board_hint_label is not None:
+            self._board_hint_label.text = self._board_hint_text(info)
+        if self._files_label is not None:
+            self._files_label.text = self._files_text(info)
+        if self._ranks_label is not None:
+            self._ranks_label.text = self._ranks_text(info)
         return True
 
     def _refresh_connection_info(self) -> None:
@@ -623,6 +651,43 @@ class ChessUIComponent(UIComponent):
             count = int(item["count"])
             parts.append(symbol if count == 1 else f"{symbol}x{count}")
         return " ".join(parts) if parts else "-"
+
+    @staticmethod
+    def _board_view(info: dict[str, object]) -> str:
+        human_sides = info.get("human_sides")
+        if not isinstance(human_sides, list):
+            return "white"
+        sides = {str(side) for side in human_sides}
+        if sides == {"black"}:
+            return "black"
+        return "white"
+
+    @staticmethod
+    def _board_hint_text(info: dict[str, object]) -> str:
+        human_sides = info.get("human_sides")
+        if not isinstance(human_sides, list):
+            return "Board: white view"
+        sides = {str(side) for side in human_sides}
+        if sides == {"white", "black"}:
+            return "Board: sandbox white view"
+        if not sides:
+            return "Board: default white view"
+        view = ChessUIComponent._board_view(info)
+        return f"Board: {view} view"
+
+    @staticmethod
+    def _files_text(info: dict[str, object]) -> str:
+        files = list("abcdefgh")
+        if ChessUIComponent._board_view(info) == "black":
+            files.reverse()
+        return f"Files: {' '.join(files)}"
+
+    @staticmethod
+    def _ranks_text(info: dict[str, object]) -> str:
+        ranks = [str(rank) for rank in range(1, 9)]
+        if ChessUIComponent._board_view(info) == "black":
+            ranks.reverse()
+        return f"Ranks: {' '.join(ranks)}"
 
     @staticmethod
     def _turn_text(info: dict[str, object]) -> str:

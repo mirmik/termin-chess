@@ -410,15 +410,16 @@ Minimum polish target:
 - Last move highlight is shown on the origin and destination squares.
 - Check state is visually distinct on the checked king square.
 - Captured piece summary is visible in the HUD.
-- HUD includes a compact board orientation hint.
+- HUD includes a compact board orientation and coordinate hint.
 - Menu panels use consistent spacing, sizing, and colors.
 - Text is readable at common desktop resolutions.
 - Promotion chooser appears in the HUD after a human selects a promotion target
   square.
+- The HUD shows file/rank order for the current local-player view; two-agent
+  and sandbox modes use a default white-view coordinate guide.
 
 Nice-to-have later:
 
-- Coordinate labels around the board.
 - Full board-edge coordinate labels in the 3D scene.
 - Move list / PGN sidebar.
 - Optional board flip when human plays black.
@@ -473,7 +474,8 @@ The game should not silently ignore these cases.
 - Add check-square highlight.
 - Report selected-piece move count and promotion target hint in the HUD.
 - Add HUD promotion chooser for queen/rook/bishop/knight.
-- Add captured-piece summary and compact board orientation hint to the HUD.
+- Add captured-piece summary and compact board orientation/coordinate hint to
+  the HUD.
 - Improve status and game-over panels.
 - Add PGN/move list if UI widgets make this practical.
 
