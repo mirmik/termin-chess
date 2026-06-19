@@ -18,6 +18,7 @@ class ChessUIComponent(UIComponent):
         self._status_label: Label | None = None
         self._turn_label: Label | None = None
         self._mode_label: Label | None = None
+        self._connection_labels: dict[str, Label] = {}
         self._game_controller = None
 
     def start(self) -> None:
@@ -41,6 +42,7 @@ class ChessUIComponent(UIComponent):
         self._status_label = None
         self._turn_label = None
         self._mode_label = None
+        self._connection_labels = {}
         if self._game_controller is not None and self._game_controller.is_start_menu_visible():
             self._build_start_menu()
             return
@@ -96,11 +98,13 @@ class ChessUIComponent(UIComponent):
 
     def _build_game_panel(self):
         # Root panel — right side of screen
+        connection_info = self._connection_info()
+        content_width = 296 if connection_info["ok"] else 176
         root_panel = Panel()
         root_panel.anchor = "top-right"
         root_panel.offset_x = -10
         root_panel.offset_y = 10
-        root_panel.preferred_width = px(200)
+        root_panel.preferred_width = px(content_width + 24)
         root_panel.padding = 12
         root_panel.background_color = (0.12, 0.12, 0.15, 0.85)
         root_panel.border_radius = 8
@@ -109,7 +113,7 @@ class ChessUIComponent(UIComponent):
         stack = VStack()
         stack.spacing = 8
         stack.alignment = "center"
-        stack.preferred_width = px(176)
+        stack.preferred_width = px(content_width)
 
         # Title
         title = Label()
@@ -117,7 +121,7 @@ class ChessUIComponent(UIComponent):
         title.font_size = 20
         title.color = (1.0, 1.0, 1.0, 1.0)
         title.alignment = "center"
-        title.preferred_width = px(176)
+        title.preferred_width = px(content_width)
         title.preferred_height = px(28)
         stack.add_child(title)
 
@@ -125,7 +129,7 @@ class ChessUIComponent(UIComponent):
         sep1 = Separator()
         sep1.orientation = "horizontal"
         sep1.color = (0.4, 0.4, 0.5, 0.6)
-        sep1.preferred_width = px(176)
+        sep1.preferred_width = px(content_width)
         stack.add_child(sep1)
 
         self._mode_label = Label()
@@ -133,7 +137,7 @@ class ChessUIComponent(UIComponent):
         self._mode_label.font_size = 12
         self._mode_label.color = (0.72, 0.78, 0.88, 1.0)
         self._mode_label.alignment = "center"
-        self._mode_label.preferred_width = px(176)
+        self._mode_label.preferred_width = px(content_width)
         self._mode_label.preferred_height = px(18)
         stack.add_child(self._mode_label)
 
@@ -143,7 +147,7 @@ class ChessUIComponent(UIComponent):
         self._turn_label.font_size = 14
         self._turn_label.color = (0.9, 0.9, 0.8, 1.0)
         self._turn_label.alignment = "center"
-        self._turn_label.preferred_width = px(176)
+        self._turn_label.preferred_width = px(content_width)
         self._turn_label.preferred_height = px(20)
         stack.add_child(self._turn_label)
 
@@ -153,7 +157,7 @@ class ChessUIComponent(UIComponent):
         self._status_label.font_size = 13
         self._status_label.color = (1.0, 0.6, 0.2, 1.0)
         self._status_label.alignment = "center"
-        self._status_label.preferred_width = px(176)
+        self._status_label.preferred_width = px(content_width)
         self._status_label.preferred_height = px(18)
         stack.add_child(self._status_label)
 
@@ -161,29 +165,32 @@ class ChessUIComponent(UIComponent):
         sep2 = Separator()
         sep2.orientation = "horizontal"
         sep2.color = (0.4, 0.4, 0.5, 0.6)
-        sep2.preferred_width = px(176)
+        sep2.preferred_width = px(content_width)
         stack.add_child(sep2)
 
+        if connection_info["ok"]:
+            self._add_connection_section(stack, connection_info, content_width)
+
         # New Game button
-        btn_new = self._make_button("New Game", self._on_new_game)
+        btn_new = self._make_button("New Game", self._on_new_game, width=content_width)
         stack.add_child(btn_new)
 
         # Copy FEN button
-        btn_fen = self._make_button("Copy FEN", self._on_copy_fen)
+        btn_fen = self._make_button("Copy FEN", self._on_copy_fen, width=content_width)
         stack.add_child(btn_fen)
 
-        btn_menu = self._make_button("Return to Menu", self._on_return_to_menu)
+        btn_menu = self._make_button("Return to Menu", self._on_return_to_menu, width=content_width)
         stack.add_child(btn_menu)
 
         # Separator
         sep3 = Separator()
         sep3.orientation = "horizontal"
         sep3.color = (0.4, 0.4, 0.5, 0.6)
-        sep3.preferred_width = px(176)
+        sep3.preferred_width = px(content_width)
         stack.add_child(sep3)
 
         # Exit button
-        btn_exit = self._make_button("Exit", self._on_exit)
+        btn_exit = self._make_button("Exit", self._on_exit, width=content_width)
         btn_exit.background_color = (0.5, 0.15, 0.15, 1.0)
         btn_exit.hover_color = (0.65, 0.2, 0.2, 1.0)
         btn_exit.pressed_color = (0.4, 0.1, 0.1, 1.0)
@@ -192,6 +199,62 @@ class ChessUIComponent(UIComponent):
         root_panel.add_child(stack)
         self.root = root_panel
         print("[ChessUI] Root widget set")
+
+    def _add_connection_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
+        title = self._make_info_label("MCP Connection", width=width, font_size=14)
+        title.color = (0.92, 0.95, 1.0, 1.0)
+        stack.add_child(title)
+
+        url = str(info["url"])
+        session_file = str(info["session_file"])
+        self._connection_labels["endpoint"] = self._make_info_label(f"URL: {url}", width=width)
+        stack.add_child(self._connection_labels["endpoint"])
+        stack.add_child(self._make_button("Copy URL", lambda value=url: self._copy_text("MCP URL", value), width=width))
+
+        self._connection_labels["session_file"] = self._make_info_label(
+            f"Session: {self._short_path(session_file)}",
+            width=width,
+        )
+        stack.add_child(self._connection_labels["session_file"])
+        stack.add_child(
+            self._make_button(
+                "Copy Session File",
+                lambda value=session_file: self._copy_text("MCP session file", value),
+                width=width,
+            )
+        )
+
+        self._connection_labels["connection_turn"] = self._make_info_label("", width=width)
+        stack.add_child(self._connection_labels["connection_turn"])
+        self._connection_labels["last_event"] = self._make_info_label("", width=width)
+        stack.add_child(self._connection_labels["last_event"])
+
+        for seat in self._seat_payloads(info):
+            side = str(seat["side"])
+            label = self._make_info_label("", width=width)
+            self._connection_labels[f"{side}_status"] = label
+            stack.add_child(label)
+            token = str(seat["token"])
+            stack.add_child(
+                self._make_button(
+                    f"Copy {side.title()} Token",
+                    lambda seat_side=side, value=token: self._copy_text(f"{seat_side} token", value),
+                    width=width,
+                )
+            )
+
+        self._refresh_connection_info()
+
+    @staticmethod
+    def _make_info_label(text: str, *, width: int, font_size: int = 12) -> Label:
+        label = Label()
+        label.text = text
+        label.font_size = font_size
+        label.color = (0.78, 0.80, 0.86, 1.0)
+        label.alignment = "center"
+        label.preferred_width = px(width)
+        label.preferred_height = px(18)
+        return label
 
     @staticmethod
     def _make_button(text: str, callback, *, width: int = 176) -> Button:
@@ -261,24 +324,26 @@ class ChessUIComponent(UIComponent):
 
         fen = self._game_controller.get_fen()
         print(f"[ChessUI] FEN: {fen}")
+        self._copy_text("FEN", fen)
 
+    def _copy_text(self, label: str, text: str) -> None:
         try:
             proc = subprocess.Popen(
                 ["xclip", "-selection", "clipboard"],
                 stdin=subprocess.PIPE,
             )
-            proc.communicate(input=fen.encode("utf-8"))
-            print("[ChessUI] FEN copied to clipboard (xclip)")
+            proc.communicate(input=text.encode("utf-8"))
+            print(f"[ChessUI] {label} copied to clipboard (xclip)")
         except FileNotFoundError:
             try:
                 proc = subprocess.Popen(
                     ["xsel", "--clipboard", "--input"],
                     stdin=subprocess.PIPE,
                 )
-                proc.communicate(input=fen.encode("utf-8"))
-                print("[ChessUI] FEN copied to clipboard (xsel)")
+                proc.communicate(input=text.encode("utf-8"))
+                print(f"[ChessUI] {label} copied to clipboard (xsel)")
             except FileNotFoundError:
-                print("[ChessUI] WARNING: xclip/xsel not found, cannot copy to clipboard")
+                print(f"[ChessUI] WARNING: xclip/xsel not found, cannot copy {label} to clipboard")
 
     def _on_exit(self):
         print("[ChessUI] 'Exit' clicked")
@@ -292,6 +357,7 @@ class ChessUIComponent(UIComponent):
         """Update displayed status labels."""
         if self._mode_label is not None:
             self._mode_label.text = self._mode_text()
+        self._refresh_connection_info()
         if self._turn_label is not None:
             self._turn_label.text = turn_text
         if self._status_label is not None:
@@ -329,3 +395,59 @@ class ChessUIComponent(UIComponent):
             return "Mode: unknown"
         mode = self._game_controller.current_mode().replace("_", " ")
         return f"Mode: {mode}"
+
+    def _connection_info(self) -> dict[str, object]:
+        if self._game_controller is None:
+            return {"ok": False, "error": "No game controller"}
+        return self._game_controller.get_connection_panel_info()
+
+    def _refresh_connection_info(self) -> None:
+        if not self._connection_labels:
+            return
+        info = self._connection_info()
+        if not info["ok"]:
+            return
+
+        turn = str(info["turn"]).title()
+        status = str(info["status"])
+        self._connection_labels["connection_turn"].text = f"Turn: {turn} / {status}"
+        self._connection_labels["last_event"].text = self._last_event_text(info)
+        for seat in self._seat_payloads(info):
+            side = str(seat["side"])
+            key = f"{side}_status"
+            if key in self._connection_labels:
+                self._connection_labels[key].text = self._seat_status_text(seat)
+
+    @staticmethod
+    def _seat_payloads(info: dict[str, object]) -> list[dict[str, object]]:
+        seats = info["seats"]
+        if not isinstance(seats, list):
+            return []
+        return [seat for seat in seats if isinstance(seat, dict) and bool(seat["active"])]
+
+    @staticmethod
+    def _seat_status_text(seat: dict[str, object]) -> str:
+        side = str(seat["side"]).title()
+        state = "connected" if bool(seat["connected"]) else "waiting"
+        requests = int(seat["request_count"])
+        method = seat["last_method"]
+        method_text = str(method) if method is not None else "no calls"
+        return f"{side}: {state}, {requests} req, {method_text}"
+
+    @staticmethod
+    def _last_event_text(info: dict[str, object]) -> str:
+        event = info["last_event"]
+        if not isinstance(event, dict):
+            return "Last event: none"
+        event_type = str(event["type"])
+        san = event.get("san")
+        actor = event.get("actor")
+        if san is None:
+            return f"Last event: {event_type}"
+        return f"Last event: {san} by {actor}"
+
+    @staticmethod
+    def _short_path(path: str) -> str:
+        if len(path) <= 34:
+            return path
+        return f"...{path[-31:]}"

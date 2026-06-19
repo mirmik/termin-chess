@@ -138,6 +138,11 @@ For Two-Agent Game, it shows one section per seat:
 The panel should avoid relying on clipboard commands as the only path. Copy
 buttons are useful, but the values must also be visible.
 
+Current implementation: MCP-backed game modes show a connection section in the
+right game panel. It includes the endpoint URL, session file path, current
+turn/status, last event, active MCP seat status, and copy buttons for URL,
+session file, and active seat tokens.
+
 ## Board Input Rules
 
 The controller must have a clear game mode and side ownership model.

@@ -51,6 +51,10 @@ at the in-game menu. MCP-backed menu choices start the game MCP server from the
 running game, using the same host, port, token and session-file environment
 options listed above.
 
+In MCP-backed modes the in-game right panel shows the endpoint URL, session
+file, active seat token copy buttons, connection status, current turn and last
+event. The session file remains the machine-readable handoff for agents.
+
 `CHESS_MCP_TOKEN` is kept as a convenience alias for the black seat token. New
 clients should prefer `tokens.black`, `tokens.white`, or the `seats` array in
 the session file. The session file also contains a stable `session_id` and

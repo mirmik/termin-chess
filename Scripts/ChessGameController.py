@@ -81,6 +81,7 @@ class ChessGameController(InputComponent):
         self._mcp_events: list[dict[str, object]] = []
         self._mcp_next_event_id = 1
         self._mcp_max_events = 200
+        self._ui_refresh_accum = 0.0
 
     def start(self) -> None:
         print("[Chess] ChessGameController.start() called")
@@ -104,6 +105,10 @@ class ChessGameController(InputComponent):
 
     def update(self, dt: float) -> None:
         self._process_mcp_commands()
+        self._ui_refresh_accum += dt
+        if self._ui_refresh_accum >= 0.5:
+            self._ui_refresh_accum = 0.0
+            self._notify_ui()
 
     def on_destroy(self) -> None:
         self._stop_mcp_server()
@@ -244,6 +249,17 @@ class ChessGameController(InputComponent):
 
     def current_mode(self) -> str:
         return self._session.mode.value
+
+    def get_connection_panel_info(self) -> dict[str, object]:
+        if self._mcp_server is None:
+            return {
+                "ok": False,
+                "mode": self._session.mode.value,
+                "turn": "white" if self._board.turn == chess.WHITE else "black",
+                "status": self._mcp_status(),
+                "error": "MCP server is not running",
+            }
+        return self._mcp_server.ui_connection_payload()
 
     def start_local_sandbox(self) -> None:
         self._start_selected_mode(GameMode.LOCAL_SANDBOX)

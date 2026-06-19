@@ -171,6 +171,43 @@ class ChessGameMcpServer:
             except OSError as exc:
                 print(f"[ChessMCP] failed to remove session file: {exc}")
 
+    def ui_connection_payload(self) -> dict[str, object]:
+        state = self._controller.get_mcp_state()
+        seat_statuses = self._seat_status_payload()
+        seats = []
+        active_sides = set(state["active_mcp_sides"])
+        for side in (chess.WHITE, chess.BLACK):
+            side_text = _side_name(side)
+            status = seat_statuses[side_text]
+            token = self._token_for_side(side)
+            seats.append(
+                {
+                    "side": side_text,
+                    "owner": state["side_owners"][side_text],
+                    "active": side_text in active_sides,
+                    "token": token,
+                    "authorization": f"Bearer {token}",
+                    "connected": status["connected"],
+                    "last_seen_at": status["last_seen_at"],
+                    "request_count": status["request_count"],
+                    "last_method": status["last_method"],
+                }
+            )
+
+        return {
+            "ok": True,
+            "url": self.url,
+            "health_url": self._health_url(),
+            "session_file": str(self._config.session_file),
+            "session_id": self._session_id,
+            "mode": state["mode"],
+            "turn": state["turn"],
+            "status": state["status"],
+            "last_event": state["last_move"],
+            "active_mcp_sides": state["active_mcp_sides"],
+            "seats": seats,
+        }
+
     def _install_signal_handlers(self) -> None:
         for signum in (signal.SIGINT, signal.SIGTERM):
             previous = signal.getsignal(signum)
