@@ -3,8 +3,12 @@
 from __future__ import annotations
 
 import random
+import os
+import queue
+import threading
 
 import chess
+import chess.pgn
 
 from tcbase import Action, MouseButton
 from termin.input import InputComponent
@@ -52,23 +56,68 @@ class ChessGameController(InputComponent):
         self._bot_enabled = True
         self._bot_color = chess.BLACK
         self._bot_is_moving = False
+        self._mcp_server = None
+        self._mcp_state_lock = threading.RLock()
+        self._mcp_commands: queue.Queue[dict[str, object]] = queue.Queue()
+        self._mcp_condition = threading.Condition()
+        self._mcp_events: list[dict[str, object]] = []
+        self._mcp_next_event_id = 1
+        self._mcp_max_events = 200
 
     def start(self) -> None:
         print("[Chess] ChessGameController.start() called")
         super().start()
         self._board = chess.Board()
         print("[Chess] chess.Board created, initial position loaded")
+        self._configure_runtime_options()
 
         self._create_highlight_materials()
         self._scan_board()
         self._scan_pieces()
         self._find_ui()
+        self._start_mcp_server()
 
         print(f"[Chess] Init complete. tiles={len(self._tiles)}, pieces={len(self._pieces)}")
         print(f"[Chess] Tiles: {sorted(self._tiles.keys())}")
         print(f"[Chess] Pieces: {sorted(self._pieces.keys())}")
         print("[Chess] White to move.")
         self._maybe_make_bot_move()
+
+    def update(self, dt: float) -> None:
+        self._process_mcp_commands()
+
+    def on_destroy(self) -> None:
+        if self._mcp_server is not None:
+            self._mcp_server.stop()
+            self._mcp_server = None
+
+    def _configure_runtime_options(self) -> None:
+        from Scripts.ChessMcpServer import chess_mcp_enabled
+
+        mcp_enabled = chess_mcp_enabled()
+        bot_env = os.environ.get("CHESS_BOT_ENABLED")
+        if bot_env is not None:
+            self._bot_enabled = bot_env.strip().lower() in {"1", "true", "yes", "on"}
+        elif mcp_enabled:
+            self._bot_enabled = False
+
+        print(f"[Chess] Bot enabled: {self._bot_enabled}")
+
+    def _start_mcp_server(self) -> None:
+        from Scripts.ChessMcpServer import (
+            ChessGameMcpServer,
+            chess_mcp_enabled,
+            load_chess_mcp_config,
+        )
+
+        if not chess_mcp_enabled():
+            return
+        if self._mcp_server is not None:
+            return
+
+        server = ChessGameMcpServer(self, load_chess_mcp_config())
+        if server.start():
+            self._mcp_server = server
 
     def _find_ui(self):
         """Find ChessUIComponent in scene for status updates."""
@@ -89,39 +138,266 @@ class ChessGameController(InputComponent):
     def get_board(self):
         return self._board
 
+    def get_mcp_state(self) -> dict[str, object]:
+        with self._mcp_state_lock:
+            legal_moves = []
+            for move in self._board.legal_moves:
+                legal_moves.append(
+                    {
+                        "uci": move.uci(),
+                        "san": self._board.san(move),
+                        "from": chess.square_name(move.from_square),
+                        "to": chess.square_name(move.to_square),
+                        "promotion": chess.piece_name(move.promotion) if move.promotion else None,
+                        "capture": self._board.is_capture(move),
+                        "check": self._board.gives_check(move),
+                    }
+                )
+
+            return {
+                "ok": True,
+                "fen": self._board.fen(),
+                "board_ascii": str(self._board),
+                "turn": "white" if self._board.turn == chess.WHITE else "black",
+                "fullmove_number": self._board.fullmove_number,
+                "ply": len(self._board.move_stack),
+                "legal_moves": legal_moves,
+                "last_move": self._last_mcp_move_event(),
+                "status": self._mcp_status(),
+                "check": self._board.is_check(),
+                "checkmate": self._board.is_checkmate(),
+                "stalemate": self._board.is_stalemate(),
+                "game_over": self._board.is_game_over(),
+                "selected_square": self._selected_square,
+                "bot_enabled": self._bot_enabled,
+                "bot_color": "white" if self._bot_color == chess.WHITE else "black",
+                "next_event_id": self._mcp_next_event_id,
+            }
+
+    def get_mcp_pgn(self) -> str:
+        with self._mcp_state_lock:
+            game = chess.pgn.Game.from_board(self._board)
+            return str(game)
+
+    def get_mcp_events(self) -> dict[str, object]:
+        with self._mcp_condition:
+            return {
+                "ok": True,
+                "events": list(self._mcp_events),
+                "next_event_id": self._mcp_next_event_id,
+            }
+
+    def request_mcp_move(self, move_text: str, *, timeout: float) -> dict[str, object]:
+        move_text = move_text.strip()
+        if move_text == "":
+            return {"ok": False, "error": "move must not be empty", "state": self.get_mcp_state()}
+        return self._submit_mcp_command({"kind": "move", "move": move_text}, timeout=timeout)
+
+    def request_mcp_new_game(self, *, timeout: float) -> dict[str, object]:
+        return self._submit_mcp_command({"kind": "new_game"}, timeout=timeout)
+
+    def request_mcp_set_bot_enabled(self, enabled: bool, *, timeout: float) -> dict[str, object]:
+        return self._submit_mcp_command(
+            {"kind": "set_bot_enabled", "enabled": enabled},
+            timeout=timeout,
+        )
+
+    def wait_for_mcp_event(
+        self,
+        *,
+        after_event_id: int | None,
+        after_ply: int | None,
+        timeout: float,
+    ) -> dict[str, object]:
+        def matching_event() -> dict[str, object] | None:
+            for event in self._mcp_events:
+                if after_event_id is not None and int(event["id"]) <= after_event_id:
+                    continue
+                if after_ply is not None and int(event.get("ply", 0)) <= after_ply:
+                    continue
+                return event
+            return None
+
+        with self._mcp_condition:
+            event = matching_event()
+            if event is None and timeout > 0:
+                remaining = timeout
+                import time
+
+                end_time = time.monotonic() + timeout
+                while remaining > 0:
+                    self._mcp_condition.wait(timeout=remaining)
+                    event = matching_event()
+                    if event is not None:
+                        break
+                    remaining = end_time - time.monotonic()
+
+        if event is not None:
+            return {"ok": True, "event": event, "state": self.get_mcp_state()}
+        return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
+
     def new_game(self):
         """Reset the board and pieces to starting position."""
-        print("[Chess] === NEW GAME ===")
-        self._clear_selection()
-        self._board = chess.Board()
-        self._state = STATE_IDLE
+        with self._mcp_state_lock:
+            print("[Chess] === NEW GAME ===")
+            self._clear_selection()
+            self._board = chess.Board()
+            self._state = STATE_IDLE
 
-        # Destroy all piece entities
-        for sq, entity in list(self._pieces.items()):
-            scene = entity.scene
-            if scene:
-                scene.remove(entity)
-        self._pieces.clear()
+            # Destroy all piece entities
+            for sq, entity in list(self._pieces.items()):
+                scene = entity.scene
+                if scene:
+                    scene.remove(entity)
+            self._pieces.clear()
 
-        # Recreate pieces via UnitsCreator
-        scene = self.entity.scene
-        units_entity = scene.find_entity_by_name("ChessUnits")
-        if units_entity:
-            from Scripts.UnitsCreator import UnitsCreator
-            uc = units_entity.get_component(UnitsCreator)
-            if uc:
-                uc.make_units()
-                print("[Chess] Pieces recreated via UnitsCreator.make_units()")
+            # Recreate pieces via UnitsCreator
+            scene = self.entity.scene
+            units_entity = scene.find_entity_by_name("ChessUnits")
+            if units_entity:
+                from Scripts.UnitsCreator import UnitsCreator
+                uc = units_entity.get_component(UnitsCreator)
+                if uc:
+                    uc.make_units()
+                    print("[Chess] Pieces recreated via UnitsCreator.make_units()")
+                else:
+                    print("[Chess] WARNING: UnitsCreator not found on ChessUnits!")
             else:
-                print("[Chess] WARNING: UnitsCreator not found on ChessUnits!")
-        else:
-            print("[Chess] WARNING: ChessUnits entity not found!")
+                print("[Chess] WARNING: ChessUnits entity not found!")
 
-        # Re-scan pieces
-        self._scan_pieces()
-        self._notify_ui()
-        print(f"[Chess] New game started. pieces={len(self._pieces)}")
-        self._maybe_make_bot_move()
+            # Re-scan pieces
+            self._scan_pieces()
+            self._notify_ui()
+            self._record_mcp_event({"type": "reset", "actor": "system"})
+            print(f"[Chess] New game started. pieces={len(self._pieces)}")
+            self._maybe_make_bot_move()
+
+    def _submit_mcp_command(self, command: dict[str, object], *, timeout: float) -> dict[str, object]:
+        done = threading.Event()
+        command["done"] = done
+        command["result"] = None
+        self._mcp_commands.put(command)
+        if not done.wait(timeout=max(timeout, 0.0)):
+            return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
+        result = command.get("result")
+        if isinstance(result, dict):
+            return result
+        return {"ok": False, "error": "MCP command did not produce a result", "state": self.get_mcp_state()}
+
+    def _process_mcp_commands(self) -> None:
+        processed = 0
+        while processed < 8:
+            try:
+                command = self._mcp_commands.get_nowait()
+            except queue.Empty:
+                return
+
+            done = command.get("done")
+            try:
+                command["result"] = self._handle_mcp_command(command)
+            except Exception as exc:
+                command["result"] = {
+                    "ok": False,
+                    "error": f"MCP command failed: {exc}",
+                    "state": self.get_mcp_state(),
+                }
+                print(f"[ChessMCP] command failed: {exc}")
+            finally:
+                if isinstance(done, threading.Event):
+                    done.set()
+            processed += 1
+
+    def _handle_mcp_command(self, command: dict[str, object]) -> dict[str, object]:
+        kind = command.get("kind")
+        if kind == "move":
+            return self._apply_mcp_move(str(command.get("move", "")))
+        if kind == "new_game":
+            self.new_game()
+            return {"ok": True, "state": self.get_mcp_state()}
+        if kind == "set_bot_enabled":
+            self._bot_enabled = bool(command.get("enabled", False))
+            self._record_mcp_event(
+                {
+                    "type": "bot",
+                    "actor": "mcp",
+                    "enabled": self._bot_enabled,
+                }
+            )
+            if self._bot_enabled:
+                self._maybe_make_bot_move()
+            return {"ok": True, "state": self.get_mcp_state()}
+        return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_mcp_state()}
+
+    def _apply_mcp_move(self, move_text: str) -> dict[str, object]:
+        with self._mcp_state_lock:
+            if self._state == STATE_GAME_OVER or self._board.is_game_over():
+                return {"ok": False, "error": "game is over", "state": self.get_mcp_state()}
+            if self._is_bot_turn():
+                return {"ok": False, "error": "built-in bot owns the current turn", "state": self.get_mcp_state()}
+
+            move = self._parse_mcp_move(move_text)
+            if move is None:
+                return {
+                    "ok": False,
+                    "error": f"illegal or unparseable move: {move_text}",
+                    "state": self.get_mcp_state(),
+                }
+
+            self._execute_move(move, actor="mcp")
+            return {"ok": True, "move": move.uci(), "state": self.get_mcp_state()}
+
+    def _parse_mcp_move(self, move_text: str) -> chess.Move | None:
+        try:
+            move = chess.Move.from_uci(move_text)
+        except ValueError:
+            move = None
+        if move is not None and move in self._board.legal_moves:
+            return move
+
+        try:
+            move = self._board.parse_san(move_text)
+        except ValueError:
+            return None
+        return move if move in self._board.legal_moves else None
+
+    def _mcp_status(self) -> str:
+        if self._board.is_checkmate():
+            winner = "black" if self._board.turn == chess.WHITE else "white"
+            return f"checkmate:{winner}"
+        if self._board.is_stalemate():
+            return "stalemate"
+        if self._board.is_insufficient_material():
+            return "draw:insufficient_material"
+        if self._board.can_claim_threefold_repetition():
+            return "draw:threefold_repetition_claim_available"
+        if self._board.can_claim_fifty_moves():
+            return "draw:fifty_move_claim_available"
+        if self._board.is_check():
+            return "check"
+        return "playing"
+
+    def _last_mcp_move_event(self) -> dict[str, object] | None:
+        with self._mcp_condition:
+            for event in reversed(self._mcp_events):
+                if event.get("type") == "move":
+                    return dict(event)
+        return None
+
+    def _record_mcp_event(self, event: dict[str, object]) -> None:
+        with self._mcp_state_lock:
+            payload = dict(event)
+            payload["id"] = self._mcp_next_event_id
+            payload["fen"] = self._board.fen()
+            payload["turn"] = "white" if self._board.turn == chess.WHITE else "black"
+            payload["ply"] = len(self._board.move_stack)
+            payload["status"] = self._mcp_status()
+
+        with self._mcp_condition:
+            self._mcp_events.append(payload)
+            if len(self._mcp_events) > self._mcp_max_events:
+                del self._mcp_events[:len(self._mcp_events) - self._mcp_max_events]
+            self._mcp_next_event_id += 1
+            self._mcp_condition.notify_all()
 
     def _create_highlight_materials(self):
         print("[Chess] Loading highlight materials...")
@@ -286,7 +562,7 @@ class ChessGameController(InputComponent):
             move = self._find_valid_move(self._selected_square, square)
             if move:
                 print(f"[Chess]   -> valid move found: {move.uci()}")
-                self._execute_move(move)
+                self._execute_move(move, actor="user")
             else:
                 print(f"[Chess]   -> {square} is not a valid move from {self._selected_square}, clearing")
                 self._clear_selection()
@@ -354,45 +630,58 @@ class ChessGameController(InputComponent):
         self._valid_moves = []
         self._state = STATE_IDLE
 
-    def _execute_move(self, move: chess.Move, trigger_bot: bool = True):
-        from_sq = chess.square_name(move.from_square)
-        to_sq = chess.square_name(move.to_square)
-        print(f"[Chess] === EXECUTING MOVE: {move.uci()} ({from_sq} -> {to_sq}) ===")
+    def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: str = "user"):
+        with self._mcp_state_lock:
+            from_sq = chess.square_name(move.from_square)
+            to_sq = chess.square_name(move.to_square)
+            san = self._board.san(move)
+            print(f"[Chess] === EXECUTING MOVE: {move.uci()} ({from_sq} -> {to_sq}) ===")
 
-        if self._board.is_castling(move):
-            print(f"[Chess]   move type: CASTLING")
-            self._do_castling(move)
-        elif self._board.is_en_passant(move):
-            print(f"[Chess]   move type: EN PASSANT")
-            self._do_en_passant(move)
-        elif move.promotion:
-            print(f"[Chess]   move type: PROMOTION to {chess.piece_name(move.promotion)}")
-            self._do_promotion(move)
-        else:
-            is_capture = to_sq in self._pieces
-            print(f"[Chess]   move type: {'CAPTURE' if is_capture else 'NORMAL'}")
-            self._do_normal_move(move)
+            if self._board.is_castling(move):
+                print(f"[Chess]   move type: CASTLING")
+                self._do_castling(move)
+            elif self._board.is_en_passant(move):
+                print(f"[Chess]   move type: EN PASSANT")
+                self._do_en_passant(move)
+            elif move.promotion:
+                print(f"[Chess]   move type: PROMOTION to {chess.piece_name(move.promotion)}")
+                self._do_promotion(move)
+            else:
+                is_capture = to_sq in self._pieces
+                print(f"[Chess]   move type: {'CAPTURE' if is_capture else 'NORMAL'}")
+                self._do_normal_move(move)
 
-        self._board.push(move)
-        print(f"[Chess]   board.push done. FEN: {self._board.fen()}")
-        self._clear_selection()
+            self._board.push(move)
+            print(f"[Chess]   board.push done. FEN: {self._board.fen()}")
+            self._clear_selection()
+            self._record_mcp_event(
+                {
+                    "type": "move",
+                    "actor": actor,
+                    "uci": move.uci(),
+                    "san": san,
+                    "from": from_sq,
+                    "to": to_sq,
+                    "promotion": chess.piece_name(move.promotion) if move.promotion else None,
+                }
+            )
 
-        turn_str = "White" if self._board.turn else "Black"
-        if self._board.is_checkmate():
-            winner = "Black" if self._board.turn else "White"
-            print(f"[Chess] *** CHECKMATE! {winner} wins! ***")
-            self._state = STATE_GAME_OVER
-        elif self._board.is_stalemate():
-            print(f"[Chess] *** STALEMATE! Draw. ***")
-            self._state = STATE_GAME_OVER
-        elif self._board.is_check():
-            print(f"[Chess] CHECK! {turn_str} to move.")
-        else:
-            print(f"[Chess] {turn_str} to move.")
+            turn_str = "White" if self._board.turn else "Black"
+            if self._board.is_checkmate():
+                winner = "Black" if self._board.turn else "White"
+                print(f"[Chess] *** CHECKMATE! {winner} wins! ***")
+                self._state = STATE_GAME_OVER
+            elif self._board.is_stalemate():
+                print(f"[Chess] *** STALEMATE! Draw. ***")
+                self._state = STATE_GAME_OVER
+            elif self._board.is_check():
+                print(f"[Chess] CHECK! {turn_str} to move.")
+            else:
+                print(f"[Chess] {turn_str} to move.")
 
-        self._notify_ui()
-        if trigger_bot:
-            self._maybe_make_bot_move()
+            self._notify_ui()
+            if trigger_bot:
+                self._maybe_make_bot_move()
 
     def _is_bot_turn(self) -> bool:
         return (
@@ -415,7 +704,7 @@ class ChessGameController(InputComponent):
                 print("[ChessBot] No legal move found.")
                 return
             print(f"[ChessBot] Selected move: {move.uci()}")
-            self._execute_move(move, trigger_bot=False)
+            self._execute_move(move, trigger_bot=False, actor="bot")
         finally:
             self._bot_is_moving = False
 
