@@ -46,6 +46,11 @@ agent: the local player owns white, and the black MCP seat owns black.
 choice. `CHESS_AGENT_SIDE` is used by `human_vs_agent`; `CHESS_BOT_COLOR` is
 used by `human_vs_bot`.
 
+Without `CHESS_MCP=1` and without an explicit `CHESS_GAME_MODE`, Chess starts
+at the in-game menu. MCP-backed menu choices start the game MCP server from the
+running game, using the same host, port, token and session-file environment
+options listed above.
+
 `CHESS_MCP_TOKEN` is kept as a convenience alias for the black seat token. New
 clients should prefer `tokens.black`, `tokens.white`, or the `seats` array in
 the session file. The session file also contains a stable `session_id` and

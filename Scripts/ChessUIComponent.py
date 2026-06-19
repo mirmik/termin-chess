@@ -17,6 +17,7 @@ class ChessUIComponent(UIComponent):
         super().__init__(priority=100)
         self._status_label: Label | None = None
         self._turn_label: Label | None = None
+        self._mode_label: Label | None = None
         self._game_controller = None
 
     def start(self) -> None:
@@ -37,6 +38,63 @@ class ChessUIComponent(UIComponent):
             print("[ChessUI] WARNING: ChessGameController not found in scene!")
 
     def _build_ui(self):
+        self._status_label = None
+        self._turn_label = None
+        self._mode_label = None
+        if self._game_controller is not None and self._game_controller.is_start_menu_visible():
+            self._build_start_menu()
+            return
+        self._build_game_panel()
+
+    def _build_start_menu(self):
+        root_panel = Panel()
+        root_panel.anchor = "center"
+        root_panel.preferred_width = px(300)
+        root_panel.padding = 16
+        root_panel.background_color = (0.10, 0.11, 0.14, 0.92)
+        root_panel.border_radius = 8
+
+        stack = VStack()
+        stack.spacing = 10
+        stack.alignment = "center"
+        stack.preferred_width = px(268)
+
+        title = Label()
+        title.text = "Chess"
+        title.font_size = 26
+        title.color = (1.0, 1.0, 1.0, 1.0)
+        title.alignment = "center"
+        title.preferred_width = px(268)
+        title.preferred_height = px(34)
+        stack.add_child(title)
+
+        sep = Separator()
+        sep.orientation = "horizontal"
+        sep.color = (0.4, 0.4, 0.5, 0.65)
+        sep.preferred_width = px(268)
+        stack.add_child(sep)
+
+        stack.add_child(self._make_button("Start Game With Agent", self._on_start_human_vs_agent, width=268))
+        stack.add_child(self._make_button("Start Two-Agent Game", self._on_start_agent_vs_agent, width=268))
+        stack.add_child(self._make_button("Local Sandbox", self._on_start_local_sandbox, width=268))
+
+        sep2 = Separator()
+        sep2.orientation = "horizontal"
+        sep2.color = (0.4, 0.4, 0.5, 0.65)
+        sep2.preferred_width = px(268)
+        stack.add_child(sep2)
+
+        btn_exit = self._make_button("Quit", self._on_exit, width=268)
+        btn_exit.background_color = (0.5, 0.15, 0.15, 1.0)
+        btn_exit.hover_color = (0.65, 0.2, 0.2, 1.0)
+        btn_exit.pressed_color = (0.4, 0.1, 0.1, 1.0)
+        stack.add_child(btn_exit)
+
+        root_panel.add_child(stack)
+        self.root = root_panel
+        print("[ChessUI] Start menu root widget set")
+
+    def _build_game_panel(self):
         # Root panel — right side of screen
         root_panel = Panel()
         root_panel.anchor = "top-right"
@@ -69,6 +127,15 @@ class ChessUIComponent(UIComponent):
         sep1.color = (0.4, 0.4, 0.5, 0.6)
         sep1.preferred_width = px(176)
         stack.add_child(sep1)
+
+        self._mode_label = Label()
+        self._mode_label.text = self._mode_text()
+        self._mode_label.font_size = 12
+        self._mode_label.color = (0.72, 0.78, 0.88, 1.0)
+        self._mode_label.alignment = "center"
+        self._mode_label.preferred_width = px(176)
+        self._mode_label.preferred_height = px(18)
+        stack.add_child(self._mode_label)
 
         # Turn label
         self._turn_label = Label()
@@ -105,6 +172,9 @@ class ChessUIComponent(UIComponent):
         btn_fen = self._make_button("Copy FEN", self._on_copy_fen)
         stack.add_child(btn_fen)
 
+        btn_menu = self._make_button("Return to Menu", self._on_return_to_menu)
+        stack.add_child(btn_menu)
+
         # Separator
         sep3 = Separator()
         sep3.orientation = "horizontal"
@@ -124,11 +194,11 @@ class ChessUIComponent(UIComponent):
         print("[ChessUI] Root widget set")
 
     @staticmethod
-    def _make_button(text: str, callback) -> Button:
+    def _make_button(text: str, callback, *, width: int = 176) -> Button:
         btn = Button()
         btn.text = text
         btn.font_size = 14
-        btn.preferred_width = px(176)
+        btn.preferred_width = px(width)
         btn.preferred_height = px(34)
         btn.border_radius = 5
         btn.background_color = (0.25, 0.28, 0.35, 1.0)
@@ -140,11 +210,46 @@ class ChessUIComponent(UIComponent):
 
     # --- Button callbacks ---
 
+    def _on_start_human_vs_agent(self):
+        print("[ChessUI] 'Start Game With Agent' clicked")
+        if self._game_controller is not None:
+            self._game_controller.start_human_vs_agent()
+            self._build_ui()
+            self._update_status()
+        else:
+            print("[ChessUI] No game controller found!")
+
+    def _on_start_agent_vs_agent(self):
+        print("[ChessUI] 'Start Two-Agent Game' clicked")
+        if self._game_controller is not None:
+            self._game_controller.start_agent_vs_agent()
+            self._build_ui()
+            self._update_status()
+        else:
+            print("[ChessUI] No game controller found!")
+
+    def _on_start_local_sandbox(self):
+        print("[ChessUI] 'Local Sandbox' clicked")
+        if self._game_controller is not None:
+            self._game_controller.start_local_sandbox()
+            self._build_ui()
+            self._update_status()
+        else:
+            print("[ChessUI] No game controller found!")
+
     def _on_new_game(self):
         print("[ChessUI] 'New Game' clicked")
         if self._game_controller is not None:
             self._game_controller.new_game()
             self._update_status()
+        else:
+            print("[ChessUI] No game controller found!")
+
+    def _on_return_to_menu(self):
+        print("[ChessUI] 'Return to Menu' clicked")
+        if self._game_controller is not None:
+            self._game_controller.return_to_start_menu()
+            self._build_ui()
         else:
             print("[ChessUI] No game controller found!")
 
@@ -185,6 +290,8 @@ class ChessUIComponent(UIComponent):
 
     def update_status(self, turn_text: str, status_text: str = ""):
         """Update displayed status labels."""
+        if self._mode_label is not None:
+            self._mode_label.text = self._mode_text()
         if self._turn_label is not None:
             self._turn_label.text = turn_text
         if self._status_label is not None:
@@ -216,3 +323,9 @@ class ChessUIComponent(UIComponent):
             status = "Check!"
 
         self.update_status(turn, status)
+
+    def _mode_text(self) -> str:
+        if self._game_controller is None:
+            return "Mode: unknown"
+        mode = self._game_controller.current_mode().replace("_", " ")
+        return f"Mode: {mode}"

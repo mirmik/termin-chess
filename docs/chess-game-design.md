@@ -39,6 +39,11 @@ The menu provides these primary actions:
 The board can remain visible behind the menu, but input into the board is locked
 until a mode starts.
 
+Current implementation: when no explicit runtime mode is provided, the scene
+starts with the menu open, the board is visible, and board clicks are ignored
+until a mode button is pressed. `CHESS_MCP=1` or `CHESS_GAME_MODE=...` still
+starts directly in a mode for automated MCP smoke runs.
+
 ## Game Modes
 
 ### Human vs Agent
@@ -66,6 +71,10 @@ After the user clicks Start Game With Agent:
 4. The agent uses MCP tools to observe state, wait for user moves, and make its
    own moves.
 
+Current implementation: the menu button starts a fresh Human vs Agent game,
+disables the built-in bot, assigns human to white and MCP agent to black, and
+starts the game MCP server.
+
 ### Two-Agent Game
 
 The game exposes two logical seats: white agent and black agent. Human board
@@ -88,6 +97,9 @@ After the user clicks Start Two-Agent Game:
 4. Each agent receives only its own side token.
 5. The game waits for moves from the side to move.
 
+Current implementation: the menu button starts a fresh Two-Agent Game with both
+MCP seats active and local board movement disabled by side ownership.
+
 ### Local Sandbox
 
 This mode is for manual testing. Both colors can be moved by the local user. MCP
@@ -95,6 +107,9 @@ can be disabled by default here.
 
 Local Sandbox replaces the current always-live scene behavior and is useful when
 debugging board geometry, clicking, piece movement, or UI without an agent.
+
+Current implementation: the menu button starts a fresh local sandbox game with
+both sides assigned to the local human and no MCP server.
 
 ## Connection Panel
 

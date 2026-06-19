@@ -71,6 +71,8 @@ class ChessGameController(InputComponent):
         self._bot_color = chess.BLACK
         self._bot_is_moving = False
         self._game_mcp_enabled = False
+        self._game_started = False
+        self._start_menu_visible = True
         self._session = ChessGameSession()
         self._mcp_server = None
         self._mcp_state_lock = threading.RLock()
@@ -97,15 +99,14 @@ class ChessGameController(InputComponent):
         print(f"[Chess] Tiles: {sorted(self._tiles.keys())}")
         print(f"[Chess] Pieces: {sorted(self._pieces.keys())}")
         print("[Chess] White to move.")
+        self._notify_ui()
         self._maybe_make_bot_move()
 
     def update(self, dt: float) -> None:
         self._process_mcp_commands()
 
     def on_destroy(self) -> None:
-        if self._mcp_server is not None:
-            self._mcp_server.stop()
-            self._mcp_server = None
+        self._stop_mcp_server()
 
     def _configure_runtime_options(self) -> None:
         from Scripts.ChessMcpServer import chess_mcp_enabled
@@ -119,15 +120,21 @@ class ChessGameController(InputComponent):
 
         requested_mode = self._game_mode_from_env()
         if requested_mode is not None:
+            self._game_started = True
+            self._start_menu_visible = False
             self._configure_requested_game_mode(requested_mode)
         else:
             if mcp_enabled:
+                self._game_started = True
+                self._start_menu_visible = False
                 self._bot_enabled = False
-            self._session.configure_runtime(
-                mcp_enabled=mcp_enabled,
-                bot_enabled=self._bot_enabled,
-                bot_color=self._bot_color,
-            )
+                self._session.configure_runtime(
+                    mcp_enabled=mcp_enabled,
+                    bot_enabled=self._bot_enabled,
+                    bot_color=self._bot_color,
+                )
+            else:
+                self._configure_menu_idle_mode()
         print(f"[Chess] Bot enabled: {self._bot_enabled}")
         print(f"[Chess] Game mode: {self._session.mode.value}, owners={self._session.side_owners_payload()}")
 
@@ -146,28 +153,34 @@ class ChessGameController(InputComponent):
 
     def _configure_requested_game_mode(self, mode: GameMode) -> None:
         if mode == GameMode.LOCAL_SANDBOX:
+            self._game_mcp_enabled = False
             self._bot_enabled = False
             self._session.configure_local_sandbox()
             return
         if mode == GameMode.HUMAN_VS_AGENT:
             self._bot_enabled = False
+            self._game_mcp_enabled = True
             agent_side = self._side_from_env("CHESS_AGENT_SIDE", chess.BLACK)
             self._session.configure_human_vs_agent(agent_side=agent_side)
-            if not self._game_mcp_enabled:
-                print("[Chess] WARNING: human_vs_agent mode selected but CHESS_MCP is disabled")
             return
         if mode == GameMode.AGENT_VS_AGENT:
             self._bot_enabled = False
+            self._game_mcp_enabled = True
             self._session.configure_agent_vs_agent()
-            if not self._game_mcp_enabled:
-                print("[Chess] WARNING: agent_vs_agent mode selected but CHESS_MCP is disabled")
             return
         if mode == GameMode.HUMAN_VS_BOT:
+            self._game_mcp_enabled = False
             if os.environ.get("CHESS_BOT_ENABLED") is None:
                 self._bot_enabled = True
             self._session.configure_human_vs_bot(bot_color=self._bot_color)
             return
         print(f"[Chess] WARNING: unsupported game mode '{mode.value}', using local sandbox")
+        self._game_mcp_enabled = False
+        self._bot_enabled = False
+        self._session.configure_local_sandbox()
+
+    def _configure_menu_idle_mode(self) -> None:
+        self._game_mcp_enabled = False
         self._bot_enabled = False
         self._session.configure_local_sandbox()
 
@@ -187,11 +200,10 @@ class ChessGameController(InputComponent):
     def _start_mcp_server(self) -> None:
         from Scripts.ChessMcpServer import (
             ChessGameMcpServer,
-            chess_mcp_enabled,
             load_chess_mcp_config,
         )
 
-        if not chess_mcp_enabled():
+        if not self._game_mcp_enabled:
             return
         if self._mcp_server is not None:
             return
@@ -199,6 +211,11 @@ class ChessGameController(InputComponent):
         server = ChessGameMcpServer(self, load_chess_mcp_config())
         if server.start():
             self._mcp_server = server
+
+    def _stop_mcp_server(self) -> None:
+        if self._mcp_server is not None:
+            self._mcp_server.stop()
+            self._mcp_server = None
 
     def _find_ui(self):
         """Find ChessUIComponent in scene for status updates."""
@@ -218,6 +235,44 @@ class ChessGameController(InputComponent):
 
     def get_board(self):
         return self._board
+
+    def is_game_started(self) -> bool:
+        return self._game_started
+
+    def is_start_menu_visible(self) -> bool:
+        return self._start_menu_visible
+
+    def current_mode(self) -> str:
+        return self._session.mode.value
+
+    def start_local_sandbox(self) -> None:
+        self._start_selected_mode(GameMode.LOCAL_SANDBOX)
+
+    def start_human_vs_agent(self) -> None:
+        self._start_selected_mode(GameMode.HUMAN_VS_AGENT)
+
+    def start_agent_vs_agent(self) -> None:
+        self._start_selected_mode(GameMode.AGENT_VS_AGENT)
+
+    def return_to_start_menu(self) -> None:
+        print("[Chess] Returning to start menu")
+        self._stop_mcp_server()
+        self._game_started = False
+        self._start_menu_visible = True
+        self._configure_menu_idle_mode()
+        self.new_game(trigger_bot=False)
+        self._notify_ui()
+
+    def _start_selected_mode(self, mode: GameMode) -> None:
+        print(f"[Chess] Starting mode from menu: {mode.value}")
+        self._stop_mcp_server()
+        self._game_started = True
+        self._start_menu_visible = False
+        self._configure_requested_game_mode(mode)
+        self.new_game(trigger_bot=False)
+        self._start_mcp_server()
+        self._notify_ui()
+        self._maybe_make_bot_move()
 
     def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
         with self._mcp_state_lock:
@@ -256,6 +311,8 @@ class ChessGameController(InputComponent):
                 "checkmate": self._board.is_checkmate(),
                 "stalemate": self._board.is_stalemate(),
                 "game_over": self._board.is_game_over(),
+                "game_started": self._game_started,
+                "start_menu_visible": self._start_menu_visible,
                 "selected_square": self._selected_square,
                 "mode": self._session.mode.value,
                 "side_owners": self._session.side_owners_payload(),
@@ -338,7 +395,7 @@ class ChessGameController(InputComponent):
             return {"ok": True, "event": event, "state": self.get_mcp_state()}
         return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
 
-    def new_game(self):
+    def new_game(self, *, trigger_bot: bool = True):
         """Reset the board and pieces to starting position."""
         with self._mcp_state_lock:
             print("[Chess] === NEW GAME ===")
@@ -372,7 +429,8 @@ class ChessGameController(InputComponent):
             self._notify_ui()
             self._record_mcp_event({"type": "reset", "actor": "system"})
             print(f"[Chess] New game started. pieces={len(self._pieces)}")
-            self._maybe_make_bot_move()
+            if trigger_bot:
+                self._maybe_make_bot_move()
 
     def _submit_mcp_command(self, command: dict[str, object], *, timeout: float) -> dict[str, object]:
         done = threading.Event()
@@ -567,6 +625,9 @@ class ChessGameController(InputComponent):
     def on_mouse_button(self, event):
         print("[Chess] On mouse button")
         if event.button != MouseButton.LEFT or event.action != Action.PRESS:
+            return
+        if not self._game_started:
+            print("[Chess] Game has not started, ignoring board click.")
             return
         if self._state == STATE_GAME_OVER:
             print("[Chess] Game is over, ignoring click.")
@@ -804,7 +865,7 @@ class ChessGameController(InputComponent):
             return True
 
     def _is_bot_turn(self) -> bool:
-        return self._bot_enabled and self._session.can_move_now(
+        return self._game_started and self._bot_enabled and self._session.can_move_now(
             actor=MoveActor.bot(),
             board=self._board,
             game_state=self._state,
