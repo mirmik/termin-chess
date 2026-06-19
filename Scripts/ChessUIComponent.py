@@ -23,6 +23,7 @@ class ChessUIComponent(UIComponent):
         self._captures_label: Label | None = None
         self._board_hint_label: Label | None = None
         self._connection_labels: dict[str, Label] = {}
+        self._promotion_panel_visible = False
         self._game_controller = None
 
     def start(self) -> None:
@@ -51,6 +52,7 @@ class ChessUIComponent(UIComponent):
         self._captures_label = None
         self._board_hint_label = None
         self._connection_labels = {}
+        self._promotion_panel_visible = False
         if self._game_controller is not None and self._game_controller.is_start_menu_visible():
             self._build_start_menu()
             return
@@ -205,6 +207,11 @@ class ChessUIComponent(UIComponent):
         self._board_hint_label.preferred_height = px(18)
         stack.add_child(self._board_hint_label)
 
+        promotion_info = self._promotion_info()
+        if bool(promotion_info["pending"]):
+            self._promotion_panel_visible = True
+            self._add_promotion_section(stack, promotion_info, content_width)
+
         # Separator
         sep2 = Separator()
         sep2.orientation = "horizontal"
@@ -318,6 +325,28 @@ class ChessUIComponent(UIComponent):
         btn.on_click = callback
         return btn
 
+    def _add_promotion_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
+        title = self._make_info_label(self._promotion_title(info), width=width, font_size=13)
+        title.color = (1.0, 0.82, 0.36, 1.0)
+        stack.add_child(title)
+
+        for choice in self._promotion_choices(info):
+            piece = str(choice["piece"])
+            label = str(choice["label"])
+            stack.add_child(
+                self._make_button(
+                    f"Promote: {label}",
+                    lambda value=piece: self._on_choose_promotion(value),
+                    width=width,
+                )
+            )
+
+        cancel = self._make_button("Cancel Promotion", self._on_cancel_promotion, width=width)
+        cancel.background_color = (0.35, 0.24, 0.18, 1.0)
+        cancel.hover_color = (0.48, 0.32, 0.22, 1.0)
+        cancel.pressed_color = (0.24, 0.16, 0.12, 1.0)
+        stack.add_child(cancel)
+
     # --- Button callbacks ---
 
     def _on_start_human_vs_agent(self):
@@ -383,6 +412,24 @@ class ChessUIComponent(UIComponent):
         print(f"[ChessUI] PGN:\n{pgn}")
         self._copy_text("PGN", pgn)
 
+    def _on_choose_promotion(self, piece_name: str):
+        print(f"[ChessUI] promotion choice clicked: {piece_name}")
+        if self._game_controller is None:
+            print("[ChessUI] No game controller!")
+            return
+        self._game_controller.choose_promotion(piece_name)
+        self._build_ui()
+        self._update_status()
+
+    def _on_cancel_promotion(self):
+        print("[ChessUI] promotion cancelled")
+        if self._game_controller is None:
+            print("[ChessUI] No game controller!")
+            return
+        self._game_controller.cancel_promotion()
+        self._build_ui()
+        self._update_status()
+
     def _copy_text(self, label: str, text: str) -> None:
         try:
             proc = subprocess.Popen(
@@ -412,6 +459,8 @@ class ChessUIComponent(UIComponent):
 
     def update_status(self, turn_text: str, status_text: str = ""):
         """Update displayed status labels."""
+        if self._promotion_layout_changed():
+            self._build_ui()
         if self._mode_label is not None:
             self._mode_label.text = self._mode_text()
         hud_refreshed = self._refresh_hud_info()
@@ -459,6 +508,15 @@ class ChessUIComponent(UIComponent):
         if self._game_controller is None:
             return {"ok": False, "error": "No game controller"}
         return self._game_controller.get_mcp_state()
+
+    def _promotion_info(self) -> dict[str, object]:
+        if self._game_controller is None:
+            return {"pending": False}
+        return self._game_controller.get_pending_promotion_info()
+
+    def _promotion_layout_changed(self) -> bool:
+        pending = bool(self._promotion_info()["pending"])
+        return pending != self._promotion_panel_visible
 
     def _refresh_hud_info(self) -> bool:
         if self._turn_label is None or self._status_label is None:
@@ -588,6 +646,9 @@ class ChessUIComponent(UIComponent):
             return f"Draw: {reason}"
         if status == "check":
             return "Check!"
+        promotion = info.get("pending_promotion")
+        if isinstance(promotion, dict) and bool(promotion["pending"]):
+            return ChessUIComponent._promotion_title(promotion)
         if bool(info["game_over"]):
             return "Game over"
         hint = info.get("selection_hint")
@@ -610,3 +671,16 @@ class ChessUIComponent(UIComponent):
         if len(path) <= 34:
             return path
         return f"...{path[-31:]}"
+
+    @staticmethod
+    def _promotion_title(info: dict[str, object]) -> str:
+        from_sq = str(info["from"])
+        to_sq = str(info["to"])
+        return f"Promote {from_sq}-{to_sq}"
+
+    @staticmethod
+    def _promotion_choices(info: dict[str, object]) -> list[dict[str, object]]:
+        choices = info["choices"]
+        if not isinstance(choices, list):
+            return []
+        return [choice for choice in choices if isinstance(choice, dict)]

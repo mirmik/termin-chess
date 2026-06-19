@@ -413,15 +413,14 @@ Minimum polish target:
 - HUD includes a compact board orientation hint.
 - Menu panels use consistent spacing, sizing, and colors.
 - Text is readable at common desktop resolutions.
-- Promotion currently uses explicit auto-queen behavior and reports that choice in
-  the HUD while a promotion move is selected.
+- Promotion chooser appears in the HUD after a human selects a promotion target
+  square.
 
 Nice-to-have later:
 
 - Coordinate labels around the board.
 - Full board-edge coordinate labels in the 3D scene.
 - Move list / PGN sidebar.
-- Promotion chooser UI for rook/bishop/knight underpromotion.
 - Optional board flip when human plays black.
 - Simple piece movement animation.
 
@@ -472,11 +471,11 @@ The game should not silently ignore these cases.
 
 - Add last move highlight.
 - Add check-square highlight.
-- Report selected-piece move count and auto-queen promotion hint in the HUD.
+- Report selected-piece move count and promotion target hint in the HUD.
+- Add HUD promotion chooser for queen/rook/bishop/knight.
 - Add captured-piece summary and compact board orientation hint to the HUD.
 - Improve status and game-over panels.
 - Add PGN/move list if UI widgets make this practical.
-- Add promotion chooser UI if underpromotion becomes a user-facing requirement.
 
 ### Phase 5: Verification
 

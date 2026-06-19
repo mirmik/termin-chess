@@ -109,13 +109,24 @@ def test_hud_status_text_formats_game_over_results() -> None:
     selection = {
         "status": "playing",
         "game_over": False,
-        "selection_hint": "Promotion: queen will be selected automatically.",
+        "selection_hint": "Promotion: choose target square, then pick a piece.",
+    }
+    promotion = {
+        "status": "playing",
+        "game_over": False,
+        "pending_promotion": {
+            "pending": True,
+            "from": "e7",
+            "to": "e8",
+            "choices": [],
+        },
     }
 
     assert ChessUIComponent._status_text(checkmate) == "Checkmate! White wins!"
     assert ChessUIComponent._status_text(stalemate) == "Stalemate! Draw."
     assert ChessUIComponent._status_text(insufficient) == "Draw: insufficient material"
-    assert ChessUIComponent._status_text(selection) == "Promotion: queen will be selected automatically."
+    assert ChessUIComponent._status_text(selection) == "Promotion: choose target square, then pick a piece."
+    assert ChessUIComponent._status_text(promotion) == "Promote e7-e8"
 
 
 def test_copy_pgn_uses_controller_pgn_payload() -> None:

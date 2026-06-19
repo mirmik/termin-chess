@@ -50,6 +50,13 @@ GAME_MODE_ENV_VALUES: dict[str, GameMode] = {
     "bot": GameMode.HUMAN_VS_BOT,
 }
 
+PROMOTION_CHOICES: tuple[tuple[int, str], ...] = (
+    (chess.QUEEN, "Queen"),
+    (chess.ROOK, "Rook"),
+    (chess.BISHOP, "Bishop"),
+    (chess.KNIGHT, "Knight"),
+)
+
 
 class ChessGameController(InputComponent):
 
@@ -69,6 +76,7 @@ class ChessGameController(InputComponent):
         self._highlight_check: TcMaterial | None = None
         self._last_move_squares: tuple[str, str] | None = None
         self._check_square: str | None = None
+        self._pending_promotion: dict[str, object] | None = None
         self._board_entity = None
         self._units_entity = None
         self._bot_enabled = True
@@ -256,6 +264,11 @@ class ChessGameController(InputComponent):
     def get_board(self):
         return self._board
 
+    def get_pending_promotion_info(self) -> dict[str, object]:
+        if self._pending_promotion is None:
+            return {"pending": False}
+        return dict(self._pending_promotion)
+
     def is_game_started(self) -> bool:
         return self._game_started
 
@@ -284,6 +297,34 @@ class ChessGameController(InputComponent):
 
     def start_agent_vs_agent(self) -> None:
         self._start_selected_mode(GameMode.AGENT_VS_AGENT)
+
+    def choose_promotion(self, piece_name: str) -> None:
+        pending = self._pending_promotion
+        if pending is None:
+            print(f"[Chess] promotion choice '{piece_name}' ignored: no pending promotion")
+            return
+
+        normalized = piece_name.strip().lower()
+        for choice in pending["choices"]:
+            if not isinstance(choice, dict):
+                continue
+            if str(choice["piece"]) != normalized:
+                continue
+            move = chess.Move.from_uci(str(choice["uci"]))
+            print(f"[Chess] promotion choice selected: {normalized} ({move.uci()})")
+            self._pending_promotion = None
+            self._execute_move(move, actor=MoveActor.human())
+            return
+
+        print(f"[Chess] invalid promotion choice '{piece_name}'")
+
+    def cancel_promotion(self) -> None:
+        if self._pending_promotion is None:
+            return
+        print("[Chess] promotion selection cancelled")
+        self._pending_promotion = None
+        self._clear_selection()
+        self._notify_ui()
 
     def return_to_start_menu(self) -> None:
         print("[Chess] Returning to start menu")
@@ -344,6 +385,7 @@ class ChessGameController(InputComponent):
                 "legal_moves": legal_moves,
                 "selected_legal_moves": self._selected_move_payloads(),
                 "selection_hint": self._selection_hint(),
+                "pending_promotion": self.get_pending_promotion_info(),
                 "last_move": self._last_mcp_move_event(),
                 "last_move_squares": list(self._last_move_squares) if self._last_move_squares is not None else [],
                 "check_square": self._check_square,
@@ -459,6 +501,7 @@ class ChessGameController(InputComponent):
             print("[Chess] === NEW GAME ===")
             self._last_move_squares = None
             self._check_square = None
+            self._pending_promotion = None
             self._clear_selection()
             self._board = chess.Board()
             self._state = STATE_IDLE
@@ -813,7 +856,12 @@ class ChessGameController(InputComponent):
                 self._select_piece(square)
                 return
 
-            move = self._find_valid_move(self._selected_square, square)
+            matching_moves = self._matching_valid_moves(self._selected_square, square)
+            if self._has_promotion_choices(matching_moves):
+                self._set_pending_promotion(self._selected_square, square, matching_moves)
+                return
+
+            move = self._preferred_move(matching_moves)
             if move:
                 print(f"[Chess]   -> valid move found: {move.uci()}")
                 self._execute_move(move, actor=MoveActor.human())
@@ -832,18 +880,52 @@ class ChessGameController(InputComponent):
         print(f"[Chess]   selected {square}, valid moves ({len(self._valid_moves)}): {move_strs}")
         self._apply_highlight()
 
-    def _find_valid_move(self, from_sq: str, to_sq: str) -> chess.Move | None:
+    def _matching_valid_moves(self, from_sq: str | None, to_sq: str) -> list[chess.Move]:
+        if from_sq is None:
+            return []
         matching_moves = []
         for move in self._valid_moves:
             if (chess.square_name(move.from_square) == from_sq and
                     chess.square_name(move.to_square) == to_sq):
                 matching_moves.append(move)
+        return matching_moves
 
+    @staticmethod
+    def _has_promotion_choices(moves: list[chess.Move]) -> bool:
+        return len(moves) > 1 and any(move.promotion is not None for move in moves)
+
+    @staticmethod
+    def _preferred_move(matching_moves: list[chess.Move]) -> chess.Move | None:
         for move in matching_moves:
             if move.promotion == chess.QUEEN:
-                print(f"[Chess]   promotion target {to_sq}: auto-selecting queen")
                 return move
         return matching_moves[0] if matching_moves else None
+
+    def _set_pending_promotion(self, from_sq: str | None, to_sq: str, moves: list[chess.Move]) -> None:
+        if from_sq is None:
+            return
+        choices = []
+        by_piece = {move.promotion: move for move in moves if move.promotion is not None}
+        for piece_type, label in PROMOTION_CHOICES:
+            move = by_piece.get(piece_type)
+            if move is None:
+                continue
+            choices.append(
+                {
+                    "piece": chess.piece_name(piece_type),
+                    "label": label,
+                    "uci": move.uci(),
+                    "san": self._board.san(move),
+                }
+            )
+        self._pending_promotion = {
+            "pending": True,
+            "from": from_sq,
+            "to": to_sq,
+            "choices": choices,
+        }
+        print(f"[Chess] promotion pending: {from_sq}->{to_sq}, choices={[choice['piece'] for choice in choices]}")
+        self._notify_ui()
 
     def _apply_highlight(self):
         self._refresh_board_highlights()
@@ -897,6 +979,7 @@ class ChessGameController(InputComponent):
 
     def _clear_selection(self):
         print(f"[Chess]   clearing selection (was: {self._selected_square})")
+        self._pending_promotion = None
         self._selected_square = None
         self._valid_moves = []
         self._state = STATE_IDLE
@@ -1085,11 +1168,13 @@ class ChessGameController(InputComponent):
     def _selection_hint(self) -> str | None:
         if self._selected_square is None:
             return None
+        if self._pending_promotion is not None:
+            return f"Choose promotion for {self._pending_promotion['from']}-{self._pending_promotion['to']}"
         if not self._valid_moves:
             return f"No legal moves from {self._selected_square}"
         for move in self._valid_moves:
             if move.promotion:
-                return "Promotion: queen will be selected automatically."
+                return "Promotion: choose target square, then pick a piece."
         count = len({chess.square_name(move.to_square) for move in self._valid_moves})
         return f"{count} legal move{'s' if count != 1 else ''} from {self._selected_square}"
 

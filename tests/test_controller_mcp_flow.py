@@ -135,6 +135,8 @@ def make_headless_controller() -> object:
     controller._mcp_max_events = 200
     controller._mcp_server_stopping = False
     controller._mcp_server = None
+    controller._ui_component = None
+    controller._pending_promotion = None
     controller._session = session_module.ChessGameSession()
     controller._session.configure_agent_vs_agent()
     return controller
@@ -244,7 +246,7 @@ def test_board_highlight_layers_keep_last_move_check_selection_and_valid_moves()
     assert controller._tiles["a1"].renderer.material == "base-a1"
 
 
-def test_selected_promotion_state_reports_auto_queen_hint() -> None:
+def test_selected_promotion_state_reports_piece_choice_hint() -> None:
     controller = make_headless_controller()
     controller._board = chess.Board("k7/4P3/8/8/8/8/8/K7 w - - 0 1")
     controller._selected_square = "e7"
@@ -256,10 +258,52 @@ def test_selected_promotion_state_reports_auto_queen_hint() -> None:
     state = controller.get_mcp_state()
 
     assert state["selected_square"] == "e7"
-    assert state["selection_hint"] == "Promotion: queen will be selected automatically."
+    assert state["selection_hint"] == "Promotion: choose target square, then pick a piece."
+    assert state["pending_promotion"] == {"pending": False}
     assert {"queen", "rook", "bishop", "knight"}.issubset(
         {str(move["promotion"]) for move in state["selected_legal_moves"]}
     )
+
+
+def test_human_promotion_click_waits_for_piece_choice() -> None:
+    controller = make_headless_controller()
+    controller._session.configure_local_sandbox()
+    controller._board = chess.Board("k7/4P3/8/8/8/8/8/K7 w - - 0 1")
+
+    controller._select_piece("e7")
+    controller._handle_click("e8")
+
+    pending = controller.get_pending_promotion_info()
+    assert pending["pending"] is True
+    assert pending["from"] == "e7"
+    assert pending["to"] == "e8"
+    assert {str(choice["piece"]) for choice in pending["choices"]} == {"queen", "rook", "bishop", "knight"}
+    assert controller._board.piece_at(chess.E7) == chess.Piece(chess.PAWN, chess.WHITE)
+
+
+def test_choose_promotion_executes_selected_piece_move() -> None:
+    controller = make_headless_controller()
+    executed: list[str] = []
+    controller._pending_promotion = {
+        "pending": True,
+        "from": "e7",
+        "to": "e8",
+        "choices": [
+            {"piece": "queen", "label": "Queen", "uci": "e7e8q", "san": "e8=Q+"},
+            {"piece": "rook", "label": "Rook", "uci": "e7e8r", "san": "e8=R+"},
+        ],
+    }
+
+    def execute(move: chess.Move, trigger_bot: bool = True, actor: object = MoveActor.human()) -> bool:
+        executed.append(move.uci())
+        return True
+
+    controller._execute_move = execute
+
+    controller.choose_promotion("rook")
+
+    assert executed == ["e7e8r"]
+    assert controller._pending_promotion is None
 
 
 def test_captured_summary_reports_missing_pieces_by_capturing_side() -> None:
