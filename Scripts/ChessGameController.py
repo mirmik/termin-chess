@@ -6,8 +6,8 @@ import random
 
 import chess
 
-from termin.visualization.core.python_component import InputComponent
-from termin.visualization.core.input_events import MouseButton, Action
+from tcbase import Action, MouseButton
+from termin.input import InputComponent
 from termin.collision import CollisionWorld
 from termin.materials import TcMaterial
 

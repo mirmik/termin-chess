@@ -5,9 +5,7 @@ from __future__ import annotations
 import subprocess
 
 from termin.visualization.ui.widgets.component import UIComponent
-from termin.visualization.ui.widgets.containers import Panel, VStack
-from termin.visualization.ui.widgets.basic import Button, Label, Separator
-from termin.visualization.ui.widgets.units import px, pct
+from tcgui.widgets import Button, Label, Panel, Separator, VStack, px
 
 print("[ChessUI] ChessUIComponent module loaded.")
 

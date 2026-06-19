@@ -5,7 +5,7 @@ World position: (i*W, j*W, 0), W=2
 Chess mapping: i=-4 -> file 'a', j=-4 -> rank 1
 """
 
-from termin.geombase._geom_native import Vec3
+from termin.geombase import Vec3
 
 W = 2
 

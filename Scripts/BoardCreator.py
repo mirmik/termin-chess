@@ -4,9 +4,9 @@ BoardCreatorComponent component.
 
 from __future__ import annotations
 
-from termin.visualization.core.python_component import PythonComponent
+from termin.scene import PythonComponent
 from termin.inspect import InspectField
-from termin.geombase._geom_native import Vec3, Vec4
+from termin.geombase import Vec3, Vec4
 from termin.mesh import TcMesh
 from termin.materials import TcMaterial
 
