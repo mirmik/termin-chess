@@ -20,6 +20,7 @@ from Scripts.chess_coords import (
     entity_to_square,
     tile_name_to_square,
 )
+from Scripts.ChessGameSession import ChessGameSession, MoveActor, side_name
 
 print("[Chess] ChessGameController module loaded.")
 
@@ -56,6 +57,8 @@ class ChessGameController(InputComponent):
         self._bot_enabled = True
         self._bot_color = chess.BLACK
         self._bot_is_moving = False
+        self._game_mcp_enabled = False
+        self._session = ChessGameSession()
         self._mcp_server = None
         self._mcp_state_lock = threading.RLock()
         self._mcp_commands: queue.Queue[dict[str, object]] = queue.Queue()
@@ -95,13 +98,20 @@ class ChessGameController(InputComponent):
         from Scripts.ChessMcpServer import chess_mcp_enabled
 
         mcp_enabled = chess_mcp_enabled()
+        self._game_mcp_enabled = mcp_enabled
         bot_env = os.environ.get("CHESS_BOT_ENABLED")
         if bot_env is not None:
             self._bot_enabled = bot_env.strip().lower() in {"1", "true", "yes", "on"}
         elif mcp_enabled:
             self._bot_enabled = False
 
+        self._session.configure_runtime(
+            mcp_enabled=mcp_enabled,
+            bot_enabled=self._bot_enabled,
+            bot_color=self._bot_color,
+        )
         print(f"[Chess] Bot enabled: {self._bot_enabled}")
+        print(f"[Chess] Game mode: {self._session.mode.value}, owners={self._session.side_owners_payload()}")
 
     def _start_mcp_server(self) -> None:
         from Scripts.ChessMcpServer import (
@@ -169,6 +179,9 @@ class ChessGameController(InputComponent):
                 "stalemate": self._board.is_stalemate(),
                 "game_over": self._board.is_game_over(),
                 "selected_square": self._selected_square,
+                "mode": self._session.mode.value,
+                "side_owners": self._session.side_owners_payload(),
+                "mcp_side": side_name(self._session.mcp_side) if self._session.mcp_side is not None else None,
                 "bot_enabled": self._bot_enabled,
                 "bot_color": "white" if self._bot_color == chess.WHITE else "black",
                 "next_event_id": self._mcp_next_event_id,
@@ -316,6 +329,12 @@ class ChessGameController(InputComponent):
             return {"ok": True, "state": self.get_mcp_state()}
         if kind == "set_bot_enabled":
             self._bot_enabled = bool(command.get("enabled", False))
+            if self._bot_enabled:
+                self._session.configure_human_vs_bot(bot_color=self._bot_color)
+            elif self._game_mcp_enabled:
+                self._session.configure_human_vs_agent(agent_side=chess.BLACK)
+            else:
+                self._session.configure_local_sandbox()
             self._record_mcp_event(
                 {
                     "type": "bot",
@@ -332,8 +351,6 @@ class ChessGameController(InputComponent):
         with self._mcp_state_lock:
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
                 return {"ok": False, "error": "game is over", "state": self.get_mcp_state()}
-            if self._is_bot_turn():
-                return {"ok": False, "error": "built-in bot owns the current turn", "state": self.get_mcp_state()}
 
             move = self._parse_mcp_move(move_text)
             if move is None:
@@ -343,7 +360,18 @@ class ChessGameController(InputComponent):
                     "state": self.get_mcp_state(),
                 }
 
-            self._execute_move(move, actor="mcp")
+            actor = self._session.actor_for_mcp_request()
+            authorization = self._session.can_make_move(
+                actor=actor,
+                board=self._board,
+                game_state=self._state,
+                move=move,
+            )
+            if not authorization.ok:
+                print(f"[ChessMCP] rejected move {move.uci()}: {authorization.error}")
+                return {"ok": False, "error": authorization.error, "state": self.get_mcp_state()}
+
+            self._execute_move(move, actor=actor)
             return {"ok": True, "move": move.uci(), "state": self.get_mcp_state()}
 
     def _parse_mcp_move(self, move_text: str) -> chess.Move | None:
@@ -472,8 +500,13 @@ class ChessGameController(InputComponent):
         if self._state == STATE_GAME_OVER:
             print("[Chess] Game is over, ignoring click.")
             return
-        if self._is_bot_turn():
-            print("[Chess] Bot turn, ignoring player click.")
+        authorization = self._session.can_move_now(
+            actor=MoveActor.human(),
+            board=self._board,
+            game_state=self._state,
+        )
+        if not authorization.ok:
+            print(f"[Chess] Player click ignored: {authorization.error}")
             return
 
         print(f"[Chess] --- LEFT CLICK at pixel ({event.x:.0f}, {event.y:.0f}) ---")
@@ -537,8 +570,13 @@ class ChessGameController(InputComponent):
         self._handle_click(square)
 
     def _handle_click(self, square: str):
-        if self._is_bot_turn():
-            print(f"[Chess]   ignoring click on {square}: bot turn")
+        authorization = self._session.can_move_now(
+            actor=MoveActor.human(),
+            board=self._board,
+            game_state=self._state,
+        )
+        if not authorization.ok:
+            print(f"[Chess]   ignoring click on {square}: {authorization.error}")
             return
 
         sq_index = chess.parse_square(square)
@@ -562,7 +600,7 @@ class ChessGameController(InputComponent):
             move = self._find_valid_move(self._selected_square, square)
             if move:
                 print(f"[Chess]   -> valid move found: {move.uci()}")
-                self._execute_move(move, actor="user")
+                self._execute_move(move, actor=MoveActor.human())
             else:
                 print(f"[Chess]   -> {square} is not a valid move from {self._selected_square}, clearing")
                 self._clear_selection()
@@ -630,8 +668,18 @@ class ChessGameController(InputComponent):
         self._valid_moves = []
         self._state = STATE_IDLE
 
-    def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: str = "user"):
+    def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: MoveActor = MoveActor.human()) -> bool:
         with self._mcp_state_lock:
+            authorization = self._session.can_make_move(
+                actor=actor,
+                board=self._board,
+                game_state=self._state,
+                move=move,
+            )
+            if not authorization.ok:
+                print(f"[Chess] rejected move {move.uci()} from {actor.event_label()}: {authorization.error}")
+                return False
+
             from_sq = chess.square_name(move.from_square)
             to_sq = chess.square_name(move.to_square)
             san = self._board.san(move)
@@ -657,7 +705,7 @@ class ChessGameController(InputComponent):
             self._record_mcp_event(
                 {
                     "type": "move",
-                    "actor": actor,
+                    "actor": actor.event_label(),
                     "uci": move.uci(),
                     "san": san,
                     "from": from_sq,
@@ -682,13 +730,14 @@ class ChessGameController(InputComponent):
             self._notify_ui()
             if trigger_bot:
                 self._maybe_make_bot_move()
+            return True
 
     def _is_bot_turn(self) -> bool:
-        return (
-            self._bot_enabled and
-            self._board.turn == self._bot_color and
-            self._state != STATE_GAME_OVER
-        )
+        return self._bot_enabled and self._session.can_move_now(
+            actor=MoveActor.bot(),
+            board=self._board,
+            game_state=self._state,
+        ).ok
 
     def _maybe_make_bot_move(self) -> None:
         if not self._is_bot_turn():
@@ -704,7 +753,7 @@ class ChessGameController(InputComponent):
                 print("[ChessBot] No legal move found.")
                 return
             print(f"[ChessBot] Selected move: {move.uci()}")
-            self._execute_move(move, trigger_bot=False, actor="bot")
+            self._execute_move(move, trigger_bot=False, actor=MoveActor.bot())
         finally:
             self._bot_is_moving = False
 
