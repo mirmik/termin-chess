@@ -11358,19 +11358,6 @@
               "min_radius": 1.0,
               "max_radius": 100.0
             }
-          },
-          {
-            "type": "CameraViewportComponent",
-            "data": {
-              "target_display": "Display 0",
-              "rect_x": 0.0,
-              "rect_y": 0.0,
-              "rect_w": 1.0,
-              "rect_h": 1.0,
-              "depth": 0.0,
-              "input_manager_type": "simple",
-              "layer_mask": "0xffffffffffffffff"
-            }
           }
         ]
       },
@@ -11652,9 +11639,18 @@
         ]
       }
     },
-    "selected_entity": "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
+    "selected_entity": "62dc098a-2260-42c4-a534-f8b8542cb81b",
     "expanded_entities": [
-      "ba5ebc38-adb1-4245-aebb-ea7cca4882f1"
+      "549734b2-191b-4016-8914-5d687ea1b7a3",
+      "64a01777-5d57-4709-abd2-9a1caaacf544",
+      "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
+      "52cd6dff-f4c4-4716-b33a-75c9c0473b52",
+      "90274b68-9358-4d05-97bc-8bd1f8ce824a",
+      "9bf04a90-b4f1-4628-ab1c-f1eb632c3df4",
+      "53895ce7-e1da-4cb8-9677-898e450cd8e0",
+      "62dc098a-2260-42c4-a534-f8b8542cb81b",
+      "4ac2ce0c-f821-4605-8cd6-44040724ab67",
+      "1e357e19-bade-4def-8c7d-860d43141dc0"
     ]
   }
 }
