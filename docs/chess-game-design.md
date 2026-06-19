@@ -113,7 +113,8 @@ Local Sandbox replaces the current always-live scene behavior and is useful when
 debugging board geometry, clicking, piece movement, or UI without an agent.
 
 Current implementation: the menu button starts a fresh local sandbox game with
-both sides assigned to the local human and no MCP server.
+both sides assigned to the local human and no MCP server. The same mode can be
+forced for smoke/manual runs with `CHESS_GAME_MODE=local_sandbox`.
 
 ## Connection Panel
 

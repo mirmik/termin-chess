@@ -75,6 +75,7 @@ session_module = sys.modules["Scripts.ChessGameSession"]
 ChessGameController = controller_module.ChessGameController
 STATE_GAME_OVER = controller_module.STATE_GAME_OVER
 STATE_IDLE = controller_module.STATE_IDLE
+GameMode = session_module.GameMode
 MoveActor = session_module.MoveActor
 
 
@@ -164,3 +165,29 @@ def test_controller_reset_hook_clears_mcp_session_state() -> None:
     controller._reset_mcp_session_state()
 
     assert server.reset_count == 1
+
+
+def test_local_sandbox_controller_mode_disables_mcp_and_allows_human_board_input() -> None:
+    controller = make_headless_controller()
+
+    controller._configure_requested_game_mode(GameMode.LOCAL_SANDBOX)
+    state = controller.get_mcp_state()
+    connection_info = controller.get_connection_panel_info()
+    human_authorization = controller._session.can_make_move(
+        actor=MoveActor.human(),
+        board=controller._board,
+        game_state=controller._state,
+        move=chess.Move.from_uci("e2e4"),
+    )
+
+    assert controller.current_mode() == "local_sandbox"
+    assert controller._game_mcp_enabled is False
+    assert controller._bot_enabled is False
+    assert state["side_owners"] == {"white": "human", "black": "human"}
+    assert state["human_sides"] == ["white", "black"]
+    assert state["active_mcp_sides"] == []
+    assert state["board_input_enabled"] is True
+    assert state["board_input_error"] is None
+    assert connection_info["ok"] is False
+    assert connection_info["error"] == "MCP server is not running"
+    assert human_authorization.ok is True
