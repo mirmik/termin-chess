@@ -1,3 +1,6 @@
 {
-  "render_sync_mode": "none"
+  "render_sync_mode": "none",
+  "ignored_resource_paths": [
+    "tests"
+  ]
 }
