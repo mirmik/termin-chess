@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import errno
 import json
 import os
+import pty
 import signal
 import subprocess
+import threading
 import time
 import urllib.request
 from pathlib import Path
@@ -50,11 +53,13 @@ def tool_payload(response: dict[str, object]) -> dict[str, object]:
     return structured
 
 
-def wait_for_session_file(path: Path) -> dict[str, object]:
+def wait_for_session_file(path: Path, process: subprocess.Popen[str]) -> dict[str, object]:
     deadline = time.monotonic() + 20.0
     while time.monotonic() < deadline:
         if path.exists():
             return json.loads(path.read_text(encoding="utf-8"))
+        if process.poll() is not None:
+            break
         time.sleep(0.1)
     raise TimeoutError(f"session file was not written: {path}")
 
@@ -62,8 +67,17 @@ def wait_for_session_file(path: Path) -> dict[str, object]:
 class PlayProcess:
     def __init__(self, *, mode: str, port: int, session_file: Path) -> None:
         self.session_file = session_file
+        self.log_file = session_file.with_suffix(session_file.suffix + ".log")
         self.white_token = f"white-{mode}-token"
         self.black_token = f"black-{mode}-token"
+        self.output = ""
+        self._output_chunks: list[str] = []
+        self._stopped = False
+        session_file.unlink(missing_ok=True)
+        self.log_file.unlink(missing_ok=True)
+        self._pty_master_fd, pty_slave_fd = pty.openpty()
+        self._reader_thread = threading.Thread(target=self._read_output, name=f"termin-play-{mode}-log")
+        self._reader_thread.start()
         env = os.environ.copy()
         env.update(
             {
@@ -75,33 +89,83 @@ class PlayProcess:
                 "CHESS_MCP_SESSION_FILE": str(session_file),
             }
         )
-        session_file.unlink(missing_ok=True)
-        self.process = subprocess.Popen(
-            [str(TERMIN_BIN), "play", "."],
-            cwd=PROJECT_ROOT,
-            env=env,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.STDOUT,
-            start_new_session=True,
-        )
-        self.session = wait_for_session_file(session_file)
+        try:
+            self.process = subprocess.Popen(
+                [str(TERMIN_BIN), "play", "."],
+                cwd=PROJECT_ROOT,
+                env=env,
+                stdout=pty_slave_fd,
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+        finally:
+            os.close(pty_slave_fd)
+        try:
+            self.session = wait_for_session_file(session_file, self.process)
+        except Exception as exc:
+            self.stop(assert_clean=False)
+            self._skip_if_backend_unavailable()
+            raise AssertionError(f"session file was not written; player output:\n{self.output[-4000:]}") from exc
 
-    def stop(self) -> None:
-        try:
-            os.killpg(self.process.pid, signal.SIGTERM)
-        except ProcessLookupError:
+    def _read_output(self) -> None:
+        while True:
+            try:
+                data = os.read(self._pty_master_fd, 4096)
+            except OSError as exc:
+                if exc.errno in (errno.EIO, errno.EBADF):
+                    return
+                raise
+            if not data:
+                return
+            self._output_chunks.append(data.decode("utf-8", errors="replace"))
+
+    def stop(self, *, assert_clean: bool = True) -> None:
+        if self._stopped:
             return
+        self._stopped = True
         try:
-            self.process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            os.killpg(self.process.pid, signal.SIGKILL)
-            self.process.wait(timeout=5)
+            if self.process.poll() is None:
+                try:
+                    os.killpg(self.process.pid, signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
+            try:
+                self.process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                os.killpg(self.process.pid, signal.SIGKILL)
+                self.process.wait(timeout=5)
+        finally:
+            self._reader_thread.join(timeout=2)
+            try:
+                os.close(self._pty_master_fd)
+            except OSError:
+                pass
+            self._reader_thread.join(timeout=2)
+            self.output = "".join(self._output_chunks)
+            self.log_file.write_text(self.output, encoding="utf-8")
+            self.session_file.unlink(missing_ok=True)
+
+        if assert_clean:
+            self._assert_no_fatal_python_shutdown()
+
+    def _assert_no_fatal_python_shutdown(self) -> None:
+        forbidden_fragments = (
+            "Fatal Python error",
+            "PyThreadState_Get",
+            "Python runtime state: finalizing",
+        )
+        for fragment in forbidden_fragments:
+            assert fragment not in self.output, self.output[-4000:]
+
+    def _skip_if_backend_unavailable(self) -> None:
+        if "[PlayerRuntime] Failed to create backend window" in self.output:
+            pytest.skip("termin play backend window is unavailable in this subprocess environment")
 
     def __enter__(self) -> "PlayProcess":
         return self
 
     def __exit__(self, exc_type: object, exc_value: object, traceback: object) -> None:
-        self.stop()
+        self.stop(assert_clean=exc_type is None)
 
 
 def test_play_human_vs_agent_black_waits_for_human(tmp_path: Path) -> None:

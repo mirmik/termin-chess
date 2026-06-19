@@ -81,6 +81,7 @@ class ChessGameController(InputComponent):
         self._mcp_events: list[dict[str, object]] = []
         self._mcp_next_event_id = 1
         self._mcp_max_events = 200
+        self._mcp_server_stopping = False
         self._ui_refresh_accum = 0.0
 
     def start(self) -> None:
@@ -213,6 +214,8 @@ class ChessGameController(InputComponent):
         if self._mcp_server is not None:
             return
 
+        with self._mcp_condition:
+            self._mcp_server_stopping = False
         server = ChessGameMcpServer(self, load_chess_mcp_config())
         if server.start():
             self._mcp_server = server
@@ -221,6 +224,11 @@ class ChessGameController(InputComponent):
         if self._mcp_server is not None:
             self._mcp_server.stop()
             self._mcp_server = None
+
+    def notify_mcp_server_stopping(self) -> None:
+        with self._mcp_condition:
+            self._mcp_server_stopping = True
+            self._mcp_condition.notify_all()
 
     def _find_ui(self):
         """Find ChessUIComponent in scene for status updates."""
@@ -415,7 +423,7 @@ class ChessGameController(InputComponent):
                 import time
 
                 end_time = time.monotonic() + timeout
-                while remaining > 0:
+                while remaining > 0 and not self._mcp_server_stopping:
                     self._mcp_condition.wait(timeout=remaining)
                     event = matching_event()
                     if event is not None:
@@ -426,6 +434,14 @@ class ChessGameController(InputComponent):
             state = self.get_mcp_state(caller_side=caller_side)
             return {"ok": True, "event": event, "waiting_for": state["turn_owner"], "state": state}
         state = self.get_mcp_state(caller_side=caller_side)
+        if self._mcp_server_stopping:
+            return {
+                "ok": False,
+                "shutdown": True,
+                "error": "MCP server is shutting down",
+                "waiting_for": state["turn_owner"],
+                "state": state,
+            }
         return {"ok": False, "timeout": True, "waiting_for": state["turn_owner"], "state": state}
 
     def new_game(self, *, trigger_bot: bool = True):

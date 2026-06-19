@@ -71,7 +71,8 @@ class McpSeatStatus:
 
 class ChessMcpHttpServer(ThreadingHTTPServer):
     allow_reuse_address = True
-    daemon_threads = True
+    daemon_threads = False
+    block_on_close = True
 
 
 def chess_mcp_enabled() -> bool:
@@ -112,6 +113,7 @@ class ChessGameMcpServer:
         self._resource_subscriptions: set[str] = set()
         self._stop_lock = threading.Lock()
         self._stopped = False
+        self._atexit_registered = False
         self._previous_signal_handlers: dict[int, object] = {}
         self._started_at = time.time()
         self._session_id = secrets.token_hex(8)
@@ -142,10 +144,10 @@ class ChessGameMcpServer:
         self._thread = threading.Thread(
             target=self._httpd.serve_forever,
             name="chess-game-mcp",
-            daemon=True,
+            daemon=False,
         )
         self._thread.start()
-        atexit.register(self.stop)
+        self._register_atexit()
         self._install_signal_handlers()
         self._write_session_file()
         print(f"[ChessMCP] listening on {self.url}")
@@ -157,19 +159,36 @@ class ChessGameMcpServer:
             if self._stopped:
                 return
             self._stopped = True
+            self._unregister_atexit()
+            self._restore_signal_handlers()
+            self._controller.notify_mcp_server_stopping()
+            self._remove_session_file()
 
             server = self._httpd
-            if server is not None:
-                server.shutdown()
-                server.server_close()
-                self._httpd = None
-            if self._thread is not None:
-                self._thread.join(timeout=2.0)
-                self._thread = None
+            thread = self._thread
+            self._httpd = None
+            self._thread = None
+
+        if server is not None:
             try:
-                self._config.session_file.unlink(missing_ok=True)
-            except OSError as exc:
-                print(f"[ChessMCP] failed to remove session file: {exc}")
+                server.shutdown()
+            except Exception as exc:
+                print(f"[ChessMCP] failed to shutdown HTTP server: {exc}")
+            try:
+                server.server_close()
+            except Exception as exc:
+                print(f"[ChessMCP] failed to close HTTP server: {exc}")
+
+        if thread is not None and thread is not threading.current_thread():
+            thread.join(timeout=2.0)
+            if thread.is_alive():
+                print("[ChessMCP] HTTP server thread did not stop within 2 seconds")
+
+    def _remove_session_file(self) -> None:
+        try:
+            self._config.session_file.unlink(missing_ok=True)
+        except OSError as exc:
+            print(f"[ChessMCP] failed to remove session file: {exc}")
 
     def reset_session_state(self) -> None:
         """Clear live seat status for a new in-game chess session."""
@@ -220,7 +239,29 @@ class ChessGameMcpServer:
             "seats": seats,
         }
 
+    def _register_atexit(self) -> None:
+        if self._atexit_registered:
+            return
+        atexit.register(self.stop)
+        self._atexit_registered = True
+
+    def _unregister_atexit(self) -> None:
+        if not self._atexit_registered:
+            return
+        try:
+            atexit.unregister(self.stop)
+        except ValueError:
+            pass
+        except Exception as exc:
+            print(f"[ChessMCP] failed to unregister atexit cleanup: {exc}")
+        finally:
+            self._atexit_registered = False
+
     def _install_signal_handlers(self) -> None:
+        if threading.current_thread() is not threading.main_thread():
+            print("[ChessMCP] signal handlers are only installed from the main thread")
+            return
+
         for signum in (signal.SIGINT, signal.SIGTERM):
             previous = signal.getsignal(signum)
             self._previous_signal_handlers[signum] = previous
@@ -235,7 +276,20 @@ class ChessGameMcpServer:
                     return
                 raise SystemExit(128 + received)
 
-            signal.signal(signum, handler)
+            try:
+                signal.signal(signum, handler)
+            except ValueError as exc:
+                print(f"[ChessMCP] failed to install signal handler {signum}: {exc}")
+
+    def _restore_signal_handlers(self) -> None:
+        if not self._previous_signal_handlers:
+            return
+        for signum, previous in list(self._previous_signal_handlers.items()):
+            try:
+                signal.signal(signum, previous)
+            except ValueError as exc:
+                print(f"[ChessMCP] failed to restore signal handler {signum}: {exc}")
+        self._previous_signal_handlers.clear()
 
     def _write_session_file(self) -> None:
         state = self._controller.get_mcp_state()

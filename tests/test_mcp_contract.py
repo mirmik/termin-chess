@@ -17,6 +17,7 @@ ChessMcpConfig = mcp_module.ChessMcpConfig
 class FakeController:
     def __init__(self) -> None:
         self.calls: list[tuple[str, bool | None]] = []
+        self.shutdown_notifications = 0
 
     def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
         self.calls.append(("get_mcp_state", caller_side))
@@ -104,8 +105,35 @@ class FakeController:
     def get_mcp_events(self) -> dict[str, object]:
         return {"ok": True, "events": [], "next_event_id": 1}
 
+    def notify_mcp_server_stopping(self) -> None:
+        self.shutdown_notifications += 1
+
+
+class FakeHttpServer:
+    def __init__(self) -> None:
+        self.shutdown_called = False
+        self.server_close_called = False
+
+    def shutdown(self) -> None:
+        self.shutdown_called = True
+
+    def server_close(self) -> None:
+        self.server_close_called = True
+
+
+class FakeThread:
+    def __init__(self) -> None:
+        self.join_timeout: float | None = None
+
+    def join(self, timeout: float | None = None) -> None:
+        self.join_timeout = timeout
+
+    def is_alive(self) -> bool:
+        return False
+
 
 def make_server(session_file: Path) -> ChessGameMcpServer:
+    controller = FakeController()
     config = ChessMcpConfig(
         host="127.0.0.1",
         port=8790,
@@ -113,7 +141,33 @@ def make_server(session_file: Path) -> ChessGameMcpServer:
         black_token="black-token",
         session_file=session_file,
     )
-    return ChessGameMcpServer(FakeController(), config)
+    return ChessGameMcpServer(controller, config)
+
+
+def test_stop_closes_http_server_joins_thread_and_removes_session_file(tmp_path: Path) -> None:
+    controller = FakeController()
+    config = ChessMcpConfig(
+        host="127.0.0.1",
+        port=8790,
+        white_token="white-token",
+        black_token="black-token",
+        session_file=tmp_path / "session.json",
+    )
+    server = ChessGameMcpServer(controller, config)
+    httpd = FakeHttpServer()
+    thread = FakeThread()
+    config.session_file.write_text("{}", encoding="utf-8")
+    server._httpd = httpd
+    server._thread = thread
+
+    server.stop()
+    server.stop()
+
+    assert controller.shutdown_notifications == 1
+    assert httpd.shutdown_called is True
+    assert httpd.server_close_called is True
+    assert thread.join_timeout == 2.0
+    assert not config.session_file.exists()
 
 
 def test_session_file_contains_two_agent_handoff(tmp_path: Path) -> None:
