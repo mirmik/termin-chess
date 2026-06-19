@@ -9,7 +9,7 @@ from termin.inspect import InspectField
 from termin.geombase import Vec3
 from termin.mesh import TcMesh
 from termin.materials import TcMaterial
-from termin.render_components import WorldTextAnchor, WorldTextComponent  # noqa: F401 - registers native component
+from termin.render_components import WorldTextAnchor, WorldTextComponent, WorldTextOrientation  # noqa: F401 - registers native component
 
 print("BoardCreatorComponent loaded.")
 
@@ -122,14 +122,38 @@ class BoardCreatorComponent(PythonComponent):
 
         for file_index, file_name in enumerate("abcdefgh"):
             x = (file_index - 4) * TILE_SIZE
-            self._make_coordinate_label(labels_root, f"file-{file_name}-bottom", file_name, Vec3(x, bottom_y, COORDINATE_LABEL_Z))
-            self._make_coordinate_label(labels_root, f"file-{file_name}-top", file_name, Vec3(x, top_y, COORDINATE_LABEL_Z))
+            self._make_coordinate_label(
+                labels_root,
+                f"file-{file_name}-bottom",
+                file_name,
+                Vec3(x, bottom_y, COORDINATE_LABEL_Z),
+                Vec3(0, 1, 0),
+            )
+            self._make_coordinate_label(
+                labels_root,
+                f"file-{file_name}-top",
+                file_name,
+                Vec3(x, top_y, COORDINATE_LABEL_Z),
+                Vec3(0, -1, 0),
+            )
 
         for rank in range(1, 9):
             y = (rank - 5) * TILE_SIZE
             text = str(rank)
-            self._make_coordinate_label(labels_root, f"rank-{rank}-left", text, Vec3(left_x, y, COORDINATE_LABEL_Z))
-            self._make_coordinate_label(labels_root, f"rank-{rank}-right", text, Vec3(right_x, y, COORDINATE_LABEL_Z))
+            self._make_coordinate_label(
+                labels_root,
+                f"rank-{rank}-left",
+                text,
+                Vec3(left_x, y, COORDINATE_LABEL_Z),
+                Vec3(1, 0, 0),
+            )
+            self._make_coordinate_label(
+                labels_root,
+                f"rank-{rank}-right",
+                text,
+                Vec3(right_x, y, COORDINATE_LABEL_Z),
+                Vec3(-1, 0, 0),
+            )
 
         print("Board coordinate labels ready.")
 
@@ -139,7 +163,7 @@ class BoardCreatorComponent(PythonComponent):
                 return child
         return None
 
-    def _make_coordinate_label(self, parent, name: str, text: str, position: Vec3) -> None:
+    def _make_coordinate_label(self, parent, name: str, text: str, position: Vec3, text_up: Vec3) -> None:
         label = parent.create_child(name=name)
         label.pickable = False
         label.selectable = False
@@ -151,4 +175,7 @@ class BoardCreatorComponent(PythonComponent):
         text_component.size = COORDINATE_LABEL_SIZE
         text_component.color = COORDINATE_LABEL_COLOR
         text_component.anchor = WorldTextAnchor.Center
+        text_component.orientation = WorldTextOrientation.Fixed
+        text_component.plane_normal = (0, 0, 1)
+        text_component.text_up = (text_up.x, text_up.y, text_up.z)
         text_component.phase_mark = "transparent"
