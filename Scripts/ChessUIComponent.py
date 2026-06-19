@@ -18,6 +18,8 @@ class ChessUIComponent(UIComponent):
         self._status_label: Label | None = None
         self._turn_label: Label | None = None
         self._mode_label: Label | None = None
+        self._owners_label: Label | None = None
+        self._last_move_label: Label | None = None
         self._connection_labels: dict[str, Label] = {}
         self._game_controller = None
 
@@ -42,6 +44,8 @@ class ChessUIComponent(UIComponent):
         self._status_label = None
         self._turn_label = None
         self._mode_label = None
+        self._owners_label = None
+        self._last_move_label = None
         self._connection_labels = {}
         if self._game_controller is not None and self._game_controller.is_start_menu_visible():
             self._build_start_menu()
@@ -141,6 +145,15 @@ class ChessUIComponent(UIComponent):
         self._mode_label.preferred_height = px(18)
         stack.add_child(self._mode_label)
 
+        self._owners_label = Label()
+        self._owners_label.text = ""
+        self._owners_label.font_size = 12
+        self._owners_label.color = (0.78, 0.80, 0.86, 1.0)
+        self._owners_label.alignment = "center"
+        self._owners_label.preferred_width = px(content_width)
+        self._owners_label.preferred_height = px(18)
+        stack.add_child(self._owners_label)
+
         # Turn label
         self._turn_label = Label()
         self._turn_label.text = "White to move"
@@ -161,6 +174,15 @@ class ChessUIComponent(UIComponent):
         self._status_label.preferred_height = px(18)
         stack.add_child(self._status_label)
 
+        self._last_move_label = Label()
+        self._last_move_label.text = "Last move: none"
+        self._last_move_label.font_size = 12
+        self._last_move_label.color = (0.72, 0.74, 0.80, 1.0)
+        self._last_move_label.alignment = "center"
+        self._last_move_label.preferred_width = px(content_width)
+        self._last_move_label.preferred_height = px(18)
+        stack.add_child(self._last_move_label)
+
         # Separator
         sep2 = Separator()
         sep2.orientation = "horizontal"
@@ -178,6 +200,9 @@ class ChessUIComponent(UIComponent):
         # Copy FEN button
         btn_fen = self._make_button("Copy FEN", self._on_copy_fen, width=content_width)
         stack.add_child(btn_fen)
+
+        btn_pgn = self._make_button("Copy PGN", self._on_copy_pgn, width=content_width)
+        stack.add_child(btn_pgn)
 
         btn_menu = self._make_button("Return to Menu", self._on_return_to_menu, width=content_width)
         stack.add_child(btn_menu)
@@ -326,6 +351,16 @@ class ChessUIComponent(UIComponent):
         print(f"[ChessUI] FEN: {fen}")
         self._copy_text("FEN", fen)
 
+    def _on_copy_pgn(self):
+        print("[ChessUI] 'Copy PGN' clicked")
+        if self._game_controller is None:
+            print("[ChessUI] No game controller!")
+            return
+
+        pgn = self._game_controller.get_pgn()
+        print(f"[ChessUI] PGN:\n{pgn}")
+        self._copy_text("PGN", pgn)
+
     def _copy_text(self, label: str, text: str) -> None:
         try:
             proc = subprocess.Popen(
@@ -357,17 +392,14 @@ class ChessUIComponent(UIComponent):
         """Update displayed status labels."""
         if self._mode_label is not None:
             self._mode_label.text = self._mode_text()
+        hud_refreshed = self._refresh_hud_info()
         self._refresh_connection_info()
-        if self._turn_label is not None:
-            self._turn_label.text = turn_text
-        if self._status_label is not None:
-            self._status_label.text = status_text
-            if "checkmate" in status_text.lower() or "stalemate" in status_text.lower():
-                self._status_label.color = (1.0, 0.3, 0.3, 1.0)
-            elif "check" in status_text.lower():
-                self._status_label.color = (1.0, 0.6, 0.2, 1.0)
-            else:
-                self._status_label.color = (0.7, 0.7, 0.7, 1.0)
+        if not hud_refreshed:
+            if self._turn_label is not None:
+                self._turn_label.text = turn_text
+            if self._status_label is not None:
+                self._status_label.text = status_text
+                self._apply_status_color(status_text)
 
     def _update_status(self):
         """Pull status from game controller."""
@@ -400,6 +432,28 @@ class ChessUIComponent(UIComponent):
         if self._game_controller is None:
             return {"ok": False, "error": "No game controller"}
         return self._game_controller.get_connection_panel_info()
+
+    def _game_state_info(self) -> dict[str, object]:
+        if self._game_controller is None:
+            return {"ok": False, "error": "No game controller"}
+        return self._game_controller.get_mcp_state()
+
+    def _refresh_hud_info(self) -> bool:
+        if self._turn_label is None or self._status_label is None:
+            return False
+        info = self._game_state_info()
+        if not info["ok"]:
+            return False
+
+        self._turn_label.text = self._turn_text(info)
+        status_text = self._status_text(info)
+        self._status_label.text = status_text
+        self._apply_status_color(status_text)
+        if self._owners_label is not None:
+            self._owners_label.text = self._owners_text(info)
+        if self._last_move_label is not None:
+            self._last_move_label.text = self._last_move_text(info)
+        return True
 
     def _refresh_connection_info(self) -> None:
         if not self._connection_labels:
@@ -437,14 +491,68 @@ class ChessUIComponent(UIComponent):
     @staticmethod
     def _last_event_text(info: dict[str, object]) -> str:
         event = info["last_event"]
+        return ChessUIComponent._event_text(event, prefix="Last event")
+
+    @staticmethod
+    def _last_move_text(info: dict[str, object]) -> str:
+        event = info["last_move"]
+        return ChessUIComponent._event_text(event, prefix="Last move")
+
+    @staticmethod
+    def _event_text(event: object, *, prefix: str) -> str:
         if not isinstance(event, dict):
-            return "Last event: none"
+            return f"{prefix}: none"
         event_type = str(event["type"])
         san = event.get("san")
         actor = event.get("actor")
         if san is None:
-            return f"Last event: {event_type}"
-        return f"Last event: {san} by {actor}"
+            return f"{prefix}: {event_type}"
+        return f"{prefix}: {san} by {actor}"
+
+    @staticmethod
+    def _owners_text(info: dict[str, object]) -> str:
+        owners = info["side_owners"]
+        if not isinstance(owners, dict):
+            return "White: unknown | Black: unknown"
+        white = str(owners["white"]).replace("_", " ")
+        black = str(owners["black"]).replace("_", " ")
+        return f"White: {white} | Black: {black}"
+
+    @staticmethod
+    def _turn_text(info: dict[str, object]) -> str:
+        turn = str(info["turn"]).title()
+        turn_owner = info["turn_owner"]
+        actor = "unknown"
+        if isinstance(turn_owner, dict):
+            actor = str(turn_owner["actor"])
+        return f"{turn} to move ({actor})"
+
+    @staticmethod
+    def _status_text(info: dict[str, object]) -> str:
+        status = str(info["status"])
+        if status.startswith("checkmate:"):
+            winner = status.split(":", 1)[1].title()
+            return f"Checkmate! {winner} wins!"
+        if status == "stalemate":
+            return "Stalemate! Draw."
+        if status.startswith("draw:"):
+            reason = status.split(":", 1)[1].replace("_", " ")
+            return f"Draw: {reason}"
+        if status == "check":
+            return "Check!"
+        if bool(info["game_over"]):
+            return "Game over"
+        return ""
+
+    def _apply_status_color(self, status_text: str) -> None:
+        if self._status_label is None:
+            return
+        if "checkmate" in status_text.lower() or "stalemate" in status_text.lower() or "draw:" in status_text.lower():
+            self._status_label.color = (1.0, 0.3, 0.3, 1.0)
+        elif "check" in status_text.lower():
+            self._status_label.color = (1.0, 0.6, 0.2, 1.0)
+        else:
+            self._status_label.color = (0.7, 0.7, 0.7, 1.0)
 
     @staticmethod
     def _short_path(path: str) -> str:

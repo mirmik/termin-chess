@@ -372,6 +372,11 @@ Fields/actions:
 - New Game
 - Return to Menu
 - Copy FEN
+- Copy PGN
+
+Current implementation: the right-side game panel shows mode, side ownership,
+turn owner, check/checkmate/stalemate/draw status, last move, and actions for
+New Game, Return to Menu, Copy FEN, and Copy PGN.
 
 ### MCP Connection Panel
 

@@ -238,6 +238,9 @@ class ChessGameController(InputComponent):
     def get_fen(self) -> str:
         return self._board.fen()
 
+    def get_pgn(self) -> str:
+        return self.get_mcp_pgn()
+
     def get_board(self):
         return self._board
 
