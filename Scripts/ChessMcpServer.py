@@ -189,12 +189,18 @@ class ChessGameMcpServer:
             signal.signal(signum, handler)
 
     def _write_session_file(self) -> None:
+        state = self._controller.get_mcp_state()
         payload = {
             "pid": os.getpid(),
             "url": self.url,
             "token": self._config.black_token,
             "side": "black",
             "session_id": self._session_id,
+            "mode": state["mode"],
+            "side_owners": state["side_owners"],
+            "game_seats": state["seats"],
+            "mcp_seats": state["mcp_seats"],
+            "active_mcp_sides": state["active_mcp_sides"],
             "tokens": {
                 "white": self._config.white_token,
                 "black": self._config.black_token,
@@ -604,6 +610,9 @@ class ChessGameMcpServer:
             "turn": state["turn"],
             "status": state["status"],
             "side_owners": state["side_owners"],
+            "game_seats": state["seats"],
+            "mcp_seats": state["mcp_seats"],
+            "active_mcp_sides": state["active_mcp_sides"],
             "caller": {
                 "side": state["caller_side"],
                 "can_move": state["caller_can_move"],

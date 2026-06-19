@@ -20,7 +20,7 @@ from Scripts.chess_coords import (
     entity_to_square,
     tile_name_to_square,
 )
-from Scripts.ChessGameSession import ChessGameSession, MoveActor, side_name
+from Scripts.ChessGameSession import ChessGameSession, GameMode, MoveActor, side_name
 
 print("[Chess] ChessGameController module loaded.")
 
@@ -35,6 +35,19 @@ BOT_PIECE_VALUES = {
     chess.ROOK: 500,
     chess.QUEEN: 900,
     chess.KING: 0,
+}
+
+GAME_MODE_ENV_VALUES: dict[str, GameMode] = {
+    "sandbox": GameMode.LOCAL_SANDBOX,
+    "local": GameMode.LOCAL_SANDBOX,
+    "local_sandbox": GameMode.LOCAL_SANDBOX,
+    "human_vs_agent": GameMode.HUMAN_VS_AGENT,
+    "agent": GameMode.HUMAN_VS_AGENT,
+    "agent_vs_agent": GameMode.AGENT_VS_AGENT,
+    "two_agent": GameMode.AGENT_VS_AGENT,
+    "two_agents": GameMode.AGENT_VS_AGENT,
+    "human_vs_bot": GameMode.HUMAN_VS_BOT,
+    "bot": GameMode.HUMAN_VS_BOT,
 }
 
 
@@ -102,16 +115,74 @@ class ChessGameController(InputComponent):
         bot_env = os.environ.get("CHESS_BOT_ENABLED")
         if bot_env is not None:
             self._bot_enabled = bot_env.strip().lower() in {"1", "true", "yes", "on"}
-        elif mcp_enabled:
-            self._bot_enabled = False
+        self._bot_color = self._side_from_env("CHESS_BOT_COLOR", self._bot_color)
 
-        self._session.configure_runtime(
-            mcp_enabled=mcp_enabled,
-            bot_enabled=self._bot_enabled,
-            bot_color=self._bot_color,
-        )
+        requested_mode = self._game_mode_from_env()
+        if requested_mode is not None:
+            self._configure_requested_game_mode(requested_mode)
+        else:
+            if mcp_enabled:
+                self._bot_enabled = False
+            self._session.configure_runtime(
+                mcp_enabled=mcp_enabled,
+                bot_enabled=self._bot_enabled,
+                bot_color=self._bot_color,
+            )
         print(f"[Chess] Bot enabled: {self._bot_enabled}")
         print(f"[Chess] Game mode: {self._session.mode.value}, owners={self._session.side_owners_payload()}")
+
+    def _game_mode_from_env(self) -> GameMode | None:
+        value = os.environ.get("CHESS_GAME_MODE")
+        if value is None:
+            value = os.environ.get("CHESS_MODE")
+        if value is None:
+            return None
+
+        key = value.strip().lower().replace("-", "_")
+        mode = GAME_MODE_ENV_VALUES.get(key)
+        if mode is None:
+            print(f"[Chess] WARNING: unknown CHESS_GAME_MODE='{value}', using default runtime mode")
+        return mode
+
+    def _configure_requested_game_mode(self, mode: GameMode) -> None:
+        if mode == GameMode.LOCAL_SANDBOX:
+            self._bot_enabled = False
+            self._session.configure_local_sandbox()
+            return
+        if mode == GameMode.HUMAN_VS_AGENT:
+            self._bot_enabled = False
+            agent_side = self._side_from_env("CHESS_AGENT_SIDE", chess.BLACK)
+            self._session.configure_human_vs_agent(agent_side=agent_side)
+            if not self._game_mcp_enabled:
+                print("[Chess] WARNING: human_vs_agent mode selected but CHESS_MCP is disabled")
+            return
+        if mode == GameMode.AGENT_VS_AGENT:
+            self._bot_enabled = False
+            self._session.configure_agent_vs_agent()
+            if not self._game_mcp_enabled:
+                print("[Chess] WARNING: agent_vs_agent mode selected but CHESS_MCP is disabled")
+            return
+        if mode == GameMode.HUMAN_VS_BOT:
+            if os.environ.get("CHESS_BOT_ENABLED") is None:
+                self._bot_enabled = True
+            self._session.configure_human_vs_bot(bot_color=self._bot_color)
+            return
+        print(f"[Chess] WARNING: unsupported game mode '{mode.value}', using local sandbox")
+        self._bot_enabled = False
+        self._session.configure_local_sandbox()
+
+    @staticmethod
+    def _side_from_env(name: str, default: bool) -> bool:
+        value = os.environ.get(name)
+        if value is None:
+            return default
+        key = value.strip().lower()
+        if key in {"white", "w", "1", "true"}:
+            return chess.WHITE
+        if key in {"black", "b", "0", "false"}:
+            return chess.BLACK
+        print(f"[Chess] WARNING: invalid {name}='{value}', using {side_name(default)}")
+        return default
 
     def _start_mcp_server(self) -> None:
         from Scripts.ChessMcpServer import (
@@ -188,6 +259,9 @@ class ChessGameController(InputComponent):
                 "selected_square": self._selected_square,
                 "mode": self._session.mode.value,
                 "side_owners": self._session.side_owners_payload(),
+                "seats": self._session.player_seats_payload(),
+                "mcp_seats": self._session.mcp_seats_payload(),
+                "active_mcp_sides": self._session.active_mcp_sides_payload(),
                 "mcp_side": side_name(self._session.mcp_side) if self._session.mcp_side is not None else None,
                 "caller_side": side_name(caller_side) if caller_side is not None else None,
                 "caller_can_move": caller_authorization.ok if caller_authorization is not None else None,
@@ -213,7 +287,7 @@ class ChessGameController(InputComponent):
     def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
         move_text = move_text.strip()
         if move_text == "":
-            return {"ok": False, "error": "move must not be empty", "state": self.get_mcp_state()}
+            return {"ok": False, "error": "move must not be empty", "state": self.get_mcp_state(caller_side=side)}
         return self._submit_mcp_command({"kind": "move", "move": move_text, "side": side}, timeout=timeout)
 
     def request_mcp_new_game(self, *, timeout: float) -> dict[str, object]:

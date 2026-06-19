@@ -31,12 +31,20 @@ CHESS_MCP_TOKEN=optional-fixed-black-seat-token
 CHESS_MCP_WHITE_TOKEN=optional-fixed-white-seat-token
 CHESS_MCP_BLACK_TOKEN=optional-fixed-black-seat-token
 CHESS_MCP_SESSION_FILE=/tmp/chess-game-mcp.json
+CHESS_GAME_MODE=human_vs_agent
+CHESS_AGENT_SIDE=black
+CHESS_BOT_COLOR=black
 CHESS_BOT_ENABLED=0
 ```
 
 When `CHESS_MCP=1` is set, the built-in bot is disabled unless
 `CHESS_BOT_ENABLED` is explicitly set. The current default mode is human vs
 agent: the local player owns white, and the black MCP seat owns black.
+
+`CHESS_GAME_MODE` can force `local_sandbox`, `human_vs_agent`,
+`agent_vs_agent`, or `human_vs_bot` until the in-game start menu owns this
+choice. `CHESS_AGENT_SIDE` is used by `human_vs_agent`; `CHESS_BOT_COLOR` is
+used by `human_vs_bot`.
 
 `CHESS_MCP_TOKEN` is kept as a convenience alias for the black seat token. New
 clients should prefer `tokens.black`, `tokens.white`, or the `seats` array in
@@ -118,6 +126,10 @@ The connection payload includes:
 - `endpoint.url` and `endpoint.health_url`
 - `caller.side`, `caller.can_move`, `caller.error`
 - `caller.seat_status`
+- `side_owners`
+- `game_seats[]`
+- `mcp_seats[]`
+- `active_mcp_sides`
 - `seats[].connected`
 - `seats[].first_seen_at`
 - `seats[].last_seen_at`

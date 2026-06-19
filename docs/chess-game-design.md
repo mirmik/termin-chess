@@ -152,8 +152,10 @@ the legacy `token` field is an alias for the black seat.
 
 Suggested concepts:
 
-- `GameMode`: `sandbox`, `human_vs_agent`, `agent_vs_agent`
+- `GameMode`: `local_sandbox`, `human_vs_agent`, `agent_vs_agent`,
+  `human_vs_bot`
 - `SideOwner`: `human`, `agent`, `local_bot`, `none`
+- `PlayerSeat`: side, owner, player-facing label
 - `McpSeat`: side, token, display name, connected flag, last seen timestamp
 - `MoveActor`: `human`, `agent:white`, `agent:black`, `bot`, `system`
 
@@ -162,6 +164,19 @@ Two-Agent Game, both side tokens become active agent seats.
 
 The server should keep the public endpoint stable while resolving the seat from
 the bearer token.
+
+Current implementation:
+
+- `ChessGameSession` owns the authoritative mode, player seats, MCP seat
+  activation, and move authorization.
+- `get_state`, the session file, and `get_connection_info` expose
+  `side_owners`, `seats`, `mcp_seats`, and `active_mcp_sides`.
+- Runtime mode can be forced before the start menu exists with
+  `CHESS_GAME_MODE=local_sandbox|human_vs_agent|agent_vs_agent|human_vs_bot`.
+- `CHESS_AGENT_SIDE=white|black` selects the agent side for `human_vs_agent`;
+  default is black.
+- `CHESS_BOT_COLOR=white|black` selects the built-in bot side for
+  `human_vs_bot`; default is black.
 
 ## MCP Tools
 
