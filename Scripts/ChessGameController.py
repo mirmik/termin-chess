@@ -458,9 +458,14 @@ class ChessGameController(InputComponent):
             self._scan_pieces()
             self._notify_ui()
             self._record_mcp_event({"type": "reset", "actor": "system"})
+            self._reset_mcp_session_state()
             print(f"[Chess] New game started. pieces={len(self._pieces)}")
             if trigger_bot:
                 self._maybe_make_bot_move()
+
+    def _reset_mcp_session_state(self) -> None:
+        if self._mcp_server is not None:
+            self._mcp_server.reset_session_state()
 
     def _submit_mcp_command(self, command: dict[str, object], *, timeout: float) -> dict[str, object]:
         done = threading.Event()

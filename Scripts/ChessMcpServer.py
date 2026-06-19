@@ -171,6 +171,17 @@ class ChessGameMcpServer:
             except OSError as exc:
                 print(f"[ChessMCP] failed to remove session file: {exc}")
 
+    def reset_session_state(self) -> None:
+        """Clear live seat status for a new in-game chess session."""
+        with self._seat_state_lock:
+            self._session_id = secrets.token_hex(8)
+            self._started_at = time.time()
+            self._seat_status = {
+                chess.WHITE: McpSeatStatus(chess.WHITE),
+                chess.BLACK: McpSeatStatus(chess.BLACK),
+            }
+        self._write_session_file()
+
     def ui_connection_payload(self) -> dict[str, object]:
         state = self._controller.get_mcp_state()
         seat_statuses = self._seat_status_payload()

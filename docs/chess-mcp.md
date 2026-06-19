@@ -90,6 +90,9 @@ user or another actor moves.
 - `set_bot_enabled`: listed for protocol visibility, but rejected for side-seat
   MCP callers. This remains a local sandbox/debug control.
 
+In-game reset starts a new MCP session id, clears live seat connection status,
+and rewrites the session file. Seat tokens stay stable for the running server.
+
 ## Curl Examples
 
 Read the session file:

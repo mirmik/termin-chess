@@ -180,6 +180,27 @@ def test_connection_payload_is_caller_scoped(tmp_path: Path) -> None:
     assert black_seat["last_method"] == "tools/call"
 
 
+def test_reset_session_state_clears_live_seat_status_and_rewrites_session_file(tmp_path: Path) -> None:
+    session_file = tmp_path / "session.json"
+    server = make_server(session_file)
+    original_session_id = server._session_id
+    server._mark_seat_seen(chess.WHITE, method="tools/call")
+    server._mark_seat_seen(chess.BLACK, method="resources/read")
+
+    connected_payload = server.ui_connection_payload()
+    assert [seat["connected"] for seat in connected_payload["seats"]] == [True, True]
+
+    server.reset_session_state()
+
+    reset_payload = server.ui_connection_payload()
+    file_payload = json.loads(session_file.read_text(encoding="utf-8"))
+    assert reset_payload["session_id"] != original_session_id
+    assert file_payload["session_id"] == reset_payload["session_id"]
+    assert [seat["connected"] for seat in reset_payload["seats"]] == [False, False]
+    assert [seat["request_count"] for seat in reset_payload["seats"]] == [0, 0]
+    assert [seat["last_method"] for seat in reset_payload["seats"]] == [None, None]
+
+
 def test_side_seat_tools_are_caller_aware(tmp_path: Path) -> None:
     server = make_server(tmp_path / "session.json")
 
