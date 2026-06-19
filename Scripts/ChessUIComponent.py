@@ -20,6 +20,8 @@ class ChessUIComponent(UIComponent):
         self._mode_label: Label | None = None
         self._owners_label: Label | None = None
         self._last_move_label: Label | None = None
+        self._captures_label: Label | None = None
+        self._board_hint_label: Label | None = None
         self._connection_labels: dict[str, Label] = {}
         self._game_controller = None
 
@@ -46,6 +48,8 @@ class ChessUIComponent(UIComponent):
         self._mode_label = None
         self._owners_label = None
         self._last_move_label = None
+        self._captures_label = None
+        self._board_hint_label = None
         self._connection_labels = {}
         if self._game_controller is not None and self._game_controller.is_start_menu_visible():
             self._build_start_menu()
@@ -182,6 +186,24 @@ class ChessUIComponent(UIComponent):
         self._last_move_label.preferred_width = px(content_width)
         self._last_move_label.preferred_height = px(18)
         stack.add_child(self._last_move_label)
+
+        self._captures_label = Label()
+        self._captures_label.text = "Captured: none"
+        self._captures_label.font_size = 12
+        self._captures_label.color = (0.72, 0.74, 0.80, 1.0)
+        self._captures_label.alignment = "center"
+        self._captures_label.preferred_width = px(content_width)
+        self._captures_label.preferred_height = px(18)
+        stack.add_child(self._captures_label)
+
+        self._board_hint_label = Label()
+        self._board_hint_label.text = "Board: files a-h, ranks 1-8"
+        self._board_hint_label.font_size = 11
+        self._board_hint_label.color = (0.62, 0.66, 0.74, 1.0)
+        self._board_hint_label.alignment = "center"
+        self._board_hint_label.preferred_width = px(content_width)
+        self._board_hint_label.preferred_height = px(18)
+        stack.add_child(self._board_hint_label)
 
         # Separator
         sep2 = Separator()
@@ -453,6 +475,8 @@ class ChessUIComponent(UIComponent):
             self._owners_label.text = self._owners_text(info)
         if self._last_move_label is not None:
             self._last_move_label.text = self._last_move_text(info)
+        if self._captures_label is not None:
+            self._captures_label.text = self._captures_text(info)
         return True
 
     def _refresh_connection_info(self) -> None:
@@ -519,6 +543,30 @@ class ChessUIComponent(UIComponent):
         return f"White: {white} | Black: {black}"
 
     @staticmethod
+    def _captures_text(info: dict[str, object]) -> str:
+        captured = info.get("captured")
+        if not isinstance(captured, dict):
+            return "Captured: none"
+        by_white = ChessUIComponent._captured_side_text(captured.get("by_white"))
+        by_black = ChessUIComponent._captured_side_text(captured.get("by_black"))
+        if by_white == "-" and by_black == "-":
+            return "Captured: none"
+        return f"Captured W: {by_white} | B: {by_black}"
+
+    @staticmethod
+    def _captured_side_text(items: object) -> str:
+        if not isinstance(items, list) or not items:
+            return "-"
+        parts = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            symbol = str(item["symbol"])
+            count = int(item["count"])
+            parts.append(symbol if count == 1 else f"{symbol}x{count}")
+        return " ".join(parts) if parts else "-"
+
+    @staticmethod
     def _turn_text(info: dict[str, object]) -> str:
         turn = str(info["turn"]).title()
         turn_owner = info["turn_owner"]
@@ -542,6 +590,9 @@ class ChessUIComponent(UIComponent):
             return "Check!"
         if bool(info["game_over"]):
             return "Game over"
+        hint = info.get("selection_hint")
+        if hint is not None:
+            return str(hint)
         return ""
 
     def _apply_status_color(self, status_text: str) -> None:

@@ -89,22 +89,33 @@ def test_hud_text_helpers_format_mode_ownership_turn_status_and_last_move() -> N
         "game_over": False,
         "side_owners": {"white": "human", "black": "agent"},
         "last_move": {"type": "move", "san": "e4", "actor": "human"},
+        "captured": {
+            "by_white": [{"piece": "pawn", "symbol": "P", "count": 2}],
+            "by_black": [{"piece": "rook", "symbol": "R", "count": 1}],
+        },
     }
 
     assert ChessUIComponent._owners_text(info) == "White: human | Black: agent"
     assert ChessUIComponent._turn_text(info) == "Black to move (agent:black)"
     assert ChessUIComponent._status_text(info) == "Check!"
     assert ChessUIComponent._last_move_text(info) == "Last move: e4 by human"
+    assert ChessUIComponent._captures_text(info) == "Captured W: Px2 | B: R"
 
 
 def test_hud_status_text_formats_game_over_results() -> None:
     checkmate = {"status": "checkmate:white", "game_over": True}
     stalemate = {"status": "stalemate", "game_over": True}
     insufficient = {"status": "draw:insufficient_material", "game_over": True}
+    selection = {
+        "status": "playing",
+        "game_over": False,
+        "selection_hint": "Promotion: queen will be selected automatically.",
+    }
 
     assert ChessUIComponent._status_text(checkmate) == "Checkmate! White wins!"
     assert ChessUIComponent._status_text(stalemate) == "Stalemate! Draw."
     assert ChessUIComponent._status_text(insufficient) == "Draw: insufficient material"
+    assert ChessUIComponent._status_text(selection) == "Promotion: queen will be selected automatically."
 
 
 def test_copy_pgn_uses_controller_pgn_payload() -> None:

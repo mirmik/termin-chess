@@ -65,6 +65,10 @@ class ChessGameController(InputComponent):
         self._state: str = STATE_IDLE
         self._highlight_selected: TcMaterial | None = None
         self._highlight_valid: TcMaterial | None = None
+        self._highlight_last_move: TcMaterial | None = None
+        self._highlight_check: TcMaterial | None = None
+        self._last_move_squares: tuple[str, str] | None = None
+        self._check_square: str | None = None
         self._board_entity = None
         self._units_entity = None
         self._bot_enabled = True
@@ -338,7 +342,12 @@ class ChessGameController(InputComponent):
                 "fullmove_number": self._board.fullmove_number,
                 "ply": len(self._board.move_stack),
                 "legal_moves": legal_moves,
+                "selected_legal_moves": self._selected_move_payloads(),
+                "selection_hint": self._selection_hint(),
                 "last_move": self._last_mcp_move_event(),
+                "last_move_squares": list(self._last_move_squares) if self._last_move_squares is not None else [],
+                "check_square": self._check_square,
+                "captured": self._captured_summary_payload(),
                 "status": self._mcp_status(),
                 "check": self._board.is_check(),
                 "checkmate": self._board.is_checkmate(),
@@ -448,6 +457,8 @@ class ChessGameController(InputComponent):
         """Reset the board and pieces to starting position."""
         with self._mcp_state_lock:
             print("[Chess] === NEW GAME ===")
+            self._last_move_squares = None
+            self._check_square = None
             self._clear_selection()
             self._board = chess.Board()
             self._state = STATE_IDLE
@@ -630,6 +641,12 @@ class ChessGameController(InputComponent):
 
         self._highlight_valid = TcMaterial.from_name("ValidMoveMaterial")
         print(f"[Chess]   ValidMoveMaterial: {self._highlight_valid}, valid={self._highlight_valid.is_valid if self._highlight_valid else False}")
+
+        self._highlight_last_move = TcMaterial.from_name("LastMoveMaterial")
+        print(f"[Chess]   LastMoveMaterial: {self._highlight_last_move}, valid={self._highlight_last_move.is_valid if self._highlight_last_move else False}")
+
+        self._highlight_check = TcMaterial.from_name("CheckMaterial")
+        print(f"[Chess]   CheckMaterial: {self._highlight_check}, valid={self._highlight_check.is_valid if self._highlight_check else False}")
 
     def _scan_board(self):
         print("[Chess] Scanning board tiles...")
@@ -824,30 +841,48 @@ class ChessGameController(InputComponent):
 
         for move in matching_moves:
             if move.promotion == chess.QUEEN:
+                print(f"[Chess]   promotion target {to_sq}: auto-selecting queen")
                 return move
         return matching_moves[0] if matching_moves else None
 
     def _apply_highlight(self):
+        self._refresh_board_highlights()
+
+    def _refresh_board_highlights(self):
         self._clear_highlight()
+        if self._last_move_squares is not None:
+            for sq in self._last_move_squares:
+                self._set_tile_material(sq, self._highlight_last_move, "LAST MOVE")
+
+        if self._check_square is not None:
+            self._set_tile_material(self._check_square, self._highlight_check, "CHECK")
+
         if self._selected_square and self._selected_square in self._tiles:
-            tile = self._tiles[self._selected_square]
-            mr = self._get_mesh_renderer_ref(tile)
-            if mr:
-                mr.set_field("material", self._highlight_selected)
-                print(f"[Chess]   highlight SELECTED: {self._selected_square}")
-            else:
-                print(f"[Chess]   WARNING: tile {self._selected_square} has no MeshRenderer for highlight")
+            self._set_tile_material(self._selected_square, self._highlight_selected, "SELECTED")
 
         for move in self._valid_moves:
             to_name = chess.square_name(move.to_square)
-            if to_name in self._tiles:
-                tile = self._tiles[to_name]
-                mr = self._get_mesh_renderer_ref(tile)
-                if mr:
-                    mr.set_field("material", self._highlight_valid)
+            self._set_tile_material(to_name, self._highlight_valid, "VALID")
 
         valid_sqs = [chess.square_name(m.to_square) for m in self._valid_moves]
-        print(f"[Chess]   highlight VALID MOVES: {valid_sqs}")
+        print(
+            "[Chess]   board highlights: "
+            f"last={self._last_move_squares}, check={self._check_square}, "
+            f"selected={self._selected_square}, valid={valid_sqs}"
+        )
+
+    def _set_tile_material(self, square: str, material: object | None, label: str) -> bool:
+        if material is None:
+            return False
+        if square not in self._tiles:
+            return False
+        tile = self._tiles[square]
+        mr = self._get_mesh_renderer_ref(tile)
+        if not mr:
+            print(f"[Chess]   WARNING: tile {square} has no MeshRenderer for {label} highlight")
+            return False
+        mr.set_field("material", material)
+        return True
 
     def _clear_highlight(self):
         restored = 0
@@ -862,10 +897,10 @@ class ChessGameController(InputComponent):
 
     def _clear_selection(self):
         print(f"[Chess]   clearing selection (was: {self._selected_square})")
-        self._clear_highlight()
         self._selected_square = None
         self._valid_moves = []
         self._state = STATE_IDLE
+        self._refresh_board_highlights()
 
     def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: MoveActor = MoveActor.human()) -> bool:
         with self._mcp_state_lock:
@@ -899,6 +934,8 @@ class ChessGameController(InputComponent):
                 self._do_normal_move(move)
 
             self._board.push(move)
+            self._last_move_squares = (from_sq, to_sq)
+            self._update_check_square()
             print(f"[Chess]   board.push done. FEN: {self._board.fen()}")
             self._clear_selection()
             self._record_mcp_event(
@@ -930,6 +967,13 @@ class ChessGameController(InputComponent):
             if trigger_bot:
                 self._maybe_make_bot_move()
             return True
+
+    def _update_check_square(self) -> None:
+        if not self._board.is_check():
+            self._check_square = None
+            return
+        king_square = self._board.king(self._board.turn)
+        self._check_square = chess.square_name(king_square) if king_square is not None else None
 
     def _is_bot_turn(self) -> bool:
         return self._game_started and self._bot_enabled and self._session.can_move_now(
@@ -1021,6 +1065,75 @@ class ChessGameController(InputComponent):
         elif self._board.is_check():
             status = "Check!"
         self._ui_component.update_status(turn, status)
+
+    def _selected_move_payloads(self) -> list[dict[str, object]]:
+        moves = []
+        for move in self._valid_moves:
+            moves.append(
+                {
+                    "uci": move.uci(),
+                    "san": self._board.san(move),
+                    "from": chess.square_name(move.from_square),
+                    "to": chess.square_name(move.to_square),
+                    "promotion": chess.piece_name(move.promotion) if move.promotion else None,
+                    "capture": self._board.is_capture(move),
+                    "check": self._board.gives_check(move),
+                }
+            )
+        return moves
+
+    def _selection_hint(self) -> str | None:
+        if self._selected_square is None:
+            return None
+        if not self._valid_moves:
+            return f"No legal moves from {self._selected_square}"
+        for move in self._valid_moves:
+            if move.promotion:
+                return "Promotion: queen will be selected automatically."
+        count = len({chess.square_name(move.to_square) for move in self._valid_moves})
+        return f"{count} legal move{'s' if count != 1 else ''} from {self._selected_square}"
+
+    def _captured_summary_payload(self) -> dict[str, object]:
+        white_remaining = self._piece_counts(chess.WHITE)
+        black_remaining = self._piece_counts(chess.BLACK)
+        return {
+            "by_white": self._missing_piece_payload(black_remaining),
+            "by_black": self._missing_piece_payload(white_remaining),
+        }
+
+    def _piece_counts(self, color: bool) -> dict[int, int]:
+        counts = {
+            chess.PAWN: 0,
+            chess.KNIGHT: 0,
+            chess.BISHOP: 0,
+            chess.ROOK: 0,
+            chess.QUEEN: 0,
+        }
+        for piece_type in counts:
+            counts[piece_type] = len(self._board.pieces(piece_type, color))
+        return counts
+
+    @staticmethod
+    def _missing_piece_payload(remaining: dict[int, int]) -> list[dict[str, object]]:
+        starting_counts = {
+            chess.PAWN: 8,
+            chess.KNIGHT: 2,
+            chess.BISHOP: 2,
+            chess.ROOK: 2,
+            chess.QUEEN: 1,
+        }
+        payload = []
+        for piece_type in (chess.QUEEN, chess.ROOK, chess.BISHOP, chess.KNIGHT, chess.PAWN):
+            count = starting_counts[piece_type] - remaining[piece_type]
+            if count > 0:
+                payload.append(
+                    {
+                        "piece": chess.piece_name(piece_type),
+                        "symbol": chess.Piece(piece_type, chess.WHITE).symbol().upper(),
+                        "count": count,
+                    }
+                )
+        return payload
 
     def _move_piece_entity(self, from_sq: str, to_sq: str):
         if from_sq not in self._pieces:

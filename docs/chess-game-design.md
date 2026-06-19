@@ -407,17 +407,21 @@ Minimum polish target:
 
 - Board starts in a readable camera framing.
 - Selected piece and legal move highlights are clear but not noisy.
-- Last move highlight is shown.
-- Check state is visually distinct.
-- Captured pieces or material summary are visible if UI support is cheap.
+- Last move highlight is shown on the origin and destination squares.
+- Check state is visually distinct on the checked king square.
+- Captured piece summary is visible in the HUD.
+- HUD includes a compact board orientation hint.
 - Menu panels use consistent spacing, sizing, and colors.
 - Text is readable at common desktop resolutions.
+- Promotion currently uses explicit auto-queen behavior and reports that choice in
+  the HUD while a promotion move is selected.
 
 Nice-to-have later:
 
 - Coordinate labels around the board.
+- Full board-edge coordinate labels in the 3D scene.
 - Move list / PGN sidebar.
-- Promotion chooser UI instead of relying only on auto/default behavior.
+- Promotion chooser UI for rook/bishop/knight underpromotion.
 - Optional board flip when human plays black.
 - Simple piece movement animation.
 
@@ -467,9 +471,12 @@ The game should not silently ignore these cases.
 ### Phase 4: Game UX
 
 - Add last move highlight.
+- Add check-square highlight.
+- Report selected-piece move count and auto-queen promotion hint in the HUD.
+- Add captured-piece summary and compact board orientation hint to the HUD.
 - Improve status and game-over panels.
 - Add PGN/move list if UI widgets make this practical.
-- Add promotion UI if not already handled cleanly.
+- Add promotion chooser UI if underpromotion becomes a user-facing requirement.
 
 ### Phase 5: Verification
 

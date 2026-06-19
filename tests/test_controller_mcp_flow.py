@@ -87,11 +87,43 @@ class RecordingMcpServer:
         self.reset_count += 1
 
 
+class FakeMeshRenderer:
+    def __init__(self, material: object) -> None:
+        self.material = material
+
+    def get_field(self, name: str) -> object:
+        assert name == "material"
+        return self.material
+
+    def set_field(self, name: str, value: object) -> None:
+        assert name == "material"
+        self.material = value
+
+
+class FakeTile:
+    def __init__(self, material: object) -> None:
+        self.renderer = FakeMeshRenderer(material)
+
+    def get_tc_component(self, name: str) -> FakeMeshRenderer | None:
+        if name == "MeshRenderer":
+            return self.renderer
+        return None
+
+
 def make_headless_controller() -> object:
     controller = ChessGameController.__new__(ChessGameController)
     controller._board = chess.Board()
     controller._state = STATE_IDLE
     controller._selected_square = None
+    controller._valid_moves = []
+    controller._last_move_squares = None
+    controller._check_square = None
+    controller._tiles = {}
+    controller._original_materials = {}
+    controller._highlight_selected = "selected"
+    controller._highlight_valid = "valid"
+    controller._highlight_last_move = "last"
+    controller._highlight_check = "check"
     controller._game_started = True
     controller._start_menu_visible = False
     controller._bot_enabled = False
@@ -101,6 +133,7 @@ def make_headless_controller() -> object:
     controller._mcp_events = []
     controller._mcp_next_event_id = 1
     controller._mcp_max_events = 200
+    controller._mcp_server_stopping = False
     controller._mcp_server = None
     controller._session = session_module.ChessGameSession()
     controller._session.configure_agent_vs_agent()
@@ -191,3 +224,49 @@ def test_local_sandbox_controller_mode_disables_mcp_and_allows_human_board_input
     assert connection_info["ok"] is False
     assert connection_info["error"] == "MCP server is not running"
     assert human_authorization.ok is True
+
+
+def test_board_highlight_layers_keep_last_move_check_selection_and_valid_moves() -> None:
+    controller = make_headless_controller()
+    squares = ("e2", "e4", "e8", "a1")
+    controller._tiles = {square: FakeTile(f"base-{square}") for square in squares}
+    controller._original_materials = {square: f"base-{square}" for square in squares}
+    controller._last_move_squares = ("e2", "e4")
+    controller._check_square = "e8"
+    controller._selected_square = "e2"
+    controller._valid_moves = [chess.Move.from_uci("e2e4")]
+
+    controller._refresh_board_highlights()
+
+    assert controller._tiles["e2"].renderer.material == "selected"
+    assert controller._tiles["e4"].renderer.material == "valid"
+    assert controller._tiles["e8"].renderer.material == "check"
+    assert controller._tiles["a1"].renderer.material == "base-a1"
+
+
+def test_selected_promotion_state_reports_auto_queen_hint() -> None:
+    controller = make_headless_controller()
+    controller._board = chess.Board("k7/4P3/8/8/8/8/8/K7 w - - 0 1")
+    controller._selected_square = "e7"
+    controller._valid_moves = [
+        move for move in controller._board.legal_moves
+        if chess.square_name(move.from_square) == "e7"
+    ]
+
+    state = controller.get_mcp_state()
+
+    assert state["selected_square"] == "e7"
+    assert state["selection_hint"] == "Promotion: queen will be selected automatically."
+    assert {"queen", "rook", "bishop", "knight"}.issubset(
+        {str(move["promotion"]) for move in state["selected_legal_moves"]}
+    )
+
+
+def test_captured_summary_reports_missing_pieces_by_capturing_side() -> None:
+    controller = make_headless_controller()
+    controller._board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN1 w Qkq - 0 1")
+
+    state = controller.get_mcp_state()
+
+    assert state["captured"]["by_white"] == []
+    assert state["captured"]["by_black"] == [{"piece": "rook", "symbol": "R", "count": 1}]
