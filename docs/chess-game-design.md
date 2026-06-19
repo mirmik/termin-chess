@@ -411,6 +411,7 @@ Minimum polish target:
 - Check state is visually distinct on the checked king square.
 - Captured piece summary is visible in the HUD.
 - HUD includes a compact board orientation and coordinate hint.
+- Full board-edge coordinate labels are visible in the 3D scene.
 - Menu panels use consistent spacing, sizing, and colors.
 - Text is readable at common desktop resolutions.
 - Promotion chooser appears in the HUD after a human selects a promotion target
@@ -420,7 +421,6 @@ Minimum polish target:
 
 Nice-to-have later:
 
-- Full board-edge coordinate labels in the 3D scene.
 - Move list / PGN sidebar.
 - Optional board flip when human plays black.
 - Simple piece movement animation.

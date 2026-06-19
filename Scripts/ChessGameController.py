@@ -703,6 +703,8 @@ class ChessGameController(InputComponent):
         children = self._board_entity.children()
         print(f"[Chess]   ChessBoard has {len(children)} children")
         for child in children:
+            if child.name == "BoardCoordinates":
+                continue
             sq = tile_name_to_square(child.name)
             if sq:
                 self._tiles[sq] = child
