@@ -17,7 +17,8 @@ By default the endpoint binds to `127.0.0.1:8790` and writes connection data to:
 ```
 
 The session file contains the URL, side-scoped bearer tokens, resource URIs and
-tool names. It is written with mode `0600`.
+tool names. It is written with mode `0600`. For two-agent games, both agents use
+the same URL and pick their side from `agents.white` or `agents.black`.
 Clients should still probe `/health` before using a discovered endpoint: an
 abrupt external kill can leave an old session file behind.
 
@@ -57,8 +58,9 @@ event. The session file remains the machine-readable handoff for agents.
 
 `CHESS_MCP_TOKEN` is kept as a convenience alias for the black seat token. New
 clients should prefer `tokens.black`, `tokens.white`, or the `seats` array in
-the session file. The session file also contains a stable `session_id` and
-`started_at` timestamp for the running game MCP process.
+the session file. The session file also contains a stable `session_id`,
+`started_at`, initial `turn_owner`, active seats, and `board_input_enabled` for
+the running game MCP process.
 
 ## Resources
 
@@ -75,7 +77,7 @@ user or another actor moves.
 ## Tools
 
 - `get_state`: current FEN, board ASCII, side to move, side owner for the turn,
-  legal moves, status and counters.
+  legal moves, status, board-input gate and counters.
 - `get_connection_info`: endpoint, caller seat, mode, live seat status and
   connection hints.
 - `legal_moves`: legal moves in UCI and SAN plus caller/turn ownership.
@@ -100,8 +102,9 @@ BLACK_TOKEN=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["t
 WHITE_TOKEN=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["tokens"]["white"])' "$SESSION")
 ```
 
-For current human-vs-agent play, use `BLACK_TOKEN` for the agent. `TOKEN` is a
-legacy alias for `BLACK_TOKEN`.
+For human-vs-agent play, use `BLACK_TOKEN` for the default black agent. `TOKEN`
+is a legacy alias for `BLACK_TOKEN`. For two-agent play, give `WHITE_TOKEN` to
+the white agent and `BLACK_TOKEN` to the black agent.
 
 List tools:
 
@@ -140,6 +143,7 @@ The connection payload includes:
 - `game_seats[]`
 - `mcp_seats[]`
 - `active_mcp_sides`
+- `board_input_enabled` and `board_input_error`
 - `seats[].connected`
 - `seats[].first_seen_at`
 - `seats[].last_seen_at`
@@ -158,6 +162,20 @@ curl -s "$URL" \
   -H "Authorization: Bearer $BLACK_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"make_move","arguments":{"move":"e7e5"}}}'
+```
+
+Two-agent opening example:
+
+```bash
+curl -s "$URL" \
+  -H "Authorization: Bearer $WHITE_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":31,"method":"tools/call","params":{"name":"make_move","arguments":{"move":"e2e4"}}}'
+
+curl -s "$URL" \
+  -H "Authorization: Bearer $BLACK_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":32,"method":"tools/call","params":{"name":"make_move","arguments":{"move":"e7e5"}}}'
 ```
 
 Wait for the next event after the current ply:

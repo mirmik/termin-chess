@@ -100,7 +100,9 @@ After the user clicks Start Two-Agent Game:
 5. The game waits for moves from the side to move.
 
 Current implementation: the menu button starts a fresh Two-Agent Game with both
-MCP seats active and local board movement disabled by side ownership.
+MCP seats active and local board movement disabled by side ownership. Both
+agents use one endpoint with side-scoped bearer tokens from the session file:
+`agents.white.authorization` and `agents.black.authorization`.
 
 ### Local Sandbox
 
@@ -143,7 +145,8 @@ buttons are useful, but the values must also be visible.
 Current implementation: MCP-backed game modes show a connection section in the
 right game panel. It includes the endpoint URL, session file path, current
 turn/status, last event, active MCP seat status, and copy buttons for URL,
-session file, and active seat tokens.
+session file, and active seat tokens. In Two-Agent Game both active seats are
+shown.
 
 ## Board Input Rules
 
@@ -192,7 +195,8 @@ Current implementation:
 - `ChessGameSession` owns the authoritative mode, player seats, MCP seat
   activation, and move authorization.
 - `get_state`, the session file, and `get_connection_info` expose
-  `side_owners`, `seats`, `mcp_seats`, and `active_mcp_sides`.
+  `side_owners`, `seats`, `mcp_seats`, `active_mcp_sides`, `turn_owner`, and
+  the local `board_input_enabled` gate.
 - Runtime mode can be forced before the start menu exists with
   `CHESS_GAME_MODE=local_sandbox|human_vs_agent|agent_vs_agent|human_vs_bot`.
 - `CHESS_AGENT_SIDE=white|black` selects the agent side for `human_vs_agent`;
@@ -221,6 +225,7 @@ Important fields:
 - mode
 - side owners
 - human, agent and local bot side lists
+- board input enabled/error for local clicks
 - caller seat, if authenticated as a seat
 - whether caller can move now
 

@@ -312,6 +312,11 @@ class ChessGameController(InputComponent):
                     board=self._board,
                     game_state=self._state,
                 )
+            human_authorization = self._session.can_move_now(
+                actor=MoveActor.human(),
+                board=self._board,
+                game_state=self._state,
+            )
 
             return {
                 "ok": True,
@@ -330,6 +335,8 @@ class ChessGameController(InputComponent):
                 "game_over": self._board.is_game_over(),
                 "game_started": self._game_started,
                 "start_menu_visible": self._start_menu_visible,
+                "board_input_enabled": self._game_started and human_authorization.ok,
+                "board_input_error": human_authorization.error if self._game_started and not human_authorization.ok else None,
                 "selected_square": self._selected_square,
                 "mode": self._session.mode.value,
                 "side_owners": self._session.side_owners_payload(),
