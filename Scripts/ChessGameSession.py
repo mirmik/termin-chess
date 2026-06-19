@@ -174,6 +174,22 @@ class ChessGameSession:
             side_name(chess.BLACK): self.owner_for_side(chess.BLACK).value,
         }
 
+    def sides_for_owner_payload(self, owner: SideOwner) -> list[str]:
+        return [
+            side_name(side)
+            for side in (chess.WHITE, chess.BLACK)
+            if self.owner_for_side(side) == owner
+        ]
+
+    def turn_owner_payload(self, turn: bool) -> dict[str, object]:
+        seat = self._player_seats[turn]
+        return {
+            "side": side_name(turn),
+            "owner": seat.owner.value,
+            "label": seat.label,
+            "actor": self._actor_label_for_owner(turn, seat.owner),
+        }
+
     def player_seats_payload(self) -> list[dict[str, object]]:
         return [
             self._player_seats[chess.WHITE].payload(),
@@ -296,3 +312,13 @@ class ChessGameSession:
         if owner == SideOwner.LOCAL_BOT:
             return f"{side_label} local bot"
         return f"{side_label} unassigned"
+
+    @staticmethod
+    def _actor_label_for_owner(side: bool, owner: SideOwner) -> str:
+        if owner == SideOwner.HUMAN:
+            return f"human:{side_name(side)}"
+        if owner == SideOwner.AGENT:
+            return f"agent:{side_name(side)}"
+        if owner == SideOwner.LOCAL_BOT:
+            return f"local_bot:{side_name(side)}"
+        return f"none:{side_name(side)}"

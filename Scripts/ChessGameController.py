@@ -20,7 +20,7 @@ from Scripts.chess_coords import (
     entity_to_square,
     tile_name_to_square,
 )
-from Scripts.ChessGameSession import ChessGameSession, GameMode, MoveActor, side_name
+from Scripts.ChessGameSession import ChessGameSession, GameMode, MoveActor, SideOwner, side_name
 
 print("[Chess] ChessGameController module loaded.")
 
@@ -318,6 +318,7 @@ class ChessGameController(InputComponent):
                 "fen": self._board.fen(),
                 "board_ascii": str(self._board),
                 "turn": "white" if self._board.turn == chess.WHITE else "black",
+                "turn_owner": self._session.turn_owner_payload(self._board.turn),
                 "fullmove_number": self._board.fullmove_number,
                 "ply": len(self._board.move_stack),
                 "legal_moves": legal_moves,
@@ -332,6 +333,9 @@ class ChessGameController(InputComponent):
                 "selected_square": self._selected_square,
                 "mode": self._session.mode.value,
                 "side_owners": self._session.side_owners_payload(),
+                "human_sides": self._session.sides_for_owner_payload(SideOwner.HUMAN),
+                "agent_sides": self._session.sides_for_owner_payload(SideOwner.AGENT),
+                "local_bot_sides": self._session.sides_for_owner_payload(SideOwner.LOCAL_BOT),
                 "seats": self._session.player_seats_payload(),
                 "mcp_seats": self._session.mcp_seats_payload(),
                 "active_mcp_sides": self._session.active_mcp_sides_payload(),
@@ -383,6 +387,7 @@ class ChessGameController(InputComponent):
         after_event_id: int | None,
         after_ply: int | None,
         timeout: float,
+        caller_side: bool | None = None,
     ) -> dict[str, object]:
         def matching_event() -> dict[str, object] | None:
             for event in self._mcp_events:
@@ -408,8 +413,10 @@ class ChessGameController(InputComponent):
                     remaining = end_time - time.monotonic()
 
         if event is not None:
-            return {"ok": True, "event": event, "state": self.get_mcp_state()}
-        return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
+            state = self.get_mcp_state(caller_side=caller_side)
+            return {"ok": True, "event": event, "waiting_for": state["turn_owner"], "state": state}
+        state = self.get_mcp_state(caller_side=caller_side)
+        return {"ok": False, "timeout": True, "waiting_for": state["turn_owner"], "state": state}
 
     def new_game(self, *, trigger_bot: bool = True):
         """Reset the board and pieces to starting position."""
@@ -497,6 +504,20 @@ class ChessGameController(InputComponent):
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
                 return {"ok": False, "error": "game is over", "state": self.get_mcp_state(caller_side=side)}
 
+            actor = MoveActor.agent(side)
+            turn_authorization = self._session.can_move_now(
+                actor=actor,
+                board=self._board,
+                game_state=self._state,
+            )
+            if not turn_authorization.ok:
+                print(f"[ChessMCP] rejected move request from {actor.event_label()}: {turn_authorization.error}")
+                return {
+                    "ok": False,
+                    "error": turn_authorization.error,
+                    "state": self.get_mcp_state(caller_side=side),
+                }
+
             move = self._parse_mcp_move(move_text)
             if move is None:
                 return {
@@ -505,7 +526,6 @@ class ChessGameController(InputComponent):
                     "state": self.get_mcp_state(caller_side=side),
                 }
 
-            actor = MoveActor.agent(side)
             authorization = self._session.can_make_move(
                 actor=actor,
                 board=self._board,

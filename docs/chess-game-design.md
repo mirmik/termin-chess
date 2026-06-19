@@ -73,7 +73,9 @@ After the user clicks Start Game With Agent:
 
 Current implementation: the menu button starts a fresh Human vs Agent game,
 disables the built-in bot, assigns human to white and MCP agent to black, and
-starts the game MCP server.
+starts the game MCP server. `get_state`, `legal_moves`, `get_connection_info`,
+and `wait_for_move` expose `turn_owner`/`waiting_for` so the connected black
+agent can distinguish "waiting for human:white" from "agent:black can move".
 
 ### Two-Agent Game
 
@@ -211,12 +213,14 @@ Important fields:
 - FEN
 - board ASCII
 - turn
+- turn owner
 - legal moves for side to move
 - game status
 - last move
 - next event id
 - mode
 - side owners
+- human, agent and local bot side lists
 - caller seat, if authenticated as a seat
 - whether caller can move now
 
@@ -247,6 +251,9 @@ Keeps the current long-poll behavior. It should allow an agent to wait for:
 
 The first polished version can keep `after_event_id` and `after_ply` and add an
 optional `event_types` filter later.
+
+Current implementation: responses include caller-aware state and a
+`waiting_for` object with side, owner, label, and actor.
 
 ### `new_game`
 

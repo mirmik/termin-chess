@@ -202,6 +202,7 @@ class ChessGameMcpServer:
             "session_id": self._session_id,
             "mode": state["mode"],
             "turn": state["turn"],
+            "turn_owner": state["turn_owner"],
             "status": state["status"],
             "last_event": state["last_move"],
             "active_mcp_sides": state["active_mcp_sides"],
@@ -411,6 +412,8 @@ class ChessGameMcpServer:
             state = self._controller.get_mcp_state(caller_side=mcp_side)
             payload = {
                 "legal_moves": state["legal_moves"],
+                "turn": state["turn"],
+                "turn_owner": state["turn_owner"],
                 "caller_side": state["caller_side"],
                 "caller_can_move": state["caller_can_move"],
                 "caller_error": state["caller_error"],
@@ -426,6 +429,7 @@ class ChessGameMcpServer:
                 after_event_id=_optional_int(arguments.get("after_event_id")),
                 after_ply=_optional_int(arguments.get("after_ply")),
                 timeout=float(arguments.get("timeout", 60.0)),
+                caller_side=mcp_side,
             )
         else:
             return self._rpc_error(request_id, -32602, f"Unknown tool: {name}")
@@ -529,7 +533,7 @@ class ChessGameMcpServer:
             },
             {
                 "name": "wait_for_move",
-                "description": "Wait until a new chess event occurs after the given event id or ply.",
+                "description": "Wait until a new chess event occurs after the given event id or ply. The response includes caller-aware state and waiting_for.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -645,6 +649,7 @@ class ChessGameMcpServer:
             "session_file": str(self._config.session_file),
             "mode": state["mode"],
             "turn": state["turn"],
+            "turn_owner": state["turn_owner"],
             "status": state["status"],
             "side_owners": state["side_owners"],
             "game_seats": state["seats"],
