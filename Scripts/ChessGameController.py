@@ -217,13 +217,18 @@ class ChessGameController(InputComponent):
         return self._submit_mcp_command({"kind": "move", "move": move_text, "side": side}, timeout=timeout)
 
     def request_mcp_new_game(self, *, timeout: float) -> dict[str, object]:
-        return self._submit_mcp_command({"kind": "new_game"}, timeout=timeout)
+        return {
+            "ok": False,
+            "error": "new_game is reserved for in-game UI or system control",
+            "state": self.get_mcp_state(),
+        }
 
     def request_mcp_set_bot_enabled(self, enabled: bool, *, timeout: float) -> dict[str, object]:
-        return self._submit_mcp_command(
-            {"kind": "set_bot_enabled", "enabled": enabled},
-            timeout=timeout,
-        )
+        return {
+            "ok": False,
+            "error": "set_bot_enabled is a local sandbox/debug control and is not available to MCP side seats",
+            "state": self.get_mcp_state(),
+        }
 
     def wait_for_mcp_event(
         self,
@@ -337,40 +342,19 @@ class ChessGameController(InputComponent):
             if not isinstance(side, bool):
                 return {"ok": False, "error": "MCP move command has no seat side", "state": self.get_mcp_state()}
             return self._apply_mcp_move(str(command.get("move", "")), side=side)
-        if kind == "new_game":
-            self.new_game()
-            return {"ok": True, "state": self.get_mcp_state()}
-        if kind == "set_bot_enabled":
-            self._bot_enabled = bool(command.get("enabled", False))
-            if self._bot_enabled:
-                self._session.configure_human_vs_bot(bot_color=self._bot_color)
-            elif self._game_mcp_enabled:
-                self._session.configure_human_vs_agent(agent_side=chess.BLACK)
-            else:
-                self._session.configure_local_sandbox()
-            self._record_mcp_event(
-                {
-                    "type": "bot",
-                    "actor": "mcp",
-                    "enabled": self._bot_enabled,
-                }
-            )
-            if self._bot_enabled:
-                self._maybe_make_bot_move()
-            return {"ok": True, "state": self.get_mcp_state()}
         return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_mcp_state()}
 
     def _apply_mcp_move(self, move_text: str, *, side: bool) -> dict[str, object]:
         with self._mcp_state_lock:
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
-                return {"ok": False, "error": "game is over", "state": self.get_mcp_state()}
+                return {"ok": False, "error": "game is over", "state": self.get_mcp_state(caller_side=side)}
 
             move = self._parse_mcp_move(move_text)
             if move is None:
                 return {
                     "ok": False,
                     "error": f"illegal or unparseable move: {move_text}",
-                    "state": self.get_mcp_state(),
+                    "state": self.get_mcp_state(caller_side=side),
                 }
 
             actor = MoveActor.agent(side)
@@ -382,10 +366,10 @@ class ChessGameController(InputComponent):
             )
             if not authorization.ok:
                 print(f"[ChessMCP] rejected move {move.uci()}: {authorization.error}")
-                return {"ok": False, "error": authorization.error, "state": self.get_mcp_state()}
+                return {"ok": False, "error": authorization.error, "state": self.get_mcp_state(caller_side=side)}
 
             self._execute_move(move, actor=actor)
-            return {"ok": True, "move": move.uci(), "state": self.get_mcp_state()}
+            return {"ok": True, "move": move.uci(), "state": self.get_mcp_state(caller_side=side)}
 
     def _parse_mcp_move(self, move_text: str) -> chess.Move | None:
         try:

@@ -65,8 +65,10 @@ user or another actor moves.
 - `make_move`: make a legal UCI or SAN move for the MCP seat identified by the
   request token.
 - `wait_for_move`: wait for a new event after an event id or ply.
-- `new_game`: reset to the initial position.
-- `set_bot_enabled`: enable or disable the built-in bot.
+- `new_game`: listed for protocol visibility, but rejected for side-seat MCP
+  callers. Use the in-game UI for reset.
+- `set_bot_enabled`: listed for protocol visibility, but rejected for side-seat
+  MCP callers. This remains a local sandbox/debug control.
 
 ## Curl Examples
 
@@ -121,6 +123,8 @@ The connection payload includes:
 - `seats[].last_seen_at`
 - `seats[].request_count`
 - `seats[].last_method`
+- `tool_policy.allowed_tools`
+- `tool_policy.restricted_tools`
 
 Only the caller seat includes its own `token` and `authorization` fields. Other
 seat tokens are returned as `null`.

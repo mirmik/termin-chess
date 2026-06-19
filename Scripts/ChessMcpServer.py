@@ -16,6 +16,21 @@ from typing import Any
 
 import chess
 
+SIDE_SEAT_ALLOWED_TOOLS = frozenset(
+    {
+        "get_state",
+        "get_connection_info",
+        "legal_moves",
+        "make_move",
+        "wait_for_move",
+    }
+)
+
+SIDE_SEAT_RESTRICTED_TOOLS: dict[str, str] = {
+    "new_game": "new_game is reserved for in-game UI or system control",
+    "set_bot_enabled": "set_bot_enabled is a local sandbox/debug control and is not available to side seats",
+}
+
 
 @dataclass(frozen=True)
 class ChessMcpConfig:
@@ -343,7 +358,9 @@ class ChessGameMcpServer:
         if not isinstance(arguments, dict):
             return self._rpc_error(request_id, -32602, "Tool arguments must be an object")
 
-        if name == "get_state":
+        if name in SIDE_SEAT_RESTRICTED_TOOLS:
+            payload = self._restricted_tool_payload(str(name), mcp_side)
+        elif name == "get_state":
             payload = self._controller.get_mcp_state(caller_side=mcp_side)
         elif name == "get_connection_info":
             payload = self._connection_payload(mcp_side)
@@ -366,15 +383,6 @@ class ChessGameMcpServer:
                 after_event_id=_optional_int(arguments.get("after_event_id")),
                 after_ply=_optional_int(arguments.get("after_ply")),
                 timeout=float(arguments.get("timeout", 60.0)),
-            )
-        elif name == "new_game":
-            payload = self._controller.request_mcp_new_game(
-                timeout=float(arguments.get("timeout", 10.0)),
-            )
-        elif name == "set_bot_enabled":
-            payload = self._controller.request_mcp_set_bot_enabled(
-                bool(arguments.get("enabled", False)),
-                timeout=float(arguments.get("timeout", 10.0)),
             )
         else:
             return self._rpc_error(request_id, -32602, f"Unknown tool: {name}")
@@ -491,7 +499,7 @@ class ChessGameMcpServer:
             },
             {
                 "name": "new_game",
-                "description": "Reset the game to the initial chess position.",
+                "description": "Reset the game to the initial chess position. Side-seat MCP callers are rejected; use in-game UI or future system control.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {"timeout": {"type": "number", "default": 10}},
@@ -500,7 +508,7 @@ class ChessGameMcpServer:
             },
             {
                 "name": "set_bot_enabled",
-                "description": "Enable or disable the built-in chess bot.",
+                "description": "Enable or disable the built-in chess bot. Side-seat MCP callers are rejected; this is a local sandbox/debug control.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
@@ -610,6 +618,7 @@ class ChessGameMcpServer:
                 "session_token_field_alias": "black",
                 "use_wait_for_move_for_updates": True,
             },
+            "tool_policy": self._tool_policy_payload(mcp_side),
             "tools": [tool["name"] for tool in self._tool_schemas()],
             "resources": [resource["uri"] for resource in self._resources()],
         }
@@ -634,6 +643,8 @@ class ChessGameMcpServer:
                 "3. When `caller_can_move` is true, call `legal_moves` and choose a legal UCI or SAN move.",
                 "4. Call `make_move` with that move.",
                 "",
+                "Side seats cannot call `new_game` or `set_bot_enabled`; use the in-game UI for reset/debug controls.",
+                "",
                 "Use `get_connection_info` or `chess://game/connection` to inspect your seat and endpoint metadata.",
             ]
         )
@@ -657,6 +668,26 @@ class ChessGameMcpServer:
                 _side_name(chess.WHITE): dict(self._seat_status[chess.WHITE].payload()),
                 _side_name(chess.BLACK): dict(self._seat_status[chess.BLACK].payload()),
             }
+
+    def _restricted_tool_payload(self, tool_name: str, mcp_side: bool) -> dict[str, object]:
+        reason = SIDE_SEAT_RESTRICTED_TOOLS[tool_name]
+        print(f"[ChessMCP] rejected side-seat tool '{tool_name}' for {_side_name(mcp_side)}: {reason}")
+        return {
+            "ok": False,
+            "error": reason,
+            "tool": tool_name,
+            "caller_side": _side_name(mcp_side),
+            "policy": self._tool_policy_payload(mcp_side),
+            "state": self._controller.get_mcp_state(caller_side=mcp_side),
+        }
+
+    @staticmethod
+    def _tool_policy_payload(mcp_side: bool) -> dict[str, object]:
+        return {
+            "caller_side": _side_name(mcp_side),
+            "allowed_tools": sorted(SIDE_SEAT_ALLOWED_TOOLS),
+            "restricted_tools": dict(SIDE_SEAT_RESTRICTED_TOOLS),
+        }
 
     @staticmethod
     def _rpc_result(request_id: object, result: dict[str, object]) -> dict[str, object]:

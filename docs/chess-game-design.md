@@ -224,10 +224,15 @@ Possible policy:
 - Allowed for an admin token if one exists.
 - Available from in-game UI.
 
+Current implementation: disabled for side seats. No admin token exists yet, so
+reset remains an in-game UI/system action.
+
 ### `set_bot_enabled`
 
 This belongs to Local Sandbox/debugging and should not be exposed to ordinary
 agent seats in the polished modes.
+
+Current implementation: side-seat MCP callers receive a structured rejection.
 
 ### Proposed New Tools
 
