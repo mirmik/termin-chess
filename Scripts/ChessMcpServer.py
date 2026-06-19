@@ -26,6 +26,34 @@ class ChessMcpConfig:
     session_file: Path
 
 
+@dataclass
+class McpSeatStatus:
+    side: bool
+    connected: bool = False
+    first_seen_at: float | None = None
+    last_seen_at: float | None = None
+    request_count: int = 0
+    last_method: str | None = None
+
+    def mark_seen(self, *, method: str, now: float) -> None:
+        if self.first_seen_at is None:
+            self.first_seen_at = now
+        self.connected = True
+        self.last_seen_at = now
+        self.request_count += 1
+        self.last_method = method
+
+    def payload(self) -> dict[str, object]:
+        return {
+            "side": _side_name(self.side),
+            "connected": self.connected,
+            "first_seen_at": self.first_seen_at,
+            "last_seen_at": self.last_seen_at,
+            "request_count": self.request_count,
+            "last_method": self.last_method,
+        }
+
+
 class ChessMcpHttpServer(ThreadingHTTPServer):
     allow_reuse_address = True
     daemon_threads = True
@@ -70,6 +98,13 @@ class ChessGameMcpServer:
         self._stop_lock = threading.Lock()
         self._stopped = False
         self._previous_signal_handlers: dict[int, object] = {}
+        self._started_at = time.time()
+        self._session_id = secrets.token_hex(8)
+        self._seat_state_lock = threading.Lock()
+        self._seat_status: dict[bool, McpSeatStatus] = {
+            chess.WHITE: McpSeatStatus(chess.WHITE),
+            chess.BLACK: McpSeatStatus(chess.BLACK),
+        }
 
     @property
     def url(self) -> str:
@@ -144,6 +179,7 @@ class ChessGameMcpServer:
             "url": self.url,
             "token": self._config.black_token,
             "side": "black",
+            "session_id": self._session_id,
             "tokens": {
                 "white": self._config.white_token,
                 "black": self._config.black_token,
@@ -160,7 +196,7 @@ class ChessGameMcpServer:
                     "authorization": f"Bearer {self._config.black_token}",
                 },
             ],
-            "started_at": time.time(),
+            "started_at": self._started_at,
             "server": "chess-game",
             "tools": [tool["name"] for tool in self._tool_schemas()],
             "resources": [resource["uri"] for resource in self._resources()],
@@ -261,6 +297,8 @@ class ChessGameMcpServer:
 
         request_id = request.get("id")
         method = request.get("method")
+        method_name = method if isinstance(method, str) else "<invalid>"
+        self._mark_seat_seen(mcp_side, method=method_name)
         try:
             if method == "initialize":
                 return self._rpc_result(
@@ -518,10 +556,12 @@ class ChessGameMcpServer:
     def _connection_payload(self, mcp_side: bool) -> dict[str, object]:
         state = self._controller.get_mcp_state(caller_side=mcp_side)
         caller_token = self._token_for_side(mcp_side)
+        seat_statuses = self._seat_status_payload()
         seats = []
         for side in (chess.WHITE, chess.BLACK):
             caller = side == mcp_side
             side_text = _side_name(side)
+            status = seat_statuses[side_text]
             seats.append(
                 {
                     "side": side_text,
@@ -529,6 +569,11 @@ class ChessGameMcpServer:
                     "caller": caller,
                     "token": caller_token if caller else None,
                     "authorization": f"Bearer {caller_token}" if caller else None,
+                    "connected": status["connected"],
+                    "first_seen_at": status["first_seen_at"],
+                    "last_seen_at": status["last_seen_at"],
+                    "request_count": status["request_count"],
+                    "last_method": status["last_method"],
                 }
             )
 
@@ -537,6 +582,10 @@ class ChessGameMcpServer:
             "server": {
                 "name": "chess-game",
                 "version": "0.1.0",
+            },
+            "session": {
+                "id": self._session_id,
+                "started_at": self._started_at,
             },
             "endpoint": {
                 "url": self.url,
@@ -553,6 +602,7 @@ class ChessGameMcpServer:
                 "error": state["caller_error"],
                 "token": caller_token,
                 "authorization": f"Bearer {caller_token}",
+                "seat_status": seat_statuses[_side_name(mcp_side)],
             },
             "seats": seats,
             "hints": {
@@ -595,6 +645,18 @@ class ChessGameMcpServer:
 
     def _token_for_side(self, side: bool) -> str:
         return self._config.white_token if side == chess.WHITE else self._config.black_token
+
+    def _mark_seat_seen(self, side: bool, *, method: str) -> None:
+        now = time.time()
+        with self._seat_state_lock:
+            self._seat_status[side].mark_seen(method=method, now=now)
+
+    def _seat_status_payload(self) -> dict[str, dict[str, object]]:
+        with self._seat_state_lock:
+            return {
+                _side_name(chess.WHITE): dict(self._seat_status[chess.WHITE].payload()),
+                _side_name(chess.BLACK): dict(self._seat_status[chess.BLACK].payload()),
+            }
 
     @staticmethod
     def _rpc_result(request_id: object, result: dict[str, object]) -> dict[str, object]:

@@ -40,7 +40,8 @@ agent: the local player owns white, and the black MCP seat owns black.
 
 `CHESS_MCP_TOKEN` is kept as a convenience alias for the black seat token. New
 clients should prefer `tokens.black`, `tokens.white`, or the `seats` array in
-the session file.
+the session file. The session file also contains a stable `session_id` and
+`started_at` timestamp for the running game MCP process.
 
 ## Resources
 
@@ -58,7 +59,8 @@ user or another actor moves.
 
 - `get_state`: current FEN, board ASCII, side to move, legal moves, status and
   counters.
-- `get_connection_info`: endpoint, caller seat, mode and connection hints.
+- `get_connection_info`: endpoint, caller seat, mode, live seat status and
+  connection hints.
 - `legal_moves`: legal moves in UCI and SAN.
 - `make_move`: make a legal UCI or SAN move for the MCP seat identified by the
   request token.
@@ -107,6 +109,21 @@ curl -s "$URL" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"get_connection_info","arguments":{}}}'
 ```
+
+The connection payload includes:
+
+- `session.id` and `session.started_at`
+- `endpoint.url` and `endpoint.health_url`
+- `caller.side`, `caller.can_move`, `caller.error`
+- `caller.seat_status`
+- `seats[].connected`
+- `seats[].first_seen_at`
+- `seats[].last_seen_at`
+- `seats[].request_count`
+- `seats[].last_method`
+
+Only the caller seat includes its own `token` and `authorization` fields. Other
+seat tokens are returned as `null`.
 
 Make a move:
 
