@@ -1,0 +1,430 @@
+# Chess Game Design
+
+This document describes the target shape of the Chess sample game for Termin.
+The goal is not to re-document chess rules. The goal is to define the game shell,
+agent connection model, MCP contract, and player-facing UX needed to make this
+project a useful end-to-end Termin sample.
+
+## Goals
+
+- Present Chess as a normal playable game, not only as a technical scene.
+- Support local human play against an MCP-connected agent.
+- Support agent-vs-agent games launched from the game itself.
+- Keep the game-level MCP separate from Termin editor/player diagnostic MCP.
+- Make side ownership explicit so clients can only move for their assigned side.
+- Make connection instructions visible in-game and simple enough to hand to an
+  agent.
+- Keep all game state authoritative in the running Chess scene.
+
+## Non-Goals
+
+- Implement a strong built-in chess engine.
+- Explain chess rules or teach chess.
+- Reuse the editor diagnostic MCP as the game API.
+- Support internet-exposed multiplayer. The default endpoint remains loopback.
+- Add persistence, ratings, clocks, or matchmaking in the first polished version.
+
+## First-Run Experience
+
+When the scene starts, the player sees a start menu instead of immediately
+playing a live board.
+
+The menu provides these primary actions:
+
+- Start Game With Agent
+- Start Two-Agent Game
+- Local Sandbox
+- Quit
+
+The board can remain visible behind the menu, but input into the board is locked
+until a mode starts.
+
+## Game Modes
+
+### Human vs Agent
+
+The user plays one side in the Termin window. An MCP client controls the other
+side.
+
+Default setup:
+
+- Human: white
+- Agent: black
+- Built-in bot: disabled
+- Board input: enabled only for the human side and only when it is the human
+  side's turn
+
+The setup UI may later allow color selection. For the first polished version,
+white-for-human is acceptable if the menu text makes it explicit.
+
+After the user clicks Start Game With Agent:
+
+1. The game creates or enables a game MCP server.
+2. The UI shows a connection panel with endpoint details.
+3. The game waits for an agent to connect or for the user to make the first move,
+   depending on side assignment.
+4. The agent uses MCP tools to observe state, wait for user moves, and make its
+   own moves.
+
+### Two-Agent Game
+
+The game exposes two logical seats: white agent and black agent. Human board
+input is disabled except for menu controls.
+
+Two implementation options are acceptable:
+
+- One MCP endpoint with two join tokens, one token per side.
+- Two MCP endpoints, one for each side.
+
+The preferred first version is one endpoint with side-scoped seat tokens. This
+keeps session discovery simpler and makes all tools/resources available through
+one server while preserving move authorization.
+
+After the user clicks Start Two-Agent Game:
+
+1. The game starts a new board.
+2. The game creates white and black agent seats.
+3. The UI shows a connection panel for both seats.
+4. Each agent receives only its own side token.
+5. The game waits for moves from the side to move.
+
+### Local Sandbox
+
+This mode is for manual testing. Both colors can be moved by the local user. MCP
+can be disabled by default here.
+
+Local Sandbox replaces the current always-live scene behavior and is useful when
+debugging board geometry, clicking, piece movement, or UI without an agent.
+
+## Connection Panel
+
+The connection panel appears after starting an MCP-backed mode.
+
+For Human vs Agent, it shows:
+
+- Mode: Human vs Agent
+- Human side
+- Agent side
+- MCP URL
+- Token or path to the session file
+- A short command snippet for an agent/operator
+- Connection status
+- Last move/event id
+
+For Two-Agent Game, it shows one section per seat:
+
+- White agent URL
+- White token or session file key
+- Black agent URL
+- Black token or session file key
+- Seat connection status
+- Current turn
+
+The panel should avoid relying on clipboard commands as the only path. Copy
+buttons are useful, but the values must also be visible.
+
+## Board Input Rules
+
+The controller must have a clear game mode and side ownership model.
+
+Human board input is accepted only when:
+
+- The game mode allows human input.
+- The clicked piece belongs to a human-controlled side.
+- The selected side is the side to move.
+- The game is not over.
+
+MCP moves are accepted only when:
+
+- The token maps to a seat.
+- The seat owns the side to move.
+- The requested move is legal.
+- The game is not over.
+
+These checks should happen before move parsing/mutation whenever possible so
+errors are clear and do not create partial UI state.
+
+## MCP Seat Model
+
+The current MCP server has a single bearer token. The target model adds seats.
+
+Suggested concepts:
+
+- `GameMode`: `sandbox`, `human_vs_agent`, `agent_vs_agent`
+- `SideOwner`: `human`, `agent`, `local_bot`, `none`
+- `McpSeat`: side, token, display name, connected flag, last seen timestamp
+- `MoveActor`: `human`, `agent:white`, `agent:black`, `bot`, `system`
+
+In Human vs Agent, only one MCP seat is created. In Two-Agent Game, two seats are
+created.
+
+The server should keep the public endpoint stable while resolving the seat from
+the bearer token.
+
+## MCP Tools
+
+Existing tools remain useful, but their semantics need side ownership.
+
+### `get_state`
+
+Returns the full public position snapshot plus caller-specific seat metadata.
+
+Important fields:
+
+- FEN
+- board ASCII
+- turn
+- legal moves for side to move
+- game status
+- last move
+- next event id
+- mode
+- side owners
+- caller seat, if authenticated as a seat
+- whether caller can move now
+
+### `legal_moves`
+
+Returns legal moves. If called by a side-scoped seat, it should indicate whether
+the seat is allowed to play any of them now.
+
+### `make_move`
+
+Attempts to make a move for the authenticated seat.
+
+Required behavior:
+
+- Reject if no seat owns the side to move.
+- Reject if the caller's seat side is not the side to move.
+- Reject illegal UCI/SAN.
+- Include current state on both success and failure.
+
+### `wait_for_move`
+
+Keeps the current long-poll behavior. It should allow an agent to wait for:
+
+- any new event
+- opponent move
+- own move accepted
+- game over
+
+The first polished version can keep `after_event_id` and `after_ply` and add an
+optional `event_types` filter later.
+
+### `new_game`
+
+Should be restricted to menu/system control by default. Allowing any connected
+agent to reset the game is surprising.
+
+Possible policy:
+
+- Disabled for side seats.
+- Allowed for an admin token if one exists.
+- Available from in-game UI.
+
+### `set_bot_enabled`
+
+This belongs to Local Sandbox/debugging and should not be exposed to ordinary
+agent seats in the polished modes.
+
+### Proposed New Tools
+
+- `join_game`: optional explicit handshake that marks a seat connected and
+  accepts a display name.
+- `get_connection_info`: returns mode, seats, endpoint, and session metadata.
+- `resign`: lets a side-scoped seat resign.
+- `offer_draw` and `respond_draw`: optional later feature.
+
+## MCP Resources
+
+Existing resources remain:
+
+- `chess://game/state`
+- `chess://game/pgn`
+- `chess://game/events`
+
+Add or extend:
+
+- `chess://game/connection`: endpoint, seats, connection status.
+- `chess://game/help`: short usage guide for agents.
+
+The HTTP transport remains request/response for now. Subscriptions can stay as
+declared capability, but agents should use `wait_for_move` until the transport
+can push server notifications.
+
+## Event Log
+
+Events should carry enough context for agents and for UI debugging.
+
+Move event fields:
+
+- id
+- type
+- actor
+- side
+- uci
+- san
+- from
+- to
+- promotion
+- fen
+- turn after move
+- ply
+- status
+
+System events:
+
+- game started
+- game reset
+- seat connected
+- seat disconnected or stale
+- game over
+- invalid move attempt, if useful for debugging
+
+Invalid move attempts should be logged carefully. They are useful during
+development but should not spam normal play.
+
+## UI Structure
+
+Target UI layers:
+
+- Start menu
+- In-game status panel
+- MCP connection panel
+- Game-over panel
+
+The current right-side status panel can evolve into the in-game panel, but the
+start menu should be a distinct overlay.
+
+### Start Menu
+
+Fields/actions:
+
+- Title: Chess
+- Start Game With Agent
+- Start Two-Agent Game
+- Local Sandbox
+- Quit
+
+### In-Game Status Panel
+
+Fields/actions:
+
+- Current turn
+- Mode
+- Side ownership
+- Last move
+- Check/checkmate/stalemate status
+- New Game
+- Return to Menu
+- Copy FEN
+
+### MCP Connection Panel
+
+Fields/actions:
+
+- Endpoint URL
+- Session file path
+- Seat token display
+- Copy endpoint
+- Copy token
+- Copy agent prompt or command snippet
+- Connection status per seat
+
+### Game-Over Panel
+
+Fields/actions:
+
+- Result
+- Final move
+- New Game Same Mode
+- Return to Menu
+- Copy PGN
+
+## Visual Polish
+
+Minimum polish target:
+
+- Board starts in a readable camera framing.
+- Selected piece and legal move highlights are clear but not noisy.
+- Last move highlight is shown.
+- Check state is visually distinct.
+- Captured pieces or material summary are visible if UI support is cheap.
+- Menu panels use consistent spacing, sizing, and colors.
+- Text is readable at common desktop resolutions.
+
+Nice-to-have later:
+
+- Coordinate labels around the board.
+- Move list / PGN sidebar.
+- Promotion chooser UI instead of relying only on auto/default behavior.
+- Optional board flip when human plays black.
+- Simple piece movement animation.
+
+## Error Handling and Logging
+
+All rejected MCP actions should produce:
+
+- A clear JSON error result for the caller.
+- A concise game log line with actor, side, reason, and move text when relevant.
+
+Examples:
+
+- seat not authorized
+- not your turn
+- move is illegal
+- game is over
+- malformed move
+- seat token is stale or unknown
+
+The game should not silently ignore these cases.
+
+## Implementation Plan
+
+### Phase 1: Documented Target and Small Refactor
+
+- Add this design document.
+- Keep `docs/chess-mcp.md` as the protocol quickstart.
+- Introduce internal mode/seat data structures without changing UI yet.
+- Add side ownership checks to controller input and MCP `make_move`.
+
+### Phase 2: MCP Polishing
+
+- Add side-scoped tokens.
+- Add connection/session metadata for one-seat and two-seat games.
+- Add `join_game` or equivalent connection status tracking.
+- Restrict `new_game` and debugging tools from ordinary side seats.
+- Add resource/help text for agents.
+
+### Phase 3: Game Menu
+
+- Add start menu overlay.
+- Add Human vs Agent flow.
+- Add Two-Agent Game flow.
+- Add Local Sandbox flow.
+- Add connection panel with visible endpoint/token/session data.
+
+### Phase 4: Game UX
+
+- Add last move highlight.
+- Improve status and game-over panels.
+- Add PGN/move list if UI widgets make this practical.
+- Add promotion UI if not already handled cleanly.
+
+### Phase 5: Verification
+
+- Test Human vs Agent manually with one MCP client.
+- Test Two-Agent Game with two tokens or two clients.
+- Verify illegal side moves are rejected through UI and MCP.
+- Verify reset/new game does not leave stale seat state.
+- Verify session file cleanup on normal quit and Ctrl-C.
+
+## Open Questions
+
+- Should Human vs Agent let the user choose white/black in the first version?
+- Should Two-Agent Game expose one endpoint with two tokens or two endpoints?
+- Should an admin token exist for reset/new game from external tools?
+- How much of the connection panel can be copied to clipboard reliably across
+  Linux desktop setups?
+- Do we want MCP server notifications later through a transport that can push,
+  or is long-polling `wait_for_move` enough for this sample?
