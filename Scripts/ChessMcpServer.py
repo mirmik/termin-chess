@@ -14,12 +14,15 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
+import chess
+
 
 @dataclass(frozen=True)
 class ChessMcpConfig:
     host: str
     port: int
-    token: str
+    white_token: str
+    black_token: str
     session_file: Path
 
 
@@ -40,11 +43,21 @@ def chess_mcp_enabled() -> bool:
 def load_chess_mcp_config() -> ChessMcpConfig:
     host = os.environ.get("CHESS_MCP_HOST", "127.0.0.1")
     port = _env_int("CHESS_MCP_PORT", 8790)
-    token = os.environ.get("CHESS_MCP_TOKEN")
-    if token is None:
-        token = secrets.token_urlsafe(24)
+    legacy_token = os.environ.get("CHESS_MCP_TOKEN")
+    white_token = os.environ.get("CHESS_MCP_WHITE_TOKEN")
+    black_token = os.environ.get("CHESS_MCP_BLACK_TOKEN")
+    if white_token is None:
+        white_token = secrets.token_urlsafe(24)
+    if black_token is None:
+        black_token = legacy_token if legacy_token is not None else secrets.token_urlsafe(24)
     session_file = Path(os.environ.get("CHESS_MCP_SESSION_FILE", "/tmp/chess-game-mcp.json"))
-    return ChessMcpConfig(host=host, port=port, token=token, session_file=session_file)
+    return ChessMcpConfig(
+        host=host,
+        port=port,
+        white_token=white_token,
+        black_token=black_token,
+        session_file=session_file,
+    )
 
 
 class ChessGameMcpServer:
@@ -129,7 +142,24 @@ class ChessGameMcpServer:
         payload = {
             "pid": os.getpid(),
             "url": self.url,
-            "token": self._config.token,
+            "token": self._config.black_token,
+            "side": "black",
+            "tokens": {
+                "white": self._config.white_token,
+                "black": self._config.black_token,
+            },
+            "seats": [
+                {
+                    "side": "white",
+                    "token": self._config.white_token,
+                    "authorization": f"Bearer {self._config.white_token}",
+                },
+                {
+                    "side": "black",
+                    "token": self._config.black_token,
+                    "authorization": f"Bearer {self._config.black_token}",
+                },
+            ],
             "started_at": time.time(),
             "server": "chess-game",
             "tools": [tool["name"] for tool in self._tool_schemas()],
@@ -161,7 +191,8 @@ class ChessGameMcpServer:
                 if self.path not in ("/mcp", "/jsonrpc"):
                     self.send_error(404)
                     return
-                if not self._is_authorized():
+                mcp_side = self._authorized_side()
+                if mcp_side is None:
                     self._send_json(owner._rpc_error(None, -32001, "Unauthorized"), status=401)
                     return
 
@@ -178,12 +209,12 @@ class ChessGameMcpServer:
                     responses = [
                         response
                         for item in request
-                        if (response := owner._handle_rpc(item)) is not None
+                        if (response := owner._handle_rpc(item, mcp_side=mcp_side)) is not None
                     ]
                     self._send_json(responses)
                     return
 
-                response = owner._handle_rpc(request)
+                response = owner._handle_rpc(request, mcp_side=mcp_side)
                 if response is None:
                     self.send_response(204)
                     self.end_headers()
@@ -193,14 +224,19 @@ class ChessGameMcpServer:
             def log_message(self, fmt: str, *args: object) -> None:
                 return
 
-            def _is_authorized(self) -> bool:
-                token = owner._config.token
-                if token == "":
-                    return True
+            def _authorized_side(self) -> bool | None:
+                token = self._request_token()
+                if token is None:
+                    return None
+                return owner._side_for_token(token)
+
+            def _request_token(self) -> str | None:
                 header = self.headers.get("Authorization", "")
-                if header == f"Bearer {token}":
-                    return True
-                return self.headers.get("X-Chess-MCP-Token", "") == token
+                prefix = "Bearer "
+                if header.startswith(prefix):
+                    return header[len(prefix):]
+                token = self.headers.get("X-Chess-MCP-Token", "")
+                return token if token != "" else None
 
             def _send_json(self, payload: Any, *, status: int = 200) -> None:
                 data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -212,7 +248,14 @@ class ChessGameMcpServer:
 
         return Handler
 
-    def _handle_rpc(self, request: Any) -> dict[str, object] | None:
+    def _side_for_token(self, token: str) -> bool | None:
+        if secrets.compare_digest(token, self._config.white_token):
+            return chess.WHITE
+        if secrets.compare_digest(token, self._config.black_token):
+            return chess.BLACK
+        return None
+
+    def _handle_rpc(self, request: Any, *, mcp_side: bool) -> dict[str, object] | None:
         if not isinstance(request, dict):
             return self._rpc_error(None, -32600, "Invalid Request")
 
@@ -238,11 +281,11 @@ class ChessGameMcpServer:
             if method == "tools/list":
                 return self._rpc_result(request_id, {"tools": self._tool_schemas()})
             if method == "tools/call":
-                return self._handle_tool_call(request_id, request.get("params"))
+                return self._handle_tool_call(request_id, request.get("params"), mcp_side=mcp_side)
             if method == "resources/list":
                 return self._rpc_result(request_id, {"resources": self._resources()})
             if method == "resources/read":
-                return self._handle_resource_read(request_id, request.get("params"))
+                return self._handle_resource_read(request_id, request.get("params"), mcp_side=mcp_side)
             if method == "resources/subscribe":
                 return self._handle_resource_subscribe(request_id, request.get("params"))
             if method == "resources/unsubscribe":
@@ -252,7 +295,7 @@ class ChessGameMcpServer:
             print(f"[ChessMCP] request handling failed: {exc}")
             return self._rpc_error(request_id, -32603, f"Internal error: {exc}")
 
-    def _handle_tool_call(self, request_id: object, params: object) -> dict[str, object]:
+    def _handle_tool_call(self, request_id: object, params: object, *, mcp_side: bool) -> dict[str, object]:
         if not isinstance(params, dict):
             return self._rpc_error(request_id, -32602, "Invalid params")
         name = params.get("name")
@@ -263,12 +306,19 @@ class ChessGameMcpServer:
             return self._rpc_error(request_id, -32602, "Tool arguments must be an object")
 
         if name == "get_state":
-            payload = self._controller.get_mcp_state()
+            payload = self._controller.get_mcp_state(caller_side=mcp_side)
         elif name == "legal_moves":
-            payload = {"legal_moves": self._controller.get_mcp_state()["legal_moves"]}
+            state = self._controller.get_mcp_state(caller_side=mcp_side)
+            payload = {
+                "legal_moves": state["legal_moves"],
+                "caller_side": state["caller_side"],
+                "caller_can_move": state["caller_can_move"],
+                "caller_error": state["caller_error"],
+            }
         elif name == "make_move":
             payload = self._controller.request_mcp_move(
                 str(arguments.get("move", "")),
+                side=mcp_side,
                 timeout=float(arguments.get("timeout", 10.0)),
             )
         elif name == "wait_for_move":
@@ -299,7 +349,7 @@ class ChessGameMcpServer:
             },
         )
 
-    def _handle_resource_read(self, request_id: object, params: object) -> dict[str, object]:
+    def _handle_resource_read(self, request_id: object, params: object, *, mcp_side: bool) -> dict[str, object]:
         if not isinstance(params, dict):
             return self._rpc_error(request_id, -32602, "Invalid params")
         uri = params.get("uri")
@@ -307,7 +357,11 @@ class ChessGameMcpServer:
             return self._rpc_error(request_id, -32602, "Resource URI must be a string")
 
         if uri == "chess://game/state":
-            text = json.dumps(self._controller.get_mcp_state(), ensure_ascii=False, indent=2)
+            text = json.dumps(
+                self._controller.get_mcp_state(caller_side=mcp_side),
+                ensure_ascii=False,
+                indent=2,
+            )
             mime_type = "application/json"
         elif uri == "chess://game/pgn":
             text = self._controller.get_mcp_pgn()
@@ -360,7 +414,7 @@ class ChessGameMcpServer:
             },
             {
                 "name": "make_move",
-                "description": "Play a legal move for the side to move. Accepts UCI such as e2e4 or SAN such as Nf3.",
+                "description": "Play a legal move for the MCP seat identified by the request token. Accepts UCI such as e2e4 or SAN such as Nf3.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {

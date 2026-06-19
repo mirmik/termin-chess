@@ -146,7 +146,9 @@ errors are clear and do not create partial UI state.
 
 ## MCP Seat Model
 
-The current MCP server has a single bearer token. The target model adds seats.
+The MCP server resolves the caller seat from the bearer token. The current
+implementation writes separate white and black side tokens to the session file;
+the legacy `token` field is an alias for the black seat.
 
 Suggested concepts:
 
@@ -155,8 +157,8 @@ Suggested concepts:
 - `McpSeat`: side, token, display name, connected flag, last seen timestamp
 - `MoveActor`: `human`, `agent:white`, `agent:black`, `bot`, `system`
 
-In Human vs Agent, only one MCP seat is created. In Two-Agent Game, two seats are
-created.
+In Human vs Agent, the black side token is the active agent seat by default. In
+Two-Agent Game, both side tokens become active agent seats.
 
 The server should keep the public endpoint stable while resolving the seat from
 the bearer token.

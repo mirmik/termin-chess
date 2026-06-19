@@ -148,7 +148,7 @@ class ChessGameController(InputComponent):
     def get_board(self):
         return self._board
 
-    def get_mcp_state(self) -> dict[str, object]:
+    def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
         with self._mcp_state_lock:
             legal_moves = []
             for move in self._board.legal_moves:
@@ -162,6 +162,13 @@ class ChessGameController(InputComponent):
                         "capture": self._board.is_capture(move),
                         "check": self._board.gives_check(move),
                     }
+                )
+            caller_authorization = None
+            if caller_side is not None:
+                caller_authorization = self._session.can_move_now(
+                    actor=MoveActor.agent(caller_side),
+                    board=self._board,
+                    game_state=self._state,
                 )
 
             return {
@@ -182,6 +189,9 @@ class ChessGameController(InputComponent):
                 "mode": self._session.mode.value,
                 "side_owners": self._session.side_owners_payload(),
                 "mcp_side": side_name(self._session.mcp_side) if self._session.mcp_side is not None else None,
+                "caller_side": side_name(caller_side) if caller_side is not None else None,
+                "caller_can_move": caller_authorization.ok if caller_authorization is not None else None,
+                "caller_error": caller_authorization.error if caller_authorization is not None and not caller_authorization.ok else None,
                 "bot_enabled": self._bot_enabled,
                 "bot_color": "white" if self._bot_color == chess.WHITE else "black",
                 "next_event_id": self._mcp_next_event_id,
@@ -200,11 +210,11 @@ class ChessGameController(InputComponent):
                 "next_event_id": self._mcp_next_event_id,
             }
 
-    def request_mcp_move(self, move_text: str, *, timeout: float) -> dict[str, object]:
+    def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
         move_text = move_text.strip()
         if move_text == "":
             return {"ok": False, "error": "move must not be empty", "state": self.get_mcp_state()}
-        return self._submit_mcp_command({"kind": "move", "move": move_text}, timeout=timeout)
+        return self._submit_mcp_command({"kind": "move", "move": move_text, "side": side}, timeout=timeout)
 
     def request_mcp_new_game(self, *, timeout: float) -> dict[str, object]:
         return self._submit_mcp_command({"kind": "new_game"}, timeout=timeout)
@@ -323,7 +333,10 @@ class ChessGameController(InputComponent):
     def _handle_mcp_command(self, command: dict[str, object]) -> dict[str, object]:
         kind = command.get("kind")
         if kind == "move":
-            return self._apply_mcp_move(str(command.get("move", "")))
+            side = command.get("side")
+            if not isinstance(side, bool):
+                return {"ok": False, "error": "MCP move command has no seat side", "state": self.get_mcp_state()}
+            return self._apply_mcp_move(str(command.get("move", "")), side=side)
         if kind == "new_game":
             self.new_game()
             return {"ok": True, "state": self.get_mcp_state()}
@@ -347,7 +360,7 @@ class ChessGameController(InputComponent):
             return {"ok": True, "state": self.get_mcp_state()}
         return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_mcp_state()}
 
-    def _apply_mcp_move(self, move_text: str) -> dict[str, object]:
+    def _apply_mcp_move(self, move_text: str, *, side: bool) -> dict[str, object]:
         with self._mcp_state_lock:
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
                 return {"ok": False, "error": "game is over", "state": self.get_mcp_state()}
@@ -360,7 +373,7 @@ class ChessGameController(InputComponent):
                     "state": self.get_mcp_state(),
                 }
 
-            actor = self._session.actor_for_mcp_request()
+            actor = MoveActor.agent(side)
             authorization = self._session.can_make_move(
                 actor=actor,
                 board=self._board,
