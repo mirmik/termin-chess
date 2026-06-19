@@ -307,6 +307,8 @@ class ChessGameMcpServer:
 
         if name == "get_state":
             payload = self._controller.get_mcp_state(caller_side=mcp_side)
+        elif name == "get_connection_info":
+            payload = self._connection_payload(mcp_side)
         elif name == "legal_moves":
             state = self._controller.get_mcp_state(caller_side=mcp_side)
             payload = {
@@ -363,6 +365,12 @@ class ChessGameMcpServer:
                 indent=2,
             )
             mime_type = "application/json"
+        elif uri == "chess://game/connection":
+            text = json.dumps(self._connection_payload(mcp_side), ensure_ascii=False, indent=2)
+            mime_type = "application/json"
+        elif uri == "chess://game/help":
+            text = self._help_text(mcp_side)
+            mime_type = "text/markdown"
         elif uri == "chess://game/pgn":
             text = self._controller.get_mcp_pgn()
             mime_type = "text/plain"
@@ -405,6 +413,11 @@ class ChessGameMcpServer:
             {
                 "name": "get_state",
                 "description": "Return the current chess position, legal moves, status and event counters.",
+                "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+            },
+            {
+                "name": "get_connection_info",
+                "description": "Return endpoint, caller seat, mode, side ownership and resource metadata for this MCP connection.",
                 "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
             {
@@ -466,6 +479,20 @@ class ChessGameMcpServer:
     def _resources() -> list[dict[str, object]]:
         return [
             {
+                "uri": "chess://game/connection",
+                "name": "connection",
+                "title": "Chess MCP connection info",
+                "description": "Endpoint, caller seat, side ownership and connection hints.",
+                "mimeType": "application/json",
+            },
+            {
+                "uri": "chess://game/help",
+                "name": "help",
+                "title": "Chess MCP help",
+                "description": "Short usage guide for agents connected to the chess game.",
+                "mimeType": "text/markdown",
+            },
+            {
                 "uri": "chess://game/state",
                 "name": "state",
                 "title": "Chess game state",
@@ -487,6 +514,87 @@ class ChessGameMcpServer:
                 "mimeType": "application/json",
             },
         ]
+
+    def _connection_payload(self, mcp_side: bool) -> dict[str, object]:
+        state = self._controller.get_mcp_state(caller_side=mcp_side)
+        caller_token = self._token_for_side(mcp_side)
+        seats = []
+        for side in (chess.WHITE, chess.BLACK):
+            caller = side == mcp_side
+            side_text = _side_name(side)
+            seats.append(
+                {
+                    "side": side_text,
+                    "owner": state["side_owners"][side_text],
+                    "caller": caller,
+                    "token": caller_token if caller else None,
+                    "authorization": f"Bearer {caller_token}" if caller else None,
+                }
+            )
+
+        return {
+            "ok": True,
+            "server": {
+                "name": "chess-game",
+                "version": "0.1.0",
+            },
+            "endpoint": {
+                "url": self.url,
+                "health_url": self._health_url(),
+            },
+            "session_file": str(self._config.session_file),
+            "mode": state["mode"],
+            "turn": state["turn"],
+            "status": state["status"],
+            "side_owners": state["side_owners"],
+            "caller": {
+                "side": state["caller_side"],
+                "can_move": state["caller_can_move"],
+                "error": state["caller_error"],
+                "token": caller_token,
+                "authorization": f"Bearer {caller_token}",
+            },
+            "seats": seats,
+            "hints": {
+                "default_human_vs_agent_agent_side": "black",
+                "session_token_field_alias": "black",
+                "use_wait_for_move_for_updates": True,
+            },
+            "tools": [tool["name"] for tool in self._tool_schemas()],
+            "resources": [resource["uri"] for resource in self._resources()],
+        }
+
+    def _help_text(self, mcp_side: bool) -> str:
+        connection = self._connection_payload(mcp_side)
+        caller = connection["caller"]
+        return "\n".join(
+            [
+                "# Chess Game MCP",
+                "",
+                f"- Endpoint: `{self.url}`",
+                f"- Caller side: `{caller['side']}`",
+                f"- Mode: `{connection['mode']}`",
+                f"- Turn: `{connection['turn']}`",
+                f"- Caller can move now: `{caller['can_move']}`",
+                "",
+                "## Common Flow",
+                "",
+                "1. Call `get_state` or read `chess://game/state`.",
+                "2. If it is not your turn, call `wait_for_move` with the latest `after_ply` or `after_event_id`.",
+                "3. When `caller_can_move` is true, call `legal_moves` and choose a legal UCI or SAN move.",
+                "4. Call `make_move` with that move.",
+                "",
+                "Use `get_connection_info` or `chess://game/connection` to inspect your seat and endpoint metadata.",
+            ]
+        )
+
+    def _health_url(self) -> str:
+        if self.url.endswith("/mcp"):
+            return f"{self.url[:-4]}/health"
+        return f"{self.url}/health"
+
+    def _token_for_side(self, side: bool) -> str:
+        return self._config.white_token if side == chess.WHITE else self._config.black_token
 
     @staticmethod
     def _rpc_result(request_id: object, result: dict[str, object]) -> dict[str, object]:
@@ -519,3 +627,7 @@ def _optional_int(value: object) -> int | None:
         return int(str(value))
     except ValueError:
         return None
+
+
+def _side_name(side: bool) -> str:
+    return "white" if side == chess.WHITE else "black"

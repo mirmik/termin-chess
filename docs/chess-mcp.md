@@ -44,6 +44,8 @@ the session file.
 
 ## Resources
 
+- `chess://game/connection`: endpoint, caller seat, mode and connection hints.
+- `chess://game/help`: short Markdown usage guide for connected agents.
 - `chess://game/state`: JSON position snapshot.
 - `chess://game/pgn`: PGN for the current game.
 - `chess://game/events`: recent move/reset/bot events.
@@ -56,6 +58,7 @@ user or another actor moves.
 
 - `get_state`: current FEN, board ASCII, side to move, legal moves, status and
   counters.
+- `get_connection_info`: endpoint, caller seat, mode and connection hints.
 - `legal_moves`: legal moves in UCI and SAN.
 - `make_move`: make a legal UCI or SAN move for the MCP seat identified by the
   request token.
@@ -96,6 +99,15 @@ curl -s "$URL" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"get_state","arguments":{}}}'
 ```
 
+Get connection info:
+
+```bash
+curl -s "$URL" \
+  -H "Authorization: Bearer $BLACK_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":6,"method":"tools/call","params":{"name":"get_connection_info","arguments":{}}}'
+```
+
 Make a move:
 
 ```bash
@@ -121,4 +133,13 @@ curl -s "$URL" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":5,"method":"resources/read","params":{"uri":"chess://game/state"}}'
+```
+
+Read the connection resource:
+
+```bash
+curl -s "$URL" \
+  -H "Authorization: Bearer $BLACK_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":7,"method":"resources/read","params":{"uri":"chess://game/connection"}}'
 ```
