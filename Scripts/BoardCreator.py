@@ -22,10 +22,14 @@ BOARD_FIRST_RANK_CENTER = -4 * TILE_SIZE
 BOARD_LAST_RANK_CENTER = 3 * TILE_SIZE
 BOARD_EDGE_MIN = BOARD_FIRST_FILE_CENTER - TILE_SIZE * 0.5
 BOARD_EDGE_MAX = BOARD_LAST_FILE_CENTER + TILE_SIZE * 0.5
-COORDINATE_LABEL_OFFSET = 1.2
-COORDINATE_LABEL_Z = 0.45
+COORDINATE_LABEL_OFFSET = 0.8
+COORDINATE_LABEL_Z = 0.15
 COORDINATE_LABEL_SIZE = 0.7
 COORDINATE_LABEL_COLOR = (0.86, 0.82, 0.72, 1.0)
+BOARD_BORDER_WIDTH = 1.2
+BOARD_BORDER_HEIGHT = 0.4
+BOARD_BORDER_Z = -0.1
+BOARD_BORDER_MATERIAL = "WoodMaterial"
 
 
 def _on_make_board_click(component: "BoardCreatorComponent") -> None:
@@ -114,6 +118,7 @@ class BoardCreatorComponent(PythonComponent):
         labels_root = self.entity.create_child(name=BOARD_COORDINATES_ENTITY)
         labels_root.pickable = False
         labels_root.selectable = False
+        self._make_board_border(labels_root)
 
         bottom_y = BOARD_EDGE_MIN - COORDINATE_LABEL_OFFSET
         top_y = BOARD_EDGE_MAX + COORDINATE_LABEL_OFFSET
@@ -156,6 +161,62 @@ class BoardCreatorComponent(PythonComponent):
             )
 
         print("Board coordinate labels ready.")
+
+    def _make_board_border(self, parent) -> None:
+        border_material = TcMaterial.from_name(BOARD_BORDER_MATERIAL)
+        if border_material is None or not border_material.is_valid:
+            print(f"WARNING: {BOARD_BORDER_MATERIAL} not found; board border skipped.")
+            return
+
+        inner_min = BOARD_EDGE_MIN
+        inner_max = BOARD_EDGE_MAX
+        outer_min = inner_min - BOARD_BORDER_WIDTH
+        outer_max = inner_max + BOARD_BORDER_WIDTH
+        center = (inner_min + inner_max) * 0.5
+        board_span = inner_max - inner_min
+        full_span = outer_max - outer_min
+
+        self._make_border_piece(
+            parent,
+            "border-bottom",
+            Vec3(center, inner_min - BOARD_BORDER_WIDTH * 0.5, BOARD_BORDER_Z),
+            Vec3(full_span, BOARD_BORDER_WIDTH, BOARD_BORDER_HEIGHT),
+            border_material,
+        )
+        self._make_border_piece(
+            parent,
+            "border-top",
+            Vec3(center, inner_max + BOARD_BORDER_WIDTH * 0.5, BOARD_BORDER_Z),
+            Vec3(full_span, BOARD_BORDER_WIDTH, BOARD_BORDER_HEIGHT),
+            border_material,
+        )
+        self._make_border_piece(
+            parent,
+            "border-left",
+            Vec3(inner_min - BOARD_BORDER_WIDTH * 0.5, center, BOARD_BORDER_Z),
+            Vec3(BOARD_BORDER_WIDTH, board_span, BOARD_BORDER_HEIGHT),
+            border_material,
+        )
+        self._make_border_piece(
+            parent,
+            "border-right",
+            Vec3(inner_max + BOARD_BORDER_WIDTH * 0.5, center, BOARD_BORDER_Z),
+            Vec3(BOARD_BORDER_WIDTH, board_span, BOARD_BORDER_HEIGHT),
+            border_material,
+        )
+
+    def _make_border_piece(self, parent, name: str, position: Vec3, scale: Vec3, material: TcMaterial) -> None:
+        piece = parent.create_child(name=name)
+        piece.pickable = False
+        piece.selectable = False
+        piece.transform.set_local_position(position)
+        piece.transform.set_local_scale(scale)
+
+        mesh_component = piece.add_component_by_name("MeshComponent")
+        mesh_component.set_field("mesh", TcMesh.from_name("Cube"))
+
+        renderer = piece.add_component_by_name("MeshRenderer")
+        renderer.set_field("material", material)
 
     def _find_child(self, name: str):
         for child in self.entity.children():
