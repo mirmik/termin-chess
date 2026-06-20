@@ -142,7 +142,7 @@ def make_headless_controller() -> object:
     return controller
 
 
-def test_wait_for_mcp_event_returns_user_move_and_updated_waiting_side() -> None:
+def test_wait_for_mcp_event_returns_ready_after_opponent_move() -> None:
     controller = make_headless_controller()
     move = chess.Move.from_uci("e2e4")
     san = controller._board.san(move)
@@ -160,19 +160,32 @@ def test_wait_for_mcp_event_returns_user_move_and_updated_waiting_side() -> None
     )
 
     payload = controller.wait_for_mcp_event(
-        after_event_id=None,
-        after_ply=0,
         timeout=0,
         caller_side=chess.BLACK,
     )
 
     assert payload["ok"] is True
-    assert payload["event"]["type"] == "move"
-    assert payload["event"]["actor"] == "human"
-    assert payload["event"]["uci"] == "e2e4"
-    assert payload["event"]["ply"] == 1
+    assert payload["ready"] is True
+    assert payload["event"] is None
     assert payload["waiting_for"]["actor"] == "agent:black"
     assert payload["state"]["caller_side"] == "black"
+    assert payload["state"]["caller_can_move"] is True
+    assert payload["state"]["last_move"]["uci"] == "e2e4"
+
+
+def test_wait_for_mcp_event_returns_ready_immediately_on_caller_turn() -> None:
+    controller = make_headless_controller()
+
+    payload = controller.wait_for_mcp_event(
+        timeout=0,
+        caller_side=chess.WHITE,
+    )
+
+    assert payload["ok"] is True
+    assert payload["ready"] is True
+    assert payload["event"] is None
+    assert payload["waiting_for"]["actor"] == "agent:white"
+    assert payload["state"]["caller_side"] == "white"
     assert payload["state"]["caller_can_move"] is True
 
 

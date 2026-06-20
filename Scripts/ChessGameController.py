@@ -453,37 +453,43 @@ class ChessGameController(InputComponent):
     def wait_for_mcp_event(
         self,
         *,
-        after_event_id: int | None,
-        after_ply: int | None,
         timeout: float,
         caller_side: bool | None = None,
     ) -> dict[str, object]:
-        def matching_event() -> dict[str, object] | None:
-            for event in self._mcp_events:
-                if after_event_id is not None and int(event["id"]) <= after_event_id:
-                    continue
-                if after_ply is not None and int(event.get("ply", 0)) <= after_ply:
-                    continue
-                return event
-            return None
+        def ready_payload(state: dict[str, object]) -> dict[str, object]:
+            return {"ok": True, "ready": True, "event": None, "waiting_for": state["turn_owner"], "state": state}
+
+        def game_over_payload(state: dict[str, object]) -> dict[str, object]:
+            return {
+                "ok": True,
+                "ready": False,
+                "game_over": True,
+                "event": state["last_move"],
+                "waiting_for": state["turn_owner"],
+                "state": state,
+            }
+
+        state = self.get_mcp_state(caller_side=caller_side)
+        if state["caller_can_move"] is True:
+            return ready_payload(state)
+        if state["game_over"] is True:
+            return game_over_payload(state)
 
         with self._mcp_condition:
-            event = matching_event()
-            if event is None and timeout > 0:
+            if timeout > 0:
                 remaining = timeout
                 import time
 
                 end_time = time.monotonic() + timeout
                 while remaining > 0 and not self._mcp_server_stopping:
                     self._mcp_condition.wait(timeout=remaining)
-                    event = matching_event()
-                    if event is not None:
-                        break
+                    state = self.get_mcp_state(caller_side=caller_side)
+                    if state["caller_can_move"] is True:
+                        return ready_payload(state)
+                    if state["game_over"] is True:
+                        return game_over_payload(state)
                     remaining = end_time - time.monotonic()
 
-        if event is not None:
-            state = self.get_mcp_state(caller_side=caller_side)
-            return {"ok": True, "event": event, "waiting_for": state["turn_owner"], "state": state}
         state = self.get_mcp_state(caller_side=caller_side)
         if self._mcp_server_stopping:
             return {

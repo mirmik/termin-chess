@@ -72,8 +72,8 @@ the running game MCP process.
 - `chess://game/events`: recent move/reset/bot events.
 
 The server accepts `resources/subscribe`, but the current local HTTP endpoint is
-request/response. Use `wait_for_move` when an agent needs to block until the
-user or another actor moves.
+request/response. Use `wait_for_move` when an agent needs to block until its
+side can move.
 
 ## Tools
 
@@ -85,8 +85,9 @@ user or another actor moves.
 - `legal_moves`: legal moves in UCI and SAN plus caller/turn ownership.
 - `make_move`: make a legal UCI or SAN move for the MCP seat identified by the
   request token.
-- `wait_for_move`: wait for a new event after an event id or ply; timeout and
-  success responses include `waiting_for`.
+- `wait_for_move`: wait until the caller's side can move, or until the game
+  ends. If the caller is already allowed to move, returns immediately with
+  `ready: true`; timeout and success responses include `waiting_for`.
 - `new_game`: listed for protocol visibility, but rejected for side-seat MCP
   callers. Use the in-game UI for reset.
 - `set_bot_enabled`: listed for protocol visibility, but rejected for side-seat
@@ -122,7 +123,8 @@ Important fields for agents:
   current mode and ownership model.
 - `board_input_enabled`, `board_input_error`: whether the in-window human can
   move now.
-- `next_event_id`: event cursor for `wait_for_move`.
+- `next_event_id`: next id for the recent event history exposed through
+  `chess://game/events`.
 
 ## Curl Examples
 
@@ -212,13 +214,13 @@ curl -s "$URL" \
   -d '{"jsonrpc":"2.0","id":32,"method":"tools/call","params":{"name":"make_move","arguments":{"move":"e7e5"}}}'
 ```
 
-Wait for the next event after the current ply:
+Wait until the caller can move:
 
 ```bash
 curl -s "$URL" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"wait_for_move","arguments":{"after_ply":1,"timeout":60}}}'
+  -d '{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"wait_for_move","arguments":{"timeout":60}}}'
 ```
 
 Read the state resource:

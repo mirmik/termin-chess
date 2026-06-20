@@ -250,13 +250,11 @@ Required behavior:
 
 Keeps the current long-poll behavior. It should allow an agent to wait for:
 
-- any new event
-- opponent move
-- own move accepted
+- its side to become ready to move
 - game over
 
-The first polished version can keep `after_event_id` and `after_ply` and add an
-optional `event_types` filter later.
+The move wait path is intentionally not indexed by ply or event id. A caller
+that is already allowed to move receives an immediate `ready: true` response.
 
 Current implementation: responses include caller-aware state and a
 `waiting_for` object with side, owner, label, and actor.

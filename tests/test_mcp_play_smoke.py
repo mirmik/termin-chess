@@ -177,7 +177,7 @@ def test_play_human_vs_agent_black_waits_for_human(tmp_path: Path) -> None:
         url = str(play.session["url"])
         state = tool_payload(rpc(url, play.black_token, 1, "get_state"))
         black_move = tool_payload(rpc(url, play.black_token, 2, "make_move", {"move": "e7e5", "timeout": 5}))
-        wait = tool_payload(rpc(url, play.black_token, 3, "wait_for_move", {"after_ply": 0, "timeout": 0}))
+        wait = tool_payload(rpc(url, play.black_token, 3, "wait_for_move", {"timeout": 0}))
 
         assert state["caller_side"] == "black"
         assert state["caller_can_move"] is False

@@ -86,16 +86,12 @@ class FakeController:
     def wait_for_mcp_event(
         self,
         *,
-        after_event_id: int | None,
-        after_ply: int | None,
         timeout: float,
         caller_side: bool | None = None,
     ) -> dict[str, object]:
         return {
             "ok": False,
             "timeout": True,
-            "after_event_id": after_event_id,
-            "after_ply": after_ply,
             "caller_side": "white" if caller_side == chess.WHITE else "black",
         }
 

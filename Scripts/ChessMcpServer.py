@@ -510,8 +510,6 @@ class ChessGameMcpServer:
             )
         elif name == "wait_for_move":
             payload = self._controller.wait_for_mcp_event(
-                after_event_id=_optional_int(arguments.get("after_event_id")),
-                after_ply=_optional_int(arguments.get("after_ply")),
                 timeout=float(arguments.get("timeout", 60.0)),
                 caller_side=mcp_side,
             )
@@ -617,12 +615,10 @@ class ChessGameMcpServer:
             },
             {
                 "name": "wait_for_move",
-                "description": "Wait until a new chess event occurs after the given event id or ply. The response includes caller-aware state and waiting_for.",
+                "description": "Wait until the caller's side can move, or until the game ends. The response includes caller-aware state and waiting_for.",
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "after_event_id": {"type": "integer"},
-                        "after_ply": {"type": "integer"},
                         "timeout": {"type": "number", "default": 60},
                     },
                     "additionalProperties": False,
@@ -779,7 +775,7 @@ class ChessGameMcpServer:
                 "## Common Flow",
                 "",
                 "1. Call `get_state` or read `chess://game/state`.",
-                "2. If it is not your turn, call `wait_for_move` with the latest `after_ply` or `after_event_id`.",
+                "2. If it is not your turn, call `wait_for_move`.",
                 "3. When `caller_can_move` is true, call `legal_moves` and choose a legal UCI or SAN move.",
                 "4. Call `make_move` with that move.",
                 "",
