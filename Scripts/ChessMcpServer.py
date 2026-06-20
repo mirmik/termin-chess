@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import secrets
 import signal
@@ -503,14 +504,20 @@ class ChessGameMcpServer:
                 "caller_error": state["caller_error"],
             }
         elif name == "make_move":
+            timeout = self._timeout_argument(arguments, default=10.0)
+            if timeout is None:
+                return self._rpc_error(request_id, -32602, "timeout must be a non-negative finite number")
             payload = self._controller.request_mcp_move(
                 str(arguments.get("move", "")),
                 side=mcp_side,
-                timeout=float(arguments.get("timeout", 10.0)),
+                timeout=timeout,
             )
         elif name == "wait_for_move":
+            timeout = self._timeout_argument(arguments, default=60.0)
+            if timeout is None:
+                return self._rpc_error(request_id, -32602, "timeout must be a non-negative finite number")
             payload = self._controller.wait_for_mcp_event(
-                timeout=float(arguments.get("timeout", 60.0)),
+                timeout=timeout,
                 caller_side=mcp_side,
             )
         else:
@@ -525,6 +532,19 @@ class ChessGameMcpServer:
                 "structuredContent": payload,
             },
         )
+
+    @staticmethod
+    def _timeout_argument(arguments: dict[str, object], *, default: float) -> float | None:
+        value = arguments.get("timeout", default)
+        if isinstance(value, bool):
+            return None
+        try:
+            timeout = float(value)
+        except (TypeError, ValueError):
+            return None
+        if not math.isfinite(timeout) or timeout < 0:
+            return None
+        return timeout
 
     def _handle_resource_read(self, request_id: object, params: object, *, mcp_side: bool) -> dict[str, object]:
         if not isinstance(params, dict):

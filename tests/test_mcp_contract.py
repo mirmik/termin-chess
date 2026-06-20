@@ -277,3 +277,16 @@ def test_side_seat_tools_are_caller_aware(tmp_path: Path) -> None:
     assert restricted_payload["ok"] is False
     assert restricted_payload["caller_side"] == "white"
     assert "new_game is reserved" in restricted_payload["error"]
+
+
+def test_invalid_timeout_argument_returns_invalid_params(tmp_path: Path) -> None:
+    server = make_server(tmp_path / "session.json")
+
+    response = server._handle_tool_call(
+        1,
+        {"name": "make_move", "arguments": {"move": "e2e4", "timeout": "soon"}},
+        mcp_side=chess.WHITE,
+    )
+
+    assert response["error"]["code"] == -32602
+    assert response["error"]["message"] == "timeout must be a non-negative finite number"

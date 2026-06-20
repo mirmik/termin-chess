@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import queue
 import threading
 import types
 from pathlib import Path
@@ -129,6 +130,7 @@ def make_headless_controller() -> object:
     controller._bot_enabled = False
     controller._bot_color = chess.BLACK
     controller._mcp_state_lock = threading.RLock()
+    controller._mcp_commands = queue.Queue()
     controller._mcp_condition = threading.Condition()
     controller._mcp_events = []
     controller._mcp_next_event_id = 1
@@ -187,6 +189,21 @@ def test_wait_for_mcp_event_returns_ready_immediately_on_caller_turn() -> None:
     assert payload["waiting_for"]["actor"] == "agent:white"
     assert payload["state"]["caller_side"] == "white"
     assert payload["state"]["caller_can_move"] is True
+
+
+def test_timed_out_mcp_move_is_not_applied_later() -> None:
+    controller = make_headless_controller()
+
+    payload = controller._submit_mcp_command(
+        {"kind": "move", "move": "e2e4", "side": chess.WHITE},
+        timeout=0,
+    )
+    controller._process_mcp_commands()
+
+    assert payload["ok"] is False
+    assert payload["timeout"] is True
+    assert controller._board.fen() == chess.STARTING_FEN
+    assert controller._mcp_events == []
 
 
 def test_mcp_move_after_game_over_returns_structured_error() -> None:
@@ -292,6 +309,21 @@ def test_human_promotion_click_waits_for_piece_choice() -> None:
     assert pending["to"] == "e8"
     assert {str(choice["piece"]) for choice in pending["choices"]} == {"queen", "rook", "bishop", "knight"}
     assert controller._board.piece_at(chess.E7) == chess.Piece(chess.PAWN, chess.WHITE)
+
+
+def test_reselecting_piece_clears_pending_promotion() -> None:
+    controller = make_headless_controller()
+    controller._session.configure_local_sandbox()
+    controller._pending_promotion = {
+        "pending": True,
+        "from": "e7",
+        "to": "e8",
+        "choices": [{"piece": "queen", "label": "Queen", "uci": "e7e8q", "san": "e8=Q+"}],
+    }
+
+    controller._select_piece("e2")
+
+    assert controller.get_pending_promotion_info() == {"pending": False}
 
 
 def test_choose_promotion_executes_selected_piece_move() -> None:

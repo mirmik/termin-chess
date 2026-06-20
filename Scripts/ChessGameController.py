@@ -6,6 +6,7 @@ import random
 import os
 import queue
 import threading
+import time
 
 import chess
 import chess.pgn
@@ -475,20 +476,32 @@ class ChessGameController(InputComponent):
         if state["game_over"] is True:
             return game_over_payload(state)
 
-        with self._mcp_condition:
-            if timeout > 0:
-                remaining = timeout
-                import time
+        if timeout > 0:
+            remaining = timeout
+            end_time = time.monotonic() + timeout
+            observed_next_event_id = state["next_event_id"]
+            while remaining > 0:
+                with self._mcp_condition:
+                    if (
+                        not self._mcp_server_stopping
+                        and self._mcp_next_event_id == observed_next_event_id
+                    ):
+                        self._mcp_condition.wait(timeout=remaining)
+                    if self._mcp_server_stopping:
+                        break
+                    observed_next_event_id = self._mcp_next_event_id
 
-                end_time = time.monotonic() + timeout
-                while remaining > 0 and not self._mcp_server_stopping:
-                    self._mcp_condition.wait(timeout=remaining)
-                    state = self.get_mcp_state(caller_side=caller_side)
-                    if state["caller_can_move"] is True:
-                        return ready_payload(state)
-                    if state["game_over"] is True:
-                        return game_over_payload(state)
-                    remaining = end_time - time.monotonic()
+                state = self.get_mcp_state(caller_side=caller_side)
+                if state["caller_can_move"] is True:
+                    return ready_payload(state)
+                if state["game_over"] is True:
+                    return game_over_payload(state)
+                remaining = end_time - time.monotonic()
+
+                if observed_next_event_id == state["next_event_id"]:
+                    # No state-changing event occurred; this was a timeout or spurious wake.
+                    continue
+                observed_next_event_id = state["next_event_id"]
 
         state = self.get_mcp_state(caller_side=caller_side)
         if self._mcp_server_stopping:
@@ -547,11 +560,15 @@ class ChessGameController(InputComponent):
             self._mcp_server.reset_session_state()
 
     def _submit_mcp_command(self, command: dict[str, object], *, timeout: float) -> dict[str, object]:
+        wait_timeout = max(timeout, 0.0)
         done = threading.Event()
         command["done"] = done
         command["result"] = None
+        command["cancelled"] = False
+        command["expires_at"] = time.monotonic() + wait_timeout
         self._mcp_commands.put(command)
-        if not done.wait(timeout=max(timeout, 0.0)):
+        if not done.wait(timeout=wait_timeout):
+            command["cancelled"] = True
             return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
         result = command.get("result")
         if isinstance(result, dict):
@@ -568,7 +585,10 @@ class ChessGameController(InputComponent):
 
             done = command.get("done")
             try:
-                command["result"] = self._handle_mcp_command(command)
+                if self._mcp_command_cancelled_or_expired(command):
+                    command["result"] = self._expired_mcp_command_result(command)
+                else:
+                    command["result"] = self._handle_mcp_command(command)
             except Exception as exc:
                 command["result"] = {
                     "ok": False,
@@ -580,6 +600,26 @@ class ChessGameController(InputComponent):
                 if isinstance(done, threading.Event):
                     done.set()
             processed += 1
+
+    def _mcp_command_cancelled_or_expired(self, command: dict[str, object]) -> bool:
+        if bool(command.get("cancelled")):
+            return True
+        expires_at = command.get("expires_at")
+        if isinstance(expires_at, (int, float)) and time.monotonic() > float(expires_at):
+            command["cancelled"] = True
+            return True
+        return False
+
+    def _expired_mcp_command_result(self, command: dict[str, object]) -> dict[str, object]:
+        side = command.get("side")
+        caller_side = side if isinstance(side, bool) else None
+        return {
+            "ok": False,
+            "timeout": True,
+            "cancelled": True,
+            "error": "MCP command timed out before it could be processed",
+            "state": self.get_mcp_state(caller_side=caller_side),
+        }
 
     def _handle_mcp_command(self, command: dict[str, object]) -> dict[str, object]:
         kind = command.get("kind")
@@ -878,6 +918,7 @@ class ChessGameController(InputComponent):
                 self._clear_selection()
 
     def _select_piece(self, square: str):
+        self._pending_promotion = None
         self._selected_square = square
         self._state = STATE_SELECTED
         self._valid_moves = [
