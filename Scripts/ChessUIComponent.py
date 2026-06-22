@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 
 from termin.ui_components import UIComponent
 from tcgui.widgets import Button, Label, Panel, Separator, VStack, px
@@ -305,7 +306,8 @@ class ChessUIComponent(UIComponent):
         self._connection_labels["last_event"] = self._make_info_label("", width=width)
         stack.add_child(self._connection_labels["last_event"])
 
-        for seat in self._seat_payloads(info):
+        active_seats = self._seat_payloads(info)
+        for seat in active_seats:
             side = str(seat["side"])
             label = self._make_info_label("", width=width)
             self._connection_labels[f"{side}_status"] = label
@@ -318,6 +320,17 @@ class ChessUIComponent(UIComponent):
                     width=width,
                 )
             )
+            memo_label = "Copy Agent Memo" if len(active_seats) == 1 else f"Copy {side.title()} Agent Memo"
+            memo_button = self._make_button(
+                memo_label,
+                lambda seat_payload=seat: self._copy_text(
+                    f"{str(seat_payload['side'])} agent memo",
+                    self._agent_memo_text(info, seat_payload),
+                ),
+                width=width,
+            )
+            self._style_agent_memo_button(memo_button)
+            stack.add_child(memo_button)
 
         self._refresh_connection_info()
 
@@ -346,6 +359,14 @@ class ChessUIComponent(UIComponent):
         btn.text_color = (1.0, 1.0, 1.0, 1.0)
         btn.on_click = callback
         return btn
+
+    @staticmethod
+    def _style_agent_memo_button(btn: Button) -> None:
+        btn.font_size = 15
+        btn.background_color = (0.82, 0.50, 0.12, 1.0)
+        btn.hover_color = (0.96, 0.62, 0.18, 1.0)
+        btn.pressed_color = (0.62, 0.34, 0.08, 1.0)
+        btn.text_color = (0.08, 0.06, 0.04, 1.0)
 
     def _add_promotion_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
         title = self._make_info_label(self._promotion_title(info), width=width, font_size=13)
@@ -453,23 +474,36 @@ class ChessUIComponent(UIComponent):
         self._update_status()
 
     def _copy_text(self, label: str, text: str) -> None:
-        try:
-            proc = subprocess.Popen(
-                ["xclip", "-selection", "clipboard"],
-                stdin=subprocess.PIPE,
-            )
-            proc.communicate(input=text.encode("utf-8"))
-            print(f"[ChessUI] {label} copied to clipboard (xclip)")
-        except FileNotFoundError:
+        for command in self._clipboard_commands():
             try:
-                proc = subprocess.Popen(
-                    ["xsel", "--clipboard", "--input"],
-                    stdin=subprocess.PIPE,
+                subprocess.run(
+                    command,
+                    input=text,
+                    text=True,
+                    check=True,
                 )
-                proc.communicate(input=text.encode("utf-8"))
-                print(f"[ChessUI] {label} copied to clipboard (xsel)")
-            except FileNotFoundError:
-                print(f"[ChessUI] WARNING: xclip/xsel not found, cannot copy {label} to clipboard")
+                print(f"[ChessUI] {label} copied to clipboard ({command[0]})")
+                return
+            except (FileNotFoundError, subprocess.CalledProcessError) as exc:
+                print(f"[ChessUI] clipboard command failed for {label}: {command[0]} ({exc})")
+        names = "/".join(command[0] for command in self._clipboard_commands())
+        print(f"[ChessUI] WARNING: {names} not found or failed, cannot copy {label} to clipboard")
+
+    @staticmethod
+    def _clipboard_commands(platform: str | None = None) -> list[list[str]]:
+        current_platform = sys.platform if platform is None else platform
+        if current_platform.startswith("win"):
+            return [
+                ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"],
+                ["pwsh.exe", "-NoProfile", "-Command", "Set-Clipboard"],
+                ["clip.exe"],
+            ]
+        if current_platform == "darwin":
+            return [["pbcopy"]]
+        return [
+            ["xclip", "-selection", "clipboard"],
+            ["xsel", "--clipboard", "--input"],
+        ]
 
     def _on_exit(self):
         print("[ChessUI] 'Exit' clicked")
@@ -597,6 +631,50 @@ class ChessUIComponent(UIComponent):
         method = seat["last_method"]
         method_text = str(method) if method is not None else "no calls"
         return f"{side}: {state}, {requests} req, {method_text}"
+
+    @staticmethod
+    def _agent_memo_text(info: dict[str, object], seat: dict[str, object]) -> str:
+        side = str(seat["side"])
+        url = str(info["url"])
+        token = str(seat["token"])
+        authorization = str(seat.get("authorization", f"Bearer {token}"))
+        mode = str(info["mode"])
+        session_file = str(info["session_file"])
+        active_sides = info.get("active_mcp_sides")
+        if isinstance(active_sides, list):
+            active_text = ", ".join(str(active_side) for active_side in active_sides)
+        else:
+            active_text = side
+
+        return "\n".join(
+            [
+                "You are playing chess as an MCP-connected agent.",
+                "",
+                "Connection:",
+                f"- Endpoint URL: {url}",
+                f"- Authorization header: {authorization}",
+                f"- Token: {token}",
+                f"- Your side: {side}",
+                f"- Game mode: {mode}",
+                f"- Active MCP sides: {active_text}",
+                f"- Local session file, if accessible: {session_file}",
+                "",
+                "Expected conduct:",
+                "- Play your own chess moves. Do not ask the user/operator to choose moves for you.",
+                "- Do not use external tools, chess engines, web search, opening books, or tablebases unless the user explicitly allows it.",
+                "- Use only the chess MCP connection above for game state and moves.",
+                "- If it is not your turn, call `wait_for_move` with a reasonable timeout instead of polling or asking the user for updates.",
+                "- On your turn, call `get_state` or `legal_moves`, choose one legal move, then call `make_move`.",
+                "- Side-seat agents must not try to call `new_game` or `set_bot_enabled`; those controls are reserved for the in-game UI.",
+                "",
+                "Useful MCP tools:",
+                "- `get_connection_info`: verify your seat, mode, endpoint and policy.",
+                "- `get_state`: inspect FEN, legal moves, turn owner, game status and last move.",
+                "- `legal_moves`: list legal UCI/SAN moves for the current position.",
+                "- `make_move`: play your selected legal UCI or SAN move.",
+                "- `wait_for_move`: wait until your side can move or the game ends.",
+            ]
+        )
 
     @staticmethod
     def _last_event_text(info: dict[str, object]) -> str:

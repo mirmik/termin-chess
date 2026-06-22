@@ -35,6 +35,10 @@ def load_ui_module():
     component_module.UIComponent = UIComponent
     sys.modules["termin.visualization.ui.widgets.component"] = component_module
 
+    ui_components_module = types.ModuleType("termin.ui_components")
+    ui_components_module.UIComponent = UIComponent
+    sys.modules["termin.ui_components"] = ui_components_module
+
     tcgui_pkg = types.ModuleType("tcgui")
     tcgui_pkg.__path__ = []
     sys.modules["tcgui"] = tcgui_pkg
@@ -162,3 +166,53 @@ def test_copy_pgn_uses_controller_pgn_payload() -> None:
     component._on_copy_pgn()
 
     assert copied == [("PGN", "1. e4 e5 *")]
+
+
+def test_agent_memo_contains_connection_and_conduct_hints() -> None:
+    info = {
+        "url": "http://127.0.0.1:8790/mcp",
+        "session_file": "/tmp/chess-game-mcp.json",
+        "mode": "human_vs_agent",
+        "active_mcp_sides": ["black"],
+    }
+    seat = {
+        "side": "black",
+        "token": "black-token",
+        "authorization": "Bearer black-token",
+    }
+
+    memo = ChessUIComponent._agent_memo_text(info, seat)
+
+    assert "Endpoint URL: http://127.0.0.1:8790/mcp" in memo
+    assert "Authorization header: Bearer black-token" in memo
+    assert "Your side: black" in memo
+    assert "Do not ask the user/operator to choose moves for you." in memo
+    assert "Do not use external tools" in memo
+    assert "wait_for_move" in memo
+    assert "new_game" in memo
+
+
+def test_agent_memo_button_uses_accent_style() -> None:
+    button = ui_module.Button()
+
+    ChessUIComponent._style_agent_memo_button(button)
+
+    assert button.font_size == 15
+    assert button.background_color == (0.82, 0.50, 0.12, 1.0)
+    assert button.hover_color == (0.96, 0.62, 0.18, 1.0)
+    assert button.text_color == (0.08, 0.06, 0.04, 1.0)
+
+
+def test_clipboard_commands_include_windows_backends() -> None:
+    commands = ChessUIComponent._clipboard_commands("win32")
+
+    assert commands[0] == ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"]
+    assert ["pwsh.exe", "-NoProfile", "-Command", "Set-Clipboard"] in commands
+    assert ["clip.exe"] in commands
+
+
+def test_clipboard_commands_keep_linux_backends() -> None:
+    assert ChessUIComponent._clipboard_commands("linux") == [
+        ["xclip", "-selection", "clipboard"],
+        ["xsel", "--clipboard", "--input"],
+    ]
