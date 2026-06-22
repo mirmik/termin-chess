@@ -203,6 +203,15 @@ def test_agent_memo_button_uses_accent_style() -> None:
     assert button.text_color == (0.08, 0.06, 0.04, 1.0)
 
 
+def test_agent_memo_button_label_says_copy_paste_to_agent() -> None:
+    white = {"side": "white"}
+    black = {"side": "black"}
+
+    assert ChessUIComponent._agent_memo_button_label(black, [black]) == "Copy & Paste to Your Agent"
+    assert ChessUIComponent._agent_memo_button_label(white, [white, black]) == "Copy & Paste to White Agent"
+    assert ChessUIComponent._agent_memo_button_label(black, [white, black]) == "Copy & Paste to Black Agent"
+
+
 def test_clipboard_commands_include_windows_backends() -> None:
     commands = ChessUIComponent._clipboard_commands("win32")
 

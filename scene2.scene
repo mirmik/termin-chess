@@ -7423,7 +7423,7 @@
         ],
         "children": [
           {
-            "uuid": "88601aa4-7a3e-4f6f-b978-dcbe135915d5",
+            "uuid": "d8c7f3f8-fe9f-445b-8050-d55750d90c7a",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -7441,8 +7441,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -7537,7 +7537,7 @@
             ]
           },
           {
-            "uuid": "09aeb18e-0359-4eb9-a2a2-a9ce9e815f26",
+            "uuid": "cdee6eb5-389a-451b-a729-a3e6bd45b5bb",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -7651,7 +7651,7 @@
             ]
           },
           {
-            "uuid": "e179cb5b-b7aa-4a71-a2a6-2f36ff450b09",
+            "uuid": "595fdb2f-8e51-4789-9341-84c97cc8e9ea",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -7669,8 +7669,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -7765,7 +7765,7 @@
             ]
           },
           {
-            "uuid": "f3bc97f7-1685-4038-a759-06c6da65ecbb",
+            "uuid": "69538e65-feca-4ef6-9370-eea2ac0badf9",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -7879,7 +7879,7 @@
             ]
           },
           {
-            "uuid": "dfb71696-61e0-4784-8637-ba867cc58f6f",
+            "uuid": "2b441c99-c450-40f3-b2d0-9652a8f64619",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -7897,8 +7897,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -7993,7 +7993,7 @@
             ]
           },
           {
-            "uuid": "82266698-ab16-40d2-b0d6-984a3b85061a",
+            "uuid": "0bea5b4b-5e6c-4251-beba-71f80fb43aba",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8107,7 +8107,7 @@
             ]
           },
           {
-            "uuid": "3c1cb19e-fdb8-4283-afdc-096ba198db23",
+            "uuid": "b63e5f3e-88e6-4822-83c7-b4f7bcac4c8d",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8125,8 +8125,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -8221,7 +8221,7 @@
             ]
           },
           {
-            "uuid": "be41bb69-588b-4cc8-a1d4-129d5918b796",
+            "uuid": "19797e71-40c7-48b5-90cf-d3efce898384",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8335,7 +8335,7 @@
             ]
           },
           {
-            "uuid": "35683432-2156-4510-b2bf-7cd35757f716",
+            "uuid": "62154c27-c359-479c-b0ec-85c2a13223d0",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8353,8 +8353,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -8449,7 +8449,7 @@
             ]
           },
           {
-            "uuid": "98b27ff0-3ebb-489f-90cb-3ce9e3f47f18",
+            "uuid": "fdc99edf-8d24-49a9-b176-bd90d1d2b1e2",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8563,7 +8563,7 @@
             ]
           },
           {
-            "uuid": "5cb34a7d-0900-4e3b-bf0a-0f1661062cf9",
+            "uuid": "97908a5b-5bf2-44eb-9f08-b2ba3dd0f26a",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8581,8 +8581,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -8677,7 +8677,7 @@
             ]
           },
           {
-            "uuid": "b8aceaf6-67a2-46f7-add2-e151c6606923",
+            "uuid": "1da2649c-2bcb-4db5-8979-d7e200d7eb59",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8791,7 +8791,7 @@
             ]
           },
           {
-            "uuid": "14b4a01d-b42e-4973-b868-89996eb69326",
+            "uuid": "bd78c2e2-3af9-4896-bae2-e2e779cee1e1",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8809,8 +8809,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -8905,7 +8905,7 @@
             ]
           },
           {
-            "uuid": "627d1dc9-1fb3-418d-85a2-de4c02476f16",
+            "uuid": "e3cc78b0-0404-4b61-809e-c8ed44df5a73",
             "name": "Pawn",
             "priority": 0.0,
             "visible": true,
@@ -8917,234 +8917,6 @@
             "pose": {
               "position": [
                 4.0,
-                4.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              0.05,
-              0.05,
-              0.05
-            ],
-            "components": [
-              {
-                "type": "MeshComponent",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
-                    "name": "Hex_Pawn",
-                    "type": "uuid"
-                  },
-                  "mesh_offset_enabled": false,
-                  "mesh_offset_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_euler": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ]
-                }
-              },
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "material": {
-                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
-                    "name": "BlackFigure",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "mesh_offset_enabled": false,
-                  "mesh_offset_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_euler": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "_override_material": false
-                }
-              },
-              {
-                "type": "ColliderComponent",
-                "data": {
-                  "enabled": true,
-                  "box_size": [
-                    20.0,
-                    20.0,
-                    40.0
-                  ],
-                  "convex_hull_mesh": {
-                    "type": "none"
-                  },
-                  "collider_offset_enabled": false,
-                  "collider_offset_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "collider_offset_euler": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "collider_type": "Box",
-                  "convex_hull_mesh_source": "Field"
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "fb0f34af-3e8d-4276-b5ac-106362a389c4",
-            "name": "Pawn",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                6.0,
-                -6.0,
-                0.0
-              ],
-              "rotation": [
-                0.0,
-                0.0,
-                0.0,
-                1.0
-              ]
-            },
-            "scale": [
-              0.05,
-              0.05,
-              0.05
-            ],
-            "components": [
-              {
-                "type": "MeshComponent",
-                "data": {
-                  "enabled": true,
-                  "mesh": {
-                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
-                    "name": "Hex_Pawn",
-                    "type": "uuid"
-                  },
-                  "mesh_offset_enabled": false,
-                  "mesh_offset_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_euler": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ]
-                }
-              },
-              {
-                "type": "MeshRenderer",
-                "data": {
-                  "enabled": true,
-                  "material": {
-                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
-                    "name": "WhiteFigure",
-                    "type": "uuid"
-                  },
-                  "cast_shadow": true,
-                  "mesh_offset_enabled": false,
-                  "mesh_offset_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_euler": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "mesh_offset_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "_override_material": false
-                }
-              },
-              {
-                "type": "ColliderComponent",
-                "data": {
-                  "enabled": true,
-                  "box_size": [
-                    20.0,
-                    20.0,
-                    40.0
-                  ],
-                  "convex_hull_mesh": {
-                    "type": "none"
-                  },
-                  "collider_offset_enabled": false,
-                  "collider_offset_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "collider_offset_euler": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "collider_type": "Box",
-                  "convex_hull_mesh_source": "Field"
-                }
-              }
-            ]
-          },
-          {
-            "uuid": "20a68d3f-594e-4cdf-b0aa-2bf3f29a09ed",
-            "name": "Pawn",
-            "priority": 0.0,
-            "visible": true,
-            "enabled": true,
-            "pickable": true,
-            "selectable": true,
-            "layer": 0.0,
-            "flags": 0.0,
-            "pose": {
-              "position": [
-                6.0,
                 4.0,
                 0.0
               ],
@@ -9247,7 +9019,235 @@
             ]
           },
           {
-            "uuid": "a93d9de7-cabf-4ebf-ab6e-22cd11ac9131",
+            "uuid": "3c959bc5-46b6-4a26-a744-be523e731abf",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                -6.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshComponent",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn",
+                    "type": "uuid"
+                  },
+                  "mesh_offset_enabled": false,
+                  "mesh_offset_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_euler": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              },
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "material": {
+                    "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
+                    "name": "WhiteFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "mesh_offset_enabled": false,
+                  "mesh_offset_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_euler": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "_override_material": false
+                }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ],
+                  "convex_hull_mesh": {
+                    "type": "none"
+                  },
+                  "collider_offset_enabled": false,
+                  "collider_offset_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "collider_offset_euler": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "collider_type": "Box",
+                  "convex_hull_mesh_source": "Field"
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "b60e8123-ff17-4b36-beae-39b9833325b7",
+            "name": "Pawn",
+            "priority": 0.0,
+            "visible": true,
+            "enabled": true,
+            "pickable": true,
+            "selectable": true,
+            "layer": 0.0,
+            "flags": 0.0,
+            "pose": {
+              "position": [
+                6.0,
+                4.0,
+                0.0
+              ],
+              "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            },
+            "scale": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "components": [
+              {
+                "type": "MeshComponent",
+                "data": {
+                  "enabled": true,
+                  "mesh": {
+                    "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
+                    "name": "Hex_Pawn",
+                    "type": "uuid"
+                  },
+                  "mesh_offset_enabled": false,
+                  "mesh_offset_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_euler": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ]
+                }
+              },
+              {
+                "type": "MeshRenderer",
+                "data": {
+                  "enabled": true,
+                  "material": {
+                    "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
+                    "name": "BlackFigure",
+                    "type": "uuid"
+                  },
+                  "cast_shadow": true,
+                  "mesh_offset_enabled": false,
+                  "mesh_offset_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_euler": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "mesh_offset_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                  ],
+                  "_override_material": false
+                }
+              },
+              {
+                "type": "ColliderComponent",
+                "data": {
+                  "enabled": true,
+                  "box_size": [
+                    20.0,
+                    20.0,
+                    40.0
+                  ],
+                  "convex_hull_mesh": {
+                    "type": "none"
+                  },
+                  "collider_offset_enabled": false,
+                  "collider_offset_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "collider_offset_euler": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "collider_type": "Box",
+                  "convex_hull_mesh_source": "Field"
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "7cafbe0b-6970-4322-90f4-ed027209c28b",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -9265,8 +9265,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -9361,7 +9361,7 @@
             ]
           },
           {
-            "uuid": "521f70ac-6d3d-4b5e-a7b6-51d9505ac7f9",
+            "uuid": "fd3128fd-034b-46bb-ab70-d14fa71c76ad",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -9379,8 +9379,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -9475,7 +9475,7 @@
             ]
           },
           {
-            "uuid": "9864e162-233f-428f-ad44-5cbef0eeef43",
+            "uuid": "e68ed2bc-8a71-4a12-9cbb-18fffed604ce",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -9589,7 +9589,7 @@
             ]
           },
           {
-            "uuid": "0d5fef7a-9c7a-4884-b029-5d808424791c",
+            "uuid": "22fe1447-faea-4479-afae-39b696e072de",
             "name": "Rook",
             "priority": 0.0,
             "visible": true,
@@ -9703,7 +9703,7 @@
             ]
           },
           {
-            "uuid": "885a7eac-99a0-4b46-a597-04d585f31892",
+            "uuid": "e0f980e1-91ff-487f-b361-e752cb23060f",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -9721,8 +9721,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -9817,7 +9817,7 @@
             ]
           },
           {
-            "uuid": "53070def-81e5-43b1-8fd1-3193f5abaf7e",
+            "uuid": "8c3aed09-cb3a-4cf6-b32e-18f63ac743d1",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -9835,8 +9835,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -9931,7 +9931,7 @@
             ]
           },
           {
-            "uuid": "052d2a9f-ce65-45b3-bcea-8882dda11430",
+            "uuid": "d3ba7080-6563-45f0-bdae-0102c037f0d6",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -10045,7 +10045,7 @@
             ]
           },
           {
-            "uuid": "a821202a-0793-4b16-a40d-a95ab858d8bd",
+            "uuid": "a3b05d49-5e84-47bc-9db9-1718791b110e",
             "name": "Knight",
             "priority": 0.0,
             "visible": true,
@@ -10159,7 +10159,7 @@
             ]
           },
           {
-            "uuid": "85025c53-6742-4663-ac8f-e50930fa3ad8",
+            "uuid": "289749a4-f0e5-48ed-a26a-0f17c45cebac",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -10177,8 +10177,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -10273,7 +10273,7 @@
             ]
           },
           {
-            "uuid": "1b5a0222-edde-4852-abe1-aca3398460bf",
+            "uuid": "cf270a11-9b0f-4d53-9717-de223d22031e",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -10291,8 +10291,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -10387,7 +10387,7 @@
             ]
           },
           {
-            "uuid": "86bd12ed-ff19-402b-a836-34d8306eb04b",
+            "uuid": "4559b452-19cc-4afe-8a5c-b89ac1d81f17",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -10501,7 +10501,7 @@
             ]
           },
           {
-            "uuid": "c8b36eb6-91a6-487c-88b4-1fc1387f80be",
+            "uuid": "78669c68-6a25-4541-8710-141f6d264288",
             "name": "Bishop",
             "priority": 0.0,
             "visible": true,
@@ -10615,7 +10615,7 @@
             ]
           },
           {
-            "uuid": "3c93ab3b-acfb-4654-b19b-2c6109dcadd2",
+            "uuid": "94c85894-c862-42ac-9d4d-a5929ef4b3a1",
             "name": "Queen",
             "priority": 0.0,
             "visible": true,
@@ -10633,8 +10633,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -10729,7 +10729,7 @@
             ]
           },
           {
-            "uuid": "8f1b8820-c190-4c49-84bb-0b7c3b8b3a77",
+            "uuid": "0636bc57-b30c-4710-976c-6114f16df5d4",
             "name": "Queen",
             "priority": 0.0,
             "visible": true,
@@ -10843,7 +10843,7 @@
             ]
           },
           {
-            "uuid": "1ee5b3ca-e019-4e12-b44a-73be272090b6",
+            "uuid": "7babde71-e5ed-497e-8305-7e0743f8cfd2",
             "name": "King",
             "priority": 0.0,
             "visible": true,
@@ -10861,8 +10861,8 @@
               "rotation": [
                 0.0,
                 0.0,
-                0.0,
-                1.0
+                1.0,
+                0.0
               ]
             },
             "scale": [
@@ -10957,7 +10957,7 @@
             ]
           },
           {
-            "uuid": "3b18d7fd-a873-46ec-af51-686adda2e1fb",
+            "uuid": "e15f12e4-5e0d-4c47-aef2-6f0bb13f458b",
             "name": "King",
             "priority": 0.0,
             "visible": true,
@@ -11472,13 +11472,6 @@
                     "min_radius": 1.0,
                     "max_radius": 100.0
                   }
-                },
-                {
-                  "type": "ViewportHintComponent",
-                  "data": {
-                    "pipeline_name": "(Editor)",
-                    "layer_mask": "0xffffffffffffffff"
-                  }
                 }
               ],
               "editor_ui": [
@@ -11613,13 +11606,6 @@
               "min_radius": 1.0,
               "max_radius": 100.0
             }
-          },
-          {
-            "type": "ViewportHintComponent",
-            "data": {
-              "pipeline_name": "(Editor)",
-              "layer_mask": "0xffffffffffffffff"
-            }
           }
         ],
         "editor_ui": [
@@ -11639,9 +11625,8 @@
         ]
       }
     },
-    "selected_entity": "62dc098a-2260-42c4-a534-f8b8542cb81b",
+    "selected_entity": "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
     "expanded_entities": [
-      "549734b2-191b-4016-8914-5d687ea1b7a3",
       "64a01777-5d57-4709-abd2-9a1caaacf544",
       "ba5ebc38-adb1-4245-aebb-ea7cca4882f1",
       "52cd6dff-f4c4-4716-b33a-75c9c0473b52",

@@ -4,7 +4,12 @@
     "dev": {
       "target": "desktop",
       "entry_scene": "scene2.scene",
-      "output_dir": "dist/Chess"
+      "output_dir": "dist/Chess",
+      "shader_targets": [
+        "vulkan",
+        "opengl",
+        "d3d11"
+      ]
     }
   }
 }

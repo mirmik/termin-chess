@@ -282,6 +282,23 @@ class ChessUIComponent(UIComponent):
         title.color = (0.92, 0.95, 1.0, 1.0)
         stack.add_child(title)
 
+        active_seats = self._seat_payloads(info)
+        if active_seats:
+            agent_memo_title = self._make_info_label("Agent Mnemo:", width=width, font_size=13)
+            agent_memo_title.color = (1.0, 0.78, 0.36, 1.0)
+            stack.add_child(agent_memo_title)
+        for seat in active_seats:
+            memo_button = self._make_button(
+                self._agent_memo_button_label(seat, active_seats),
+                lambda seat_payload=seat: self._copy_text(
+                    f"{str(seat_payload['side'])} agent memo",
+                    self._agent_memo_text(info, seat_payload),
+                ),
+                width=width,
+            )
+            self._style_agent_memo_button(memo_button)
+            stack.add_child(memo_button)
+
         url = str(info["url"])
         session_file = str(info["session_file"])
         self._connection_labels["endpoint"] = self._make_info_label(f"URL: {url}", width=width)
@@ -306,7 +323,6 @@ class ChessUIComponent(UIComponent):
         self._connection_labels["last_event"] = self._make_info_label("", width=width)
         stack.add_child(self._connection_labels["last_event"])
 
-        active_seats = self._seat_payloads(info)
         for seat in active_seats:
             side = str(seat["side"])
             label = self._make_info_label("", width=width)
@@ -320,17 +336,6 @@ class ChessUIComponent(UIComponent):
                     width=width,
                 )
             )
-            memo_label = "Copy Agent Memo" if len(active_seats) == 1 else f"Copy {side.title()} Agent Memo"
-            memo_button = self._make_button(
-                memo_label,
-                lambda seat_payload=seat: self._copy_text(
-                    f"{str(seat_payload['side'])} agent memo",
-                    self._agent_memo_text(info, seat_payload),
-                ),
-                width=width,
-            )
-            self._style_agent_memo_button(memo_button)
-            stack.add_child(memo_button)
 
         self._refresh_connection_info()
 
@@ -367,6 +372,13 @@ class ChessUIComponent(UIComponent):
         btn.hover_color = (0.96, 0.62, 0.18, 1.0)
         btn.pressed_color = (0.62, 0.34, 0.08, 1.0)
         btn.text_color = (0.08, 0.06, 0.04, 1.0)
+
+    @staticmethod
+    def _agent_memo_button_label(seat: dict[str, object], active_seats: list[dict[str, object]]) -> str:
+        if len(active_seats) == 1:
+            return "Copy & Paste to Your Agent"
+        side = str(seat["side"]).title()
+        return f"Copy & Paste to {side} Agent"
 
     def _add_promotion_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
         title = self._make_info_label(self._promotion_title(info), width=width, font_size=13)
