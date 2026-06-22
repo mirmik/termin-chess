@@ -7,6 +7,24 @@
       "output_dir": "dist/Chess",
       "shader_targets": [
         "vulkan",
+        "opengl"
+      ]
+    },
+    "dev-linux": {
+      "target": "desktop",
+      "entry_scene": "scene2.scene",
+      "output_dir": "dist/Chess-linux",
+      "shader_targets": [
+        "vulkan",
+        "opengl"
+      ]
+    },
+    "dev-windows": {
+      "target": "desktop",
+      "entry_scene": "scene2.scene",
+      "output_dir": "dist/Chess-windows",
+      "shader_targets": [
+        "vulkan",
         "opengl",
         "d3d11"
       ]
