@@ -191,6 +191,33 @@ def test_wait_for_mcp_event_returns_ready_immediately_on_caller_turn() -> None:
     assert payload["state"]["caller_can_move"] is True
 
 
+def test_get_mcp_state_caches_shared_snapshot_but_scopes_caller_fields() -> None:
+    controller = make_headless_controller()
+    original_build = controller._build_mcp_state
+    build_count = 0
+
+    def counting_build() -> dict[str, object]:
+        nonlocal build_count
+        build_count += 1
+        return original_build()
+
+    controller._build_mcp_state = counting_build
+
+    white_state = controller.get_mcp_state(caller_side=chess.WHITE)
+    black_state = controller.get_mcp_state(caller_side=chess.BLACK)
+
+    assert build_count == 1
+    assert white_state["caller_side"] == "white"
+    assert white_state["caller_can_move"] is True
+    assert black_state["caller_side"] == "black"
+    assert black_state["caller_can_move"] is False
+
+    controller._mark_state_dirty()
+    controller.get_mcp_state(caller_side=chess.WHITE)
+
+    assert build_count == 2
+
+
 def test_timed_out_mcp_move_is_not_applied_later() -> None:
     controller = make_headless_controller()
 

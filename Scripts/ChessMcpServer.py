@@ -7,6 +7,7 @@ import math
 import os
 import secrets
 import signal
+import tempfile
 import threading
 import time
 import atexit
@@ -95,7 +96,8 @@ def load_chess_mcp_config() -> ChessMcpConfig:
         white_token = secrets.token_urlsafe(24)
     if black_token is None:
         black_token = legacy_token if legacy_token is not None else secrets.token_urlsafe(24)
-    session_file = Path(os.environ.get("CHESS_MCP_SESSION_FILE", "/tmp/chess-game-mcp.json"))
+    default_session_file = Path(tempfile.gettempdir()) / "chess-game-mcp.json"
+    session_file = Path(os.environ.get("CHESS_MCP_SESSION_FILE", str(default_session_file)))
     return ChessMcpConfig(
         host=host,
         port=port,
@@ -863,20 +865,6 @@ def _env_int(name: str, default: int) -> int:
     except ValueError:
         print(f"[ChessMCP] invalid {name}={value!r}; using {default}")
         return default
-
-
-def _optional_int(value: object) -> int | None:
-    if value is None:
-        return None
-    if isinstance(value, bool):
-        return None
-    if isinstance(value, int):
-        return value
-    try:
-        return int(str(value))
-    except ValueError:
-        return None
-
 
 def _side_name(side: bool) -> str:
     return "white" if side == chess.WHITE else "black"

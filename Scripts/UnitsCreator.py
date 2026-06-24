@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from termin.scene import PythonComponent
 from termin.inspect import InspectField
-from termin.geombase import Quat, Vec3, Vec4
+from termin.geombase import Quat, Vec3
 from termin.mesh import TcMesh
 from termin.materials import TcMaterial
 
@@ -75,31 +75,32 @@ class UnitsCreator(PythonComponent):
         col = pawn.add_component_by_name("ColliderComponent")
         col.set_field("collider_type", "Box")
         col.set_field("box_size", [20, 20, 40])
+        return pawn
 
     def make_pawn(self, material, position, rotation=None):
         pawn_mesh = TcMesh.from_name("Hex_Pawn")
-        self.make_unit(material, pawn_mesh, position, name="Pawn", rotation=rotation)
+        return self.make_unit(material, pawn_mesh, position, name="Pawn", rotation=rotation)
 
     def make_rook(self, material, position, rotation=None):
         rook_mesh = TcMesh.from_name("Hex_Rook")
         print(f"Making rook at {position}: {rook_mesh}")
-        self.make_unit(material, rook_mesh, position, name="Rook", rotation=rotation)
+        return self.make_unit(material, rook_mesh, position, name="Rook", rotation=rotation)
 
     def make_knight(self, material, position, rotation=None):
         knight_mesh = TcMesh.from_name("Hex_Knight")
-        self.make_unit(material, knight_mesh, position, name="Knight", rotation=rotation)
+        return self.make_unit(material, knight_mesh, position, name="Knight", rotation=rotation)
 
     def make_bishop(self, material, position, rotation=None):
         bishop_mesh = TcMesh.from_name("Hex_Bishop")
-        self.make_unit(material, bishop_mesh, position, name="Bishop", rotation=rotation)
+        return self.make_unit(material, bishop_mesh, position, name="Bishop", rotation=rotation)
 
     def make_queen(self, material, position, rotation=None):
         queen_mesh = TcMesh.from_name("Hex_Queen")
-        self.make_unit(material, queen_mesh, position, name="Queen", rotation=rotation)
+        return self.make_unit(material, queen_mesh, position, name="Queen", rotation=rotation)
 
     def make_king(self, material, position, rotation=None):
         king_mesh = TcMesh.from_name("Hex_King")
-        self.make_unit(material, king_mesh, position, name="King", rotation=rotation)
+        return self.make_unit(material, king_mesh, position, name="King", rotation=rotation)
 
     PIECE_MESHES = {
         "pawn": "Hex_Pawn",
@@ -119,21 +120,12 @@ class UnitsCreator(PythonComponent):
         pos = self.chessboard_position_to_world(square)
         name = piece_type.capitalize()
         rotation = WHITE_PIECE_ROTATION if is_white else None
-        self.make_unit(material, mesh, pos, name=name, rotation=rotation)
-        children = self.entity.children()
-        return children[-1] if children else None
+        return self.make_unit(material, mesh, pos, name=name, rotation=rotation)
 
     def make_units(self):
         print("Make Units button clicked.")
 
         self.entity.destroy_children()
-
-        pawn_mesh = TcMesh.from_name("Hex_Pawn")
-        rook_mesh = TcMesh.from_name("Hex_Rook")
-        knight_mesh = TcMesh.from_name("Hex_Knight")
-        bishop_mesh = TcMesh.from_name("Hex_Bishop")
-        queen_mesh = TcMesh.from_name("Hex_Queen")
-        king_mesh = TcMesh.from_name("Hex_King")
 
         white_material = TcMaterial.from_name("WhiteFigure")
         black_material = TcMaterial.from_name("BlackFigure")

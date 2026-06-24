@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import random
 import os
 import queue
@@ -96,6 +97,11 @@ class ChessGameController(InputComponent):
         self._mcp_max_events = 200
         self._mcp_server_stopping = False
         self._ui_refresh_accum = 0.0
+        self._ui_dirty = True
+        self._mcp_state_revision = 0
+        self._mcp_state_cache_revision = -1
+        self._mcp_state_cache: dict[str, object] | None = None
+        self._dirty_highlight_squares: set[str] = set()
 
     def start(self) -> None:
         print("[Chess] ChessGameController.start() called")
@@ -120,7 +126,7 @@ class ChessGameController(InputComponent):
     def update(self, dt: float) -> None:
         self._process_mcp_commands()
         self._ui_refresh_accum += dt
-        if self._ui_refresh_accum >= 0.5:
+        if self._ui_refresh_accum >= 0.5 and getattr(self, "_ui_dirty", True):
             self._ui_refresh_accum = 0.0
             self._notify_ui()
 
@@ -270,6 +276,13 @@ class ChessGameController(InputComponent):
             return {"pending": False}
         return dict(self._pending_promotion)
 
+    def _mark_state_dirty(self, *, ui: bool = True) -> None:
+        self._mcp_state_revision = getattr(self, "_mcp_state_revision", 0) + 1
+        self._mcp_state_cache = None
+        self._mcp_state_cache_revision = -1
+        if ui:
+            self._ui_dirty = True
+
     def is_game_started(self) -> bool:
         return self._game_started
 
@@ -333,6 +346,7 @@ class ChessGameController(InputComponent):
         self._game_started = False
         self._start_menu_visible = True
         self._configure_menu_idle_mode()
+        self._mark_state_dirty()
         self.new_game(trigger_bot=False)
         self._notify_ui()
 
@@ -342,6 +356,7 @@ class ChessGameController(InputComponent):
         self._game_started = True
         self._start_menu_visible = False
         self._configure_requested_game_mode(mode)
+        self._mark_state_dirty()
         self.new_game(trigger_bot=False)
         self._start_mcp_server()
         self._notify_ui()
@@ -349,74 +364,88 @@ class ChessGameController(InputComponent):
 
     def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
         with self._mcp_state_lock:
-            legal_moves = []
-            for move in self._board.legal_moves:
-                legal_moves.append(
-                    {
-                        "uci": move.uci(),
-                        "san": self._board.san(move),
-                        "from": chess.square_name(move.from_square),
-                        "to": chess.square_name(move.to_square),
-                        "promotion": chess.piece_name(move.promotion) if move.promotion else None,
-                        "capture": self._board.is_capture(move),
-                        "check": self._board.gives_check(move),
-                    }
-                )
-            caller_authorization = None
+            revision = getattr(self, "_mcp_state_revision", 0)
+            cache_revision = getattr(self, "_mcp_state_cache_revision", -1)
+            cache = getattr(self, "_mcp_state_cache", None)
+            if cache is None or cache_revision != revision:
+                cache = self._build_mcp_state()
+                self._mcp_state_cache = cache
+                self._mcp_state_cache_revision = revision
+
+            state = deepcopy(cache)
             if caller_side is not None:
                 caller_authorization = self._session.can_move_now(
                     actor=MoveActor.agent(caller_side),
                     board=self._board,
                     game_state=self._state,
                 )
-            human_authorization = self._session.can_move_now(
-                actor=MoveActor.human(),
-                board=self._board,
-                game_state=self._state,
-            )
+                state["caller_side"] = side_name(caller_side)
+                state["caller_can_move"] = caller_authorization.ok
+                state["caller_error"] = caller_authorization.error if not caller_authorization.ok else None
+            return state
 
-            return {
-                "ok": True,
-                "fen": self._board.fen(),
-                "board_ascii": str(self._board),
-                "turn": "white" if self._board.turn == chess.WHITE else "black",
-                "turn_owner": self._session.turn_owner_payload(self._board.turn),
-                "fullmove_number": self._board.fullmove_number,
-                "ply": len(self._board.move_stack),
-                "legal_moves": legal_moves,
-                "selected_legal_moves": self._selected_move_payloads(),
-                "selection_hint": self._selection_hint(),
-                "pending_promotion": self.get_pending_promotion_info(),
-                "last_move": self._last_mcp_move_event(),
-                "last_move_squares": list(self._last_move_squares) if self._last_move_squares is not None else [],
-                "check_square": self._check_square,
-                "captured": self._captured_summary_payload(),
-                "status": self._mcp_status(),
-                "check": self._board.is_check(),
-                "checkmate": self._board.is_checkmate(),
-                "stalemate": self._board.is_stalemate(),
-                "game_over": self._board.is_game_over(),
-                "game_started": self._game_started,
-                "start_menu_visible": self._start_menu_visible,
-                "board_input_enabled": self._game_started and human_authorization.ok,
-                "board_input_error": human_authorization.error if self._game_started and not human_authorization.ok else None,
-                "selected_square": self._selected_square,
-                "mode": self._session.mode.value,
-                "side_owners": self._session.side_owners_payload(),
-                "human_sides": self._session.sides_for_owner_payload(SideOwner.HUMAN),
-                "agent_sides": self._session.sides_for_owner_payload(SideOwner.AGENT),
-                "local_bot_sides": self._session.sides_for_owner_payload(SideOwner.LOCAL_BOT),
-                "seats": self._session.player_seats_payload(),
-                "mcp_seats": self._session.mcp_seats_payload(),
-                "active_mcp_sides": self._session.active_mcp_sides_payload(),
-                "mcp_side": side_name(self._session.mcp_side) if self._session.mcp_side is not None else None,
-                "caller_side": side_name(caller_side) if caller_side is not None else None,
-                "caller_can_move": caller_authorization.ok if caller_authorization is not None else None,
-                "caller_error": caller_authorization.error if caller_authorization is not None and not caller_authorization.ok else None,
-                "bot_enabled": self._bot_enabled,
-                "bot_color": "white" if self._bot_color == chess.WHITE else "black",
-                "next_event_id": self._mcp_next_event_id,
-            }
+    def _build_mcp_state(self) -> dict[str, object]:
+        legal_moves = []
+        for move in self._board.legal_moves:
+            legal_moves.append(
+                {
+                    "uci": move.uci(),
+                    "san": self._board.san(move),
+                    "from": chess.square_name(move.from_square),
+                    "to": chess.square_name(move.to_square),
+                    "promotion": chess.piece_name(move.promotion) if move.promotion else None,
+                    "capture": self._board.is_capture(move),
+                    "check": self._board.gives_check(move),
+                }
+            )
+        human_authorization = self._session.can_move_now(
+            actor=MoveActor.human(),
+            board=self._board,
+            game_state=self._state,
+        )
+
+        return {
+            "ok": True,
+            "fen": self._board.fen(),
+            "board_ascii": str(self._board),
+            "turn": "white" if self._board.turn == chess.WHITE else "black",
+            "turn_owner": self._session.turn_owner_payload(self._board.turn),
+            "fullmove_number": self._board.fullmove_number,
+            "ply": len(self._board.move_stack),
+            "legal_moves": legal_moves,
+            "selected_legal_moves": self._selected_move_payloads(),
+            "selection_hint": self._selection_hint(),
+            "pending_promotion": self.get_pending_promotion_info(),
+            "last_move": self._last_mcp_move_event(),
+            "last_move_squares": list(self._last_move_squares) if self._last_move_squares is not None else [],
+            "check_square": self._check_square,
+            "captured": self._captured_summary_payload(),
+            "status": self._mcp_status(),
+            "check": self._board.is_check(),
+            "checkmate": self._board.is_checkmate(),
+            "stalemate": self._board.is_stalemate(),
+            "game_over": self._board.is_game_over(),
+            "game_started": self._game_started,
+            "start_menu_visible": self._start_menu_visible,
+            "board_input_enabled": self._game_started and human_authorization.ok,
+            "board_input_error": human_authorization.error if self._game_started and not human_authorization.ok else None,
+            "selected_square": self._selected_square,
+            "mode": self._session.mode.value,
+            "side_owners": self._session.side_owners_payload(),
+            "human_sides": self._session.sides_for_owner_payload(SideOwner.HUMAN),
+            "agent_sides": self._session.sides_for_owner_payload(SideOwner.AGENT),
+            "local_bot_sides": self._session.sides_for_owner_payload(SideOwner.LOCAL_BOT),
+            "seats": self._session.player_seats_payload(),
+            "mcp_seats": self._session.mcp_seats_payload(),
+            "active_mcp_sides": self._session.active_mcp_sides_payload(),
+            "mcp_side": side_name(self._session.mcp_side) if self._session.mcp_side is not None else None,
+            "caller_side": None,
+            "caller_can_move": None,
+            "caller_error": None,
+            "bot_enabled": self._bot_enabled,
+            "bot_color": "white" if self._bot_color == chess.WHITE else "black",
+            "next_event_id": self._mcp_next_event_id,
+        }
 
     def get_mcp_pgn(self) -> str:
         with self._mcp_state_lock:
@@ -548,9 +577,10 @@ class ChessGameController(InputComponent):
 
             # Re-scan pieces
             self._scan_pieces()
-            self._notify_ui()
+            self._mark_state_dirty()
             self._record_mcp_event({"type": "reset", "actor": "system"})
             self._reset_mcp_session_state()
+            self._notify_ui()
             print(f"[Chess] New game started. pieces={len(self._pieces)}")
             if trigger_bot:
                 self._maybe_make_bot_move()
@@ -716,12 +746,13 @@ class ChessGameController(InputComponent):
             payload["ply"] = len(self._board.move_stack)
             payload["status"] = self._mcp_status()
 
-        with self._mcp_condition:
-            self._mcp_events.append(payload)
-            if len(self._mcp_events) > self._mcp_max_events:
-                del self._mcp_events[:len(self._mcp_events) - self._mcp_max_events]
-            self._mcp_next_event_id += 1
-            self._mcp_condition.notify_all()
+            with self._mcp_condition:
+                self._mcp_events.append(payload)
+                if len(self._mcp_events) > self._mcp_max_events:
+                    del self._mcp_events[:len(self._mcp_events) - self._mcp_max_events]
+                self._mcp_next_event_id += 1
+                self._mark_state_dirty()
+                self._mcp_condition.notify_all()
 
     def _create_highlight_materials(self):
         print("[Chess] Loading highlight materials...")
@@ -768,6 +799,7 @@ class ChessGameController(InputComponent):
         print("[Chess] Scanning pieces...")
         scene = self.entity.scene
         self._units_entity = scene.find_entity_by_name("ChessUnits")
+        self._pieces.clear()
         if self._units_entity is None:
             print("[Chess]   ERROR: ChessUnits entity not found!")
             return
@@ -928,6 +960,7 @@ class ChessGameController(InputComponent):
         move_strs = [m.uci() for m in self._valid_moves]
         print(f"[Chess]   selected {square}, valid moves ({len(self._valid_moves)}): {move_strs}")
         self._apply_highlight()
+        self._mark_state_dirty()
 
     def _matching_valid_moves(self, from_sq: str | None, to_sq: str) -> list[chess.Move]:
         if from_sq is None:
@@ -974,6 +1007,7 @@ class ChessGameController(InputComponent):
             "choices": choices,
         }
         print(f"[Chess] promotion pending: {from_sq}->{to_sq}, choices={[choice['piece'] for choice in choices]}")
+        self._mark_state_dirty()
         self._notify_ui()
 
     def _apply_highlight(self):
@@ -1013,17 +1047,26 @@ class ChessGameController(InputComponent):
             print(f"[Chess]   WARNING: tile {square} has no MeshRenderer for {label} highlight")
             return False
         mr.set_field("material", material)
+        dirty = getattr(self, "_dirty_highlight_squares", None)
+        if dirty is None:
+            dirty = set()
+            self._dirty_highlight_squares = dirty
+        dirty.add(square)
         return True
 
     def _clear_highlight(self):
         restored = 0
-        for sq, mat in self._original_materials.items():
-            if sq in self._tiles:
-                tile = self._tiles[sq]
-                mr = self._get_mesh_renderer_ref(tile)
-                if mr:
-                    mr.set_field("material", mat)
-                    restored += 1
+        dirty = getattr(self, "_dirty_highlight_squares", set())
+        for sq in list(dirty):
+            mat = self._original_materials.get(sq)
+            if mat is None or sq not in self._tiles:
+                continue
+            tile = self._tiles[sq]
+            mr = self._get_mesh_renderer_ref(tile)
+            if mr:
+                mr.set_field("material", mat)
+                restored += 1
+        dirty.clear()
         print(f"[Chess]   cleared highlight, restored {restored} tile materials")
 
     def _clear_selection(self):
@@ -1033,9 +1076,12 @@ class ChessGameController(InputComponent):
         self._valid_moves = []
         self._state = STATE_IDLE
         self._refresh_board_highlights()
+        self._mark_state_dirty()
 
-    def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: MoveActor = MoveActor.human()) -> bool:
+    def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: MoveActor | None = None) -> bool:
         with self._mcp_state_lock:
+            if actor is None:
+                actor = MoveActor.human()
             authorization = self._session.can_make_move(
                 actor=actor,
                 board=self._board,
@@ -1051,19 +1097,27 @@ class ChessGameController(InputComponent):
             san = self._board.san(move)
             print(f"[Chess] === EXECUTING MOVE: {move.uci()} ({from_sq} -> {to_sq}) ===")
 
+            visual_move_ok = False
             if self._board.is_castling(move):
                 print(f"[Chess]   move type: CASTLING")
-                self._do_castling(move)
+                visual_move_ok = self._do_castling(move)
             elif self._board.is_en_passant(move):
                 print(f"[Chess]   move type: EN PASSANT")
-                self._do_en_passant(move)
+                visual_move_ok = self._do_en_passant(move)
             elif move.promotion:
                 print(f"[Chess]   move type: PROMOTION to {chess.piece_name(move.promotion)}")
-                self._do_promotion(move)
+                visual_move_ok = self._do_promotion(move)
             else:
                 is_capture = to_sq in self._pieces
                 print(f"[Chess]   move type: {'CAPTURE' if is_capture else 'NORMAL'}")
-                self._do_normal_move(move)
+                visual_move_ok = self._do_normal_move(move)
+
+            if not visual_move_ok:
+                print(f"[Chess] ERROR: visual move failed for {move.uci()}, logical board was not advanced")
+                self._scan_pieces()
+                self._mark_state_dirty()
+                self._notify_ui()
+                return False
 
             self._board.push(move)
             self._last_move_squares = (from_sq, to_sq)
@@ -1095,6 +1149,7 @@ class ChessGameController(InputComponent):
             else:
                 print(f"[Chess] {turn_str} to move.")
 
+            self._mark_state_dirty()
             self._notify_ui()
             if trigger_bot:
                 self._maybe_make_bot_move()
@@ -1186,6 +1241,7 @@ class ChessGameController(InputComponent):
     def _notify_ui(self):
         """Push status to ChessUIComponent."""
         if self._ui_component is None:
+            self._ui_dirty = False
             return
         turn = "White to move" if self._board.turn else "Black to move"
         status = ""
@@ -1197,6 +1253,7 @@ class ChessGameController(InputComponent):
         elif self._board.is_check():
             status = "Check!"
         self._ui_component.update_status(turn, status)
+        self._ui_dirty = False
 
     def _selected_move_payloads(self) -> list[dict[str, object]]:
         moves = []
@@ -1269,17 +1326,18 @@ class ChessGameController(InputComponent):
                 )
         return payload
 
-    def _move_piece_entity(self, from_sq: str, to_sq: str):
+    def _move_piece_entity(self, from_sq: str, to_sq: str) -> bool:
         if from_sq not in self._pieces:
             print(f"[Chess]   WARNING: _move_piece_entity: no piece entity at {from_sq}! pieces={sorted(self._pieces.keys())}")
-            return
+            return False
         entity = self._pieces.pop(from_sq)
         world_pos = square_to_world(to_sq)
         print(f"[Chess]   moving entity '{entity.name}' from {from_sq} to {to_sq} world=({world_pos.x:.1f},{world_pos.y:.1f},{world_pos.z:.1f})")
         entity.transform.set_local_position(world_pos)
         self._pieces[to_sq] = entity
+        return True
 
-    def _capture_piece(self, sq: str):
+    def _capture_piece(self, sq: str) -> bool:
         if sq in self._pieces:
             entity = self._pieces.pop(sq)
             print(f"[Chess]   capturing '{entity.name}' at {sq}")
@@ -1288,36 +1346,49 @@ class ChessGameController(InputComponent):
                 scene.remove(entity)
             else:
                 print(f"[Chess]   WARNING: captured entity has no scene!")
+            return True
         else:
             print(f"[Chess]   WARNING: _capture_piece: no piece at {sq}")
+            return False
 
-    def _do_normal_move(self, move: chess.Move):
+    def _do_normal_move(self, move: chess.Move) -> bool:
         from_sq = chess.square_name(move.from_square)
         to_sq = chess.square_name(move.to_square)
-        if to_sq in self._pieces:
-            self._capture_piece(to_sq)
-        self._move_piece_entity(from_sq, to_sq)
+        if from_sq not in self._pieces:
+            print(f"[Chess]   WARNING: no moving piece entity at {from_sq}")
+            return False
+        if self._board.is_capture(move) and to_sq not in self._pieces:
+            print(f"[Chess]   WARNING: capture target entity missing at {to_sq}")
+            return False
+        if to_sq in self._pieces and not self._capture_piece(to_sq):
+            return False
+        return self._move_piece_entity(from_sq, to_sq)
 
-    def _do_castling(self, move: chess.Move):
+    def _do_castling(self, move: chess.Move) -> bool:
         from_sq = chess.square_name(move.from_square)
         to_sq = chess.square_name(move.to_square)
-
-        self._move_piece_entity(from_sq, to_sq)
-
+        rook_move: tuple[str, str] | None = None
         if move.to_square == chess.G1:
             print("[Chess]   castling: white kingside, rook h1->f1")
-            self._move_piece_entity("h1", "f1")
+            rook_move = ("h1", "f1")
         elif move.to_square == chess.C1:
             print("[Chess]   castling: white queenside, rook a1->d1")
-            self._move_piece_entity("a1", "d1")
+            rook_move = ("a1", "d1")
         elif move.to_square == chess.G8:
             print("[Chess]   castling: black kingside, rook h8->f8")
-            self._move_piece_entity("h8", "f8")
+            rook_move = ("h8", "f8")
         elif move.to_square == chess.C8:
             print("[Chess]   castling: black queenside, rook a8->d8")
-            self._move_piece_entity("a8", "d8")
+            rook_move = ("a8", "d8")
+        if rook_move is None:
+            return False
+        rook_from, rook_to = rook_move
+        if from_sq not in self._pieces or rook_from not in self._pieces:
+            print(f"[Chess]   WARNING: castling entity missing king={from_sq in self._pieces}, rook={rook_from in self._pieces}")
+            return False
+        return self._move_piece_entity(from_sq, to_sq) and self._move_piece_entity(rook_from, rook_to)
 
-    def _do_en_passant(self, move: chess.Move):
+    def _do_en_passant(self, move: chess.Move) -> bool:
         from_sq = chess.square_name(move.from_square)
         to_sq = chess.square_name(move.to_square)
 
@@ -1326,34 +1397,43 @@ class ChessGameController(InputComponent):
         captured_sq = f"{captured_file}{captured_rank}"
         print(f"[Chess]   en passant: capturing pawn at {captured_sq}")
 
-        self._capture_piece(captured_sq)
-        self._move_piece_entity(from_sq, to_sq)
+        if from_sq not in self._pieces or captured_sq not in self._pieces:
+            print(f"[Chess]   WARNING: en passant entity missing mover={from_sq in self._pieces}, captured={captured_sq in self._pieces}")
+            return False
+        return self._capture_piece(captured_sq) and self._move_piece_entity(from_sq, to_sq)
 
-    def _do_promotion(self, move: chess.Move):
+    def _do_promotion(self, move: chess.Move) -> bool:
         from_sq = chess.square_name(move.from_square)
         to_sq = chess.square_name(move.to_square)
 
-        if to_sq in self._pieces:
-            self._capture_piece(to_sq)
-
-        self._capture_piece(from_sq)
+        if from_sq not in self._pieces:
+            print(f"[Chess]   WARNING: promotion pawn entity missing at {from_sq}")
+            return False
+        if self._board.is_capture(move) and to_sq not in self._pieces:
+            print(f"[Chess]   WARNING: promotion capture target entity missing at {to_sq}")
+            return False
 
         is_white = self._board.turn
         piece_type = chess.piece_name(move.promotion)
         print(f"[Chess]   promotion: creating {piece_type} at {to_sq}, is_white={is_white}")
         scene = self.entity.scene
         units_entity = scene.find_entity_by_name("ChessUnits")
-        if units_entity:
-            from Scripts.UnitsCreator import UnitsCreator
-            uc = units_entity.get_component(UnitsCreator)
-            if uc:
-                new_entity = uc.create_piece(piece_type, is_white, to_sq)
-                if new_entity:
-                    self._pieces[to_sq] = new_entity
-                    print(f"[Chess]   promotion: {piece_type} entity created: '{new_entity.name}'")
-                else:
-                    print("[Chess]   WARNING: create_piece returned None!")
-            else:
-                print("[Chess]   WARNING: UnitsCreator component not found on ChessUnits!")
-        else:
+        if not units_entity:
             print("[Chess]   WARNING: ChessUnits entity not found for promotion!")
+            return False
+        from Scripts.UnitsCreator import UnitsCreator
+        uc = units_entity.get_component(UnitsCreator)
+        if not uc:
+            print("[Chess]   WARNING: UnitsCreator component not found on ChessUnits!")
+            return False
+        new_entity = uc.create_piece(piece_type, is_white, to_sq)
+        if not new_entity:
+            print("[Chess]   WARNING: create_piece returned None!")
+            return False
+        if to_sq in self._pieces and not self._capture_piece(to_sq):
+            return False
+        if not self._capture_piece(from_sq):
+            return False
+        self._pieces[to_sq] = new_entity
+        print(f"[Chess]   promotion: {piece_type} entity created: '{new_entity.name}'")
+        return True

@@ -215,9 +215,9 @@ def test_agent_memo_button_label_says_copy_paste_to_agent() -> None:
 def test_clipboard_commands_include_windows_backends() -> None:
     commands = ChessUIComponent._clipboard_commands("win32")
 
-    assert commands[0] == ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"]
+    assert commands[0] == ["clip.exe"]
+    assert ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"] in commands
     assert ["pwsh.exe", "-NoProfile", "-Command", "Set-Clipboard"] in commands
-    assert ["clip.exe"] in commands
 
 
 def test_clipboard_commands_keep_linux_backends() -> None:

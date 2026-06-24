@@ -506,9 +506,9 @@ class ChessUIComponent(UIComponent):
         current_platform = sys.platform if platform is None else platform
         if current_platform.startswith("win"):
             return [
+                ["clip.exe"],
                 ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"],
                 ["pwsh.exe", "-NoProfile", "-Command", "Set-Clipboard"],
-                ["clip.exe"],
             ]
         if current_platform == "darwin":
             return [["pbcopy"]]

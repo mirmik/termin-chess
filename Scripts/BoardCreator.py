@@ -18,8 +18,6 @@ TILE_HEIGHT = 0.5
 BOARD_COORDINATES_ENTITY = "BoardCoordinates"
 BOARD_FIRST_FILE_CENTER = -4 * TILE_SIZE
 BOARD_LAST_FILE_CENTER = 3 * TILE_SIZE
-BOARD_FIRST_RANK_CENTER = -4 * TILE_SIZE
-BOARD_LAST_RANK_CENTER = 3 * TILE_SIZE
 BOARD_EDGE_MIN = BOARD_FIRST_FILE_CENTER - TILE_SIZE * 0.5
 BOARD_EDGE_MAX = BOARD_LAST_FILE_CENTER + TILE_SIZE * 0.5
 COORDINATE_LABEL_OFFSET = 0.8
@@ -75,6 +73,9 @@ class BoardCreatorComponent(PythonComponent):
 
     def make_board(self):
         self.entity.destroy_children()
+        mesh = TcMesh.from_name("Cube")
+        white_material = TcMaterial.from_name("WhiteMaterial")
+        black_material = TcMaterial.from_name("BlackMaterial")
         for i in range(-4, 4):
             for j in range(-4, 4):
                 file = chr(i + 4 + ord('a'))
@@ -85,10 +86,6 @@ class BoardCreatorComponent(PythonComponent):
                 mr = child.add_component_by_name("MeshRenderer")
 
                 child.transform.set_local_scale(Vec3(TILE_SIZE, TILE_SIZE, TILE_HEIGHT))
-
-                mesh = TcMesh.from_name("Cube")
-                white_material = TcMaterial.from_name("WhiteMaterial")
-                black_material = TcMaterial.from_name("BlackMaterial")
 
                 white_or_black = white_material if (i + j) % 2 == 0 else black_material
 
