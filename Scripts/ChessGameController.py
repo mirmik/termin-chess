@@ -555,7 +555,7 @@ class ChessGameController(InputComponent):
             self._state = STATE_IDLE
 
             # Destroy all piece entities
-            for sq, entity in list(self._pieces.items()):
+            for _sq, entity in list(self._pieces.items()):
                 scene = entity.scene
                 if scene:
                     scene.remove(entity)
@@ -898,7 +898,7 @@ class ChessGameController(InputComponent):
             square = tile_name_to_square(hit_entity.name)
             print(f"[Chess]   identified as TILE entity '{hit_entity.name}' -> square={square}")
         else:
-            print(f"[Chess]   hit entity is NOT a child of ChessUnits or ChessBoard -> ignoring")
+            print("[Chess]   hit entity is NOT a child of ChessUnits or ChessBoard -> ignoring")
             return
 
         if square is None:
@@ -1099,10 +1099,10 @@ class ChessGameController(InputComponent):
 
             visual_move_ok = False
             if self._board.is_castling(move):
-                print(f"[Chess]   move type: CASTLING")
+                print("[Chess]   move type: CASTLING")
                 visual_move_ok = self._do_castling(move)
             elif self._board.is_en_passant(move):
-                print(f"[Chess]   move type: EN PASSANT")
+                print("[Chess]   move type: EN PASSANT")
                 visual_move_ok = self._do_en_passant(move)
             elif move.promotion:
                 print(f"[Chess]   move type: PROMOTION to {chess.piece_name(move.promotion)}")
@@ -1142,7 +1142,7 @@ class ChessGameController(InputComponent):
                 print(f"[Chess] *** CHECKMATE! {winner} wins! ***")
                 self._state = STATE_GAME_OVER
             elif self._board.is_stalemate():
-                print(f"[Chess] *** STALEMATE! Draw. ***")
+                print("[Chess] *** STALEMATE! Draw. ***")
                 self._state = STATE_GAME_OVER
             elif self._board.is_check():
                 print(f"[Chess] CHECK! {turn_str} to move.")
@@ -1345,7 +1345,7 @@ class ChessGameController(InputComponent):
             if scene:
                 scene.remove(entity)
             else:
-                print(f"[Chess]   WARNING: captured entity has no scene!")
+                print("[Chess]   WARNING: captured entity has no scene!")
             return True
         else:
             print(f"[Chess]   WARNING: _capture_piece: no piece at {sq}")

@@ -1,0 +1,18 @@
+target-version = "py310"
+line-length = 120
+
+extend-exclude = [
+    ".git",
+    ".venv",
+    "build",
+    "sdk",
+]
+
+[lint]
+# Baseline shared with the Termin engine: catch likely runtime errors without
+# triggering a broad formatting/style migration.
+select = [
+    "B",
+    "E9",
+    "F",
+]

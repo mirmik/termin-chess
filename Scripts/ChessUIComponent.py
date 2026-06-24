@@ -37,12 +37,11 @@ class ChessUIComponent(UIComponent):
         print("[ChessUI] UI built successfully")
 
     def _find_game_controller(self):
-        from Scripts.ChessGameController import ChessGameController
         scene = self.entity.scene
         comps = scene.get_components_of_type("ChessGameController")
         if comps:
             self._game_controller = comps[0]
-            print(f"[ChessUI] Found ChessGameController")
+            print("[ChessUI] Found ChessGameController")
         else:
             print("[ChessUI] WARNING: ChessGameController not found in scene!")
 
