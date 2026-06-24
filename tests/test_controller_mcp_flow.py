@@ -210,7 +210,7 @@ def test_timed_out_mcp_move_is_not_applied_later() -> None:
     assert payload["ok"] is False
     assert payload["timeout"] is True
     assert controller._board.fen() == chess.STARTING_FEN
-    assert controller._mcp_events == []
+    assert controller.get_mcp_events()["events"] == []
 
 
 def test_mcp_move_after_game_over_returns_structured_error() -> None:

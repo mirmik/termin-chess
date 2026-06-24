@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
+import logging
 import random
 import os
-import queue
-import threading
 import time
 
 import chess
@@ -18,13 +16,23 @@ from termin.collision import CollisionWorld
 from termin.materials import TcMaterial
 
 from Scripts.chess_coords import (
-    square_to_world,
     entity_to_square,
     tile_name_to_square,
 )
 from Scripts.ChessGameSession import ChessGameSession, GameMode, MoveActor, SideOwner, side_name
+from Scripts.ChessMcpPayloads import (
+    CapturedPiecePayload,
+    CapturedSummaryPayload,
+    LegalMovePayload,
+    McpEventPayload,
+    McpStatePayload,
+    legal_move_payload,
+)
+from Scripts.ChessMcpRuntime import ChessMcpRuntime
+from Scripts.ChessPieceSceneSync import ChessPieceSceneSync
 
-print("[Chess] ChessGameController module loaded.")
+log = logging.getLogger(__name__)
+log.debug("[Chess] ChessGameController module loaded.")
 
 STATE_IDLE = "idle"
 STATE_SELECTED = "piece_selected"
@@ -63,10 +71,10 @@ PROMOTION_CHOICES: tuple[tuple[int, str], ...] = (
 class ChessGameController(InputComponent):
 
     def __init__(self):
-        print("[Chess] ChessGameController.__init__()")
+        log.debug("[Chess] ChessGameController.__init__()")
         super().__init__(enabled=True, active_in_editor=False)
         self._board: chess.Board = chess.Board()
-        self._pieces: dict[str, object] = {}      # "e2" -> entity
+        self._piece_sync = ChessPieceSceneSync(self)
         self._tiles: dict[str, object] = {}        # "a1" -> entity
         self._original_materials: dict[str, object] = {}  # "a1" -> material
         self._selected_square: str | None = None
@@ -80,7 +88,6 @@ class ChessGameController(InputComponent):
         self._check_square: str | None = None
         self._pending_promotion: dict[str, object] | None = None
         self._board_entity = None
-        self._units_entity = None
         self._bot_enabled = True
         self._bot_color = chess.BLACK
         self._bot_is_moving = False
@@ -89,37 +96,28 @@ class ChessGameController(InputComponent):
         self._start_menu_visible = True
         self._session = ChessGameSession()
         self._mcp_server = None
-        self._mcp_state_lock = threading.RLock()
-        self._mcp_commands: queue.Queue[dict[str, object]] = queue.Queue()
-        self._mcp_condition = threading.Condition()
-        self._mcp_events: list[dict[str, object]] = []
-        self._mcp_next_event_id = 1
-        self._mcp_max_events = 200
-        self._mcp_server_stopping = False
+        self._mcp_runtime = ChessMcpRuntime()
         self._ui_refresh_accum = 0.0
         self._ui_dirty = True
-        self._mcp_state_revision = 0
-        self._mcp_state_cache_revision = -1
-        self._mcp_state_cache: dict[str, object] | None = None
         self._dirty_highlight_squares: set[str] = set()
 
     def start(self) -> None:
-        print("[Chess] ChessGameController.start() called")
+        log.info("[Chess] ChessGameController.start() called")
         super().start()
         self._board = chess.Board()
-        print("[Chess] chess.Board created, initial position loaded")
+        log.debug("[Chess] chess.Board created, initial position loaded")
         self._configure_runtime_options()
 
         self._create_highlight_materials()
         self._scan_board()
-        self._scan_pieces()
+        self._piece_sync.scan()
         self._find_ui()
         self._start_mcp_server()
 
-        print(f"[Chess] Init complete. tiles={len(self._tiles)}, pieces={len(self._pieces)}")
-        print(f"[Chess] Tiles: {sorted(self._tiles.keys())}")
-        print(f"[Chess] Pieces: {sorted(self._pieces.keys())}")
-        print("[Chess] White to move.")
+        log.info("[Chess] Init complete. tiles=%s, pieces=%s", len(self._tiles), self._piece_sync.piece_count)
+        log.debug("[Chess] Tiles: %s", sorted(self._tiles.keys()))
+        log.debug("[Chess] Pieces: %s", self._piece_sync.piece_squares())
+        log.info("[Chess] White to move.")
         self._notify_ui()
         self._maybe_make_bot_move()
 
@@ -160,8 +158,8 @@ class ChessGameController(InputComponent):
                 )
             else:
                 self._configure_menu_idle_mode()
-        print(f"[Chess] Bot enabled: {self._bot_enabled}")
-        print(f"[Chess] Game mode: {self._session.mode.value}, owners={self._session.side_owners_payload()}")
+        log.info("[Chess] Bot enabled: %s", self._bot_enabled)
+        log.info("[Chess] Game mode: %s, owners=%s", self._session.mode.value, self._session.side_owners_payload())
 
     def _game_mode_from_env(self) -> GameMode | None:
         value = os.environ.get("CHESS_GAME_MODE")
@@ -173,7 +171,7 @@ class ChessGameController(InputComponent):
         key = value.strip().lower().replace("-", "_")
         mode = GAME_MODE_ENV_VALUES.get(key)
         if mode is None:
-            print(f"[Chess] WARNING: unknown CHESS_GAME_MODE='{value}', using default runtime mode")
+            log.warning("[Chess] unknown CHESS_GAME_MODE=%r, using default runtime mode", value)
         return mode
 
     def _configure_requested_game_mode(self, mode: GameMode) -> None:
@@ -199,7 +197,7 @@ class ChessGameController(InputComponent):
                 self._bot_enabled = True
             self._session.configure_human_vs_bot(bot_color=self._bot_color)
             return
-        print(f"[Chess] WARNING: unsupported game mode '{mode.value}', using local sandbox")
+        log.warning("[Chess] unsupported game mode %r, using local sandbox", mode.value)
         self._game_mcp_enabled = False
         self._bot_enabled = False
         self._session.configure_local_sandbox()
@@ -219,7 +217,7 @@ class ChessGameController(InputComponent):
             return chess.WHITE
         if key in {"black", "b", "0", "false"}:
             return chess.BLACK
-        print(f"[Chess] WARNING: invalid {name}='{value}', using {side_name(default)}")
+        log.warning("[Chess] invalid %s=%r, using %s", name, value, side_name(default))
         return default
 
     def _start_mcp_server(self) -> None:
@@ -233,8 +231,7 @@ class ChessGameController(InputComponent):
         if self._mcp_server is not None:
             return
 
-        with self._mcp_condition:
-            self._mcp_server_stopping = False
+        self._mcp_runtime.reset_server_stopping()
         server = ChessGameMcpServer(self, load_chess_mcp_config())
         if server.start():
             self._mcp_server = server
@@ -245,9 +242,7 @@ class ChessGameController(InputComponent):
             self._mcp_server = None
 
     def notify_mcp_server_stopping(self) -> None:
-        with self._mcp_condition:
-            self._mcp_server_stopping = True
-            self._mcp_condition.notify_all()
+        self._mcp_runtime.notify_server_stopping()
 
     def _find_ui(self):
         """Find ChessUIComponent in scene for status updates."""
@@ -256,9 +251,9 @@ class ChessGameController(InputComponent):
         comps = scene.get_components_of_type("ChessUIComponent")
         if comps:
             self._ui_component = comps[0]
-            print("[Chess] Found ChessUIComponent for status updates")
+            log.info("[Chess] Found ChessUIComponent for status updates")
         else:
-            print("[Chess] ChessUIComponent not found (no UI status updates)")
+            log.info("[Chess] ChessUIComponent not found (no UI status updates)")
 
     # --- Public API (called by UI) ---
 
@@ -277,9 +272,7 @@ class ChessGameController(InputComponent):
         return dict(self._pending_promotion)
 
     def _mark_state_dirty(self, *, ui: bool = True) -> None:
-        self._mcp_state_revision += 1
-        self._mcp_state_cache = None
-        self._mcp_state_cache_revision = -1
+        self._mcp_runtime.mark_state_dirty()
         if ui:
             self._ui_dirty = True
 
@@ -315,7 +308,7 @@ class ChessGameController(InputComponent):
     def choose_promotion(self, piece_name: str) -> None:
         pending = self._pending_promotion
         if pending is None:
-            print(f"[Chess] promotion choice '{piece_name}' ignored: no pending promotion")
+            log.debug("[Chess] promotion choice %r ignored: no pending promotion", piece_name)
             return
 
         normalized = piece_name.strip().lower()
@@ -325,23 +318,23 @@ class ChessGameController(InputComponent):
             if str(choice["piece"]) != normalized:
                 continue
             move = chess.Move.from_uci(str(choice["uci"]))
-            print(f"[Chess] promotion choice selected: {normalized} ({move.uci()})")
+            log.info("[Chess] promotion choice selected: %s (%s)", normalized, move.uci())
             self._pending_promotion = None
             self._execute_move(move, actor=MoveActor.human())
             return
 
-        print(f"[Chess] invalid promotion choice '{piece_name}'")
+        log.warning("[Chess] invalid promotion choice %r", piece_name)
 
     def cancel_promotion(self) -> None:
         if self._pending_promotion is None:
             return
-        print("[Chess] promotion selection cancelled")
+        log.info("[Chess] promotion selection cancelled")
         self._pending_promotion = None
         self._clear_selection()
         self._notify_ui()
 
     def return_to_start_menu(self) -> None:
-        print("[Chess] Returning to start menu")
+        log.info("[Chess] Returning to start menu")
         self._stop_mcp_server()
         self._game_started = False
         self._start_menu_visible = True
@@ -351,7 +344,7 @@ class ChessGameController(InputComponent):
         self._notify_ui()
 
     def _start_selected_mode(self, mode: GameMode) -> None:
-        print(f"[Chess] Starting mode from menu: {mode.value}")
+        log.info("[Chess] Starting mode from menu: %s", mode.value)
         self._stop_mcp_server()
         self._game_started = True
         self._start_menu_visible = False
@@ -362,41 +355,26 @@ class ChessGameController(InputComponent):
         self._notify_ui()
         self._maybe_make_bot_move()
 
-    def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
-        with self._mcp_state_lock:
-            if self._mcp_state_cache is None or self._mcp_state_cache_revision != self._mcp_state_revision:
-                cache = self._build_mcp_state()
-                self._mcp_state_cache = cache
-                self._mcp_state_cache_revision = self._mcp_state_revision
-            else:
-                cache = self._mcp_state_cache
-
-            state = deepcopy(cache)
-            if caller_side is not None:
-                caller_authorization = self._session.can_move_now(
-                    actor=MoveActor.agent(caller_side),
-                    board=self._board,
-                    game_state=self._state,
-                )
-                state["caller_side"] = side_name(caller_side)
-                state["caller_can_move"] = caller_authorization.ok
-                state["caller_error"] = caller_authorization.error if not caller_authorization.ok else None
-            return state
-
-    def _build_mcp_state(self) -> dict[str, object]:
-        legal_moves = []
-        for move in self._board.legal_moves:
-            legal_moves.append(
-                {
-                    "uci": move.uci(),
-                    "san": self._board.san(move),
-                    "from": chess.square_name(move.from_square),
-                    "to": chess.square_name(move.to_square),
-                    "promotion": chess.piece_name(move.promotion) if move.promotion else None,
-                    "capture": self._board.is_capture(move),
-                    "check": self._board.gives_check(move),
-                }
+    def get_mcp_state(self, *, caller_side: bool | None = None) -> McpStatePayload:
+        def apply_caller_fields(state: McpStatePayload) -> None:
+            if caller_side is None:
+                return
+            caller_authorization = self._session.can_move_now(
+                actor=MoveActor.agent(caller_side),
+                board=self._board,
+                game_state=self._state,
             )
+            state["caller_side"] = side_name(caller_side)
+            state["caller_can_move"] = caller_authorization.ok
+            state["caller_error"] = caller_authorization.error if not caller_authorization.ok else None
+
+        return self._mcp_runtime.get_state(
+            self._build_mcp_state,
+            apply_caller_fields if caller_side is not None else None,
+        )
+
+    def _build_mcp_state(self) -> McpStatePayload:
+        legal_moves = [legal_move_payload(self._board, move) for move in self._board.legal_moves]
         human_authorization = self._session.can_move_now(
             actor=MoveActor.human(),
             board=self._board,
@@ -443,21 +421,16 @@ class ChessGameController(InputComponent):
             "caller_error": None,
             "bot_enabled": self._bot_enabled,
             "bot_color": "white" if self._bot_color == chess.WHITE else "black",
-            "next_event_id": self._mcp_next_event_id,
+            "next_event_id": self._mcp_runtime.next_event_id,
         }
 
     def get_mcp_pgn(self) -> str:
-        with self._mcp_state_lock:
+        with self._mcp_runtime.locked():
             game = chess.pgn.Game.from_board(self._board)
             return str(game)
 
     def get_mcp_events(self) -> dict[str, object]:
-        with self._mcp_condition:
-            return {
-                "ok": True,
-                "events": list(self._mcp_events),
-                "next_event_id": self._mcp_next_event_id,
-            }
+        return self._mcp_runtime.events_payload()
 
     def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
         move_text = move_text.strip()
@@ -509,15 +482,12 @@ class ChessGameController(InputComponent):
             end_time = time.monotonic() + timeout
             observed_next_event_id = state["next_event_id"]
             while remaining > 0:
-                with self._mcp_condition:
-                    if (
-                        not self._mcp_server_stopping
-                        and self._mcp_next_event_id == observed_next_event_id
-                    ):
-                        self._mcp_condition.wait(timeout=remaining)
-                    if self._mcp_server_stopping:
-                        break
-                    observed_next_event_id = self._mcp_next_event_id
+                server_stopping, observed_next_event_id = self._mcp_runtime.wait_for_event_change(
+                    int(observed_next_event_id),
+                    remaining,
+                )
+                if server_stopping:
+                    break
 
                 state = self.get_mcp_state(caller_side=caller_side)
                 if state["caller_can_move"] is True:
@@ -532,7 +502,7 @@ class ChessGameController(InputComponent):
                 observed_next_event_id = state["next_event_id"]
 
         state = self.get_mcp_state(caller_side=caller_side)
-        if self._mcp_server_stopping:
+        if self._mcp_runtime.server_stopping:
             return {
                 "ok": False,
                 "shutdown": True,
@@ -544,8 +514,8 @@ class ChessGameController(InputComponent):
 
     def new_game(self, *, trigger_bot: bool = True):
         """Reset the board and pieces to starting position."""
-        with self._mcp_state_lock:
-            print("[Chess] === NEW GAME ===")
+        with self._mcp_runtime.locked():
+            log.info("[Chess] === NEW GAME ===")
             self._last_move_squares = None
             self._check_square = None
             self._pending_promotion = None
@@ -553,34 +523,14 @@ class ChessGameController(InputComponent):
             self._board = chess.Board()
             self._state = STATE_IDLE
 
-            # Destroy all piece entities
-            for _sq, entity in list(self._pieces.items()):
-                scene = entity.scene
-                if scene:
-                    scene.remove(entity)
-            self._pieces.clear()
-
-            # Recreate pieces via UnitsCreator
-            scene = self.entity.scene
-            units_entity = scene.find_entity_by_name("ChessUnits")
-            if units_entity:
-                from Scripts.UnitsCreator import UnitsCreator
-                uc = units_entity.get_component(UnitsCreator)
-                if uc:
-                    uc.make_units()
-                    print("[Chess] Pieces recreated via UnitsCreator.make_units()")
-                else:
-                    print("[Chess] WARNING: UnitsCreator not found on ChessUnits!")
-            else:
-                print("[Chess] WARNING: ChessUnits entity not found!")
-
-            # Re-scan pieces
-            self._scan_pieces()
+            self._piece_sync.remove_all()
+            self._piece_sync.recreate_starting_position()
+            self._piece_sync.scan()
             self._mark_state_dirty()
             self._record_mcp_event({"type": "reset", "actor": "system"})
             self._reset_mcp_session_state()
             self._notify_ui()
-            print(f"[Chess] New game started. pieces={len(self._pieces)}")
+            log.info("[Chess] New game started. pieces=%s", self._piece_sync.piece_count)
             if trigger_bot:
                 self._maybe_make_bot_move()
 
@@ -589,55 +539,33 @@ class ChessGameController(InputComponent):
             self._mcp_server.reset_session_state()
 
     def _submit_mcp_command(self, command: dict[str, object], *, timeout: float) -> dict[str, object]:
-        wait_timeout = max(timeout, 0.0)
-        done = threading.Event()
-        command["done"] = done
-        command["result"] = None
-        command["cancelled"] = False
-        command["expires_at"] = time.monotonic() + wait_timeout
-        self._mcp_commands.put(command)
-        if not done.wait(timeout=wait_timeout):
-            command["cancelled"] = True
+        result = self._mcp_runtime.submit_command(command, timeout=timeout)
+        if result is None:
             return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
-        result = command.get("result")
-        if isinstance(result, dict):
-            return result
-        return {"ok": False, "error": "MCP command did not produce a result", "state": self.get_mcp_state()}
+        return result
 
     def _process_mcp_commands(self) -> None:
         processed = 0
         while processed < 8:
-            try:
-                command = self._mcp_commands.get_nowait()
-            except queue.Empty:
+            command = self._mcp_runtime.next_command()
+            if command is None:
                 return
 
-            done = command.get("done")
             try:
-                if self._mcp_command_cancelled_or_expired(command):
-                    command["result"] = self._expired_mcp_command_result(command)
+                if self._mcp_runtime.command_cancelled_or_expired(command):
+                    result = self._expired_mcp_command_result(command)
                 else:
-                    command["result"] = self._handle_mcp_command(command)
+                    result = self._handle_mcp_command(command)
             except Exception as exc:
-                command["result"] = {
+                result = {
                     "ok": False,
                     "error": f"MCP command failed: {exc}",
                     "state": self.get_mcp_state(),
                 }
-                print(f"[ChessMCP] command failed: {exc}")
+                log.exception("[ChessMCP] command failed")
             finally:
-                if isinstance(done, threading.Event):
-                    done.set()
+                self._mcp_runtime.complete_command(command, result)
             processed += 1
-
-    def _mcp_command_cancelled_or_expired(self, command: dict[str, object]) -> bool:
-        if bool(command.get("cancelled")):
-            return True
-        expires_at = command.get("expires_at")
-        if isinstance(expires_at, (int, float)) and time.monotonic() > float(expires_at):
-            command["cancelled"] = True
-            return True
-        return False
 
     def _expired_mcp_command_result(self, command: dict[str, object]) -> dict[str, object]:
         side = command.get("side")
@@ -660,7 +588,7 @@ class ChessGameController(InputComponent):
         return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_mcp_state()}
 
     def _apply_mcp_move(self, move_text: str, *, side: bool) -> dict[str, object]:
-        with self._mcp_state_lock:
+        with self._mcp_runtime.locked():
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
                 return {"ok": False, "error": "game is over", "state": self.get_mcp_state(caller_side=side)}
 
@@ -671,7 +599,11 @@ class ChessGameController(InputComponent):
                 game_state=self._state,
             )
             if not turn_authorization.ok:
-                print(f"[ChessMCP] rejected move request from {actor.event_label()}: {turn_authorization.error}")
+                log.info(
+                    "[ChessMCP] rejected move request from %s: %s",
+                    actor.event_label(),
+                    turn_authorization.error,
+                )
                 return {
                     "ok": False,
                     "error": turn_authorization.error,
@@ -693,7 +625,7 @@ class ChessGameController(InputComponent):
                 move=move,
             )
             if not authorization.ok:
-                print(f"[ChessMCP] rejected move {move.uci()}: {authorization.error}")
+                log.info("[ChessMCP] rejected move %s: %s", move.uci(), authorization.error)
                 return {"ok": False, "error": authorization.error, "state": self.get_mcp_state(caller_side=side)}
 
             self._execute_move(move, actor=actor)
@@ -729,55 +661,60 @@ class ChessGameController(InputComponent):
             return "check"
         return "playing"
 
-    def _last_mcp_move_event(self) -> dict[str, object] | None:
-        with self._mcp_condition:
-            for event in reversed(self._mcp_events):
-                if event.get("type") == "move":
-                    return dict(event)
-        return None
+    def _last_mcp_move_event(self) -> McpEventPayload | None:
+        return self._mcp_runtime.last_move_event()
 
-    def _record_mcp_event(self, event: dict[str, object]) -> None:
-        with self._mcp_state_lock:
-            payload = dict(event)
-            payload["id"] = self._mcp_next_event_id
-            payload["fen"] = self._board.fen()
-            payload["turn"] = "white" if self._board.turn == chess.WHITE else "black"
-            payload["ply"] = len(self._board.move_stack)
-            payload["status"] = self._mcp_status()
-
-            with self._mcp_condition:
-                self._mcp_events.append(payload)
-                if len(self._mcp_events) > self._mcp_max_events:
-                    del self._mcp_events[:len(self._mcp_events) - self._mcp_max_events]
-                self._mcp_next_event_id += 1
-                self._mark_state_dirty()
-                self._mcp_condition.notify_all()
+    def _record_mcp_event(self, event: McpEventPayload) -> None:
+        self._mcp_runtime.record_event(
+            event,
+            fen=self._board.fen(),
+            turn="white" if self._board.turn == chess.WHITE else "black",
+            ply=len(self._board.move_stack),
+            status=self._mcp_status(),
+        )
+        self._ui_dirty = True
 
     def _create_highlight_materials(self):
-        print("[Chess] Loading highlight materials...")
+        log.debug("[Chess] Loading highlight materials...")
         self._highlight_selected = TcMaterial.from_name("SelectedMaterial")
-        print(f"[Chess]   SelectedMaterial: {self._highlight_selected}, valid={self._highlight_selected.is_valid if self._highlight_selected else False}")
+        log.debug(
+            "[Chess] SelectedMaterial: %s, valid=%s",
+            self._highlight_selected,
+            self._highlight_selected.is_valid if self._highlight_selected else False,
+        )
 
         self._highlight_valid = TcMaterial.from_name("ValidMoveMaterial")
-        print(f"[Chess]   ValidMoveMaterial: {self._highlight_valid}, valid={self._highlight_valid.is_valid if self._highlight_valid else False}")
+        log.debug(
+            "[Chess] ValidMoveMaterial: %s, valid=%s",
+            self._highlight_valid,
+            self._highlight_valid.is_valid if self._highlight_valid else False,
+        )
 
         self._highlight_last_move = TcMaterial.from_name("LastMoveMaterial")
-        print(f"[Chess]   LastMoveMaterial: {self._highlight_last_move}, valid={self._highlight_last_move.is_valid if self._highlight_last_move else False}")
+        log.debug(
+            "[Chess] LastMoveMaterial: %s, valid=%s",
+            self._highlight_last_move,
+            self._highlight_last_move.is_valid if self._highlight_last_move else False,
+        )
 
         self._highlight_check = TcMaterial.from_name("CheckMaterial")
-        print(f"[Chess]   CheckMaterial: {self._highlight_check}, valid={self._highlight_check.is_valid if self._highlight_check else False}")
+        log.debug(
+            "[Chess] CheckMaterial: %s, valid=%s",
+            self._highlight_check,
+            self._highlight_check.is_valid if self._highlight_check else False,
+        )
 
     def _scan_board(self):
-        print("[Chess] Scanning board tiles...")
+        log.debug("[Chess] Scanning board tiles...")
         scene = self.entity.scene
-        print(f"[Chess]   scene={scene}")
+        log.debug("[Chess] scene=%s", scene)
         self._board_entity = scene.find_entity_by_name("ChessBoard")
         if self._board_entity is None:
-            print("[Chess]   ERROR: ChessBoard entity not found!")
+            log.error("[Chess] ChessBoard entity not found")
             return
-        print(f"[Chess]   Found ChessBoard entity: {self._board_entity.name}")
+        log.debug("[Chess] Found ChessBoard entity: %s", self._board_entity.name)
         children = self._board_entity.children()
-        print(f"[Chess]   ChessBoard has {len(children)} children")
+        log.debug("[Chess] ChessBoard has %s children", len(children))
         for child in children:
             if child.name == "BoardCoordinates":
                 continue
@@ -789,31 +726,10 @@ class ChessGameController(InputComponent):
                     mat = mr.get_field("material")
                     self._original_materials[sq] = mat
                 else:
-                    print(f"[Chess]   WARNING: tile {child.name} ({sq}) has no MeshRenderer")
+                    log.warning("[Chess] tile %s (%s) has no MeshRenderer", child.name, sq)
             else:
-                print(f"[Chess]   WARNING: could not parse tile name '{child.name}'")
-        print(f"[Chess]   Scanned {len(self._tiles)} tiles, {len(self._original_materials)} materials saved")
-
-    def _scan_pieces(self):
-        print("[Chess] Scanning pieces...")
-        scene = self.entity.scene
-        self._units_entity = scene.find_entity_by_name("ChessUnits")
-        self._pieces.clear()
-        if self._units_entity is None:
-            print("[Chess]   ERROR: ChessUnits entity not found!")
-            return
-        print(f"[Chess]   Found ChessUnits entity: {self._units_entity.name}")
-        children = self._units_entity.children()
-        print(f"[Chess]   ChessUnits has {len(children)} children")
-        for child in children:
-            pos = child.transform.local_position()
-            sq = entity_to_square(child)
-            print(f"[Chess]   piece '{child.name}' pos=({pos.x:.1f},{pos.y:.1f},{pos.z:.1f}) -> square={sq}")
-            if sq:
-                self._pieces[sq] = child
-            else:
-                print(f"[Chess]   WARNING: could not map piece '{child.name}' to square")
-        print(f"[Chess]   Scanned {len(self._pieces)} pieces")
+                log.warning("[Chess] could not parse tile name %r", child.name)
+        log.debug("[Chess] Scanned %s tiles, %s materials saved", len(self._tiles), len(self._original_materials))
 
     @staticmethod
     def _get_mesh_renderer_ref(entity):
@@ -829,14 +745,14 @@ class ChessGameController(InputComponent):
         return False
 
     def on_mouse_button(self, event):
-        print("[Chess] On mouse button")
+        log.debug("[Chess] On mouse button")
         if event.button != MouseButton.LEFT or event.action != Action.PRESS:
             return
         if not self._game_started:
-            print("[Chess] Game has not started, ignoring board click.")
+            log.debug("[Chess] Game has not started, ignoring board click.")
             return
         if self._state == STATE_GAME_OVER:
-            print("[Chess] Game is over, ignoring click.")
+            log.debug("[Chess] Game is over, ignoring click.")
             return
         authorization = self._session.can_move_now(
             actor=MoveActor.human(),
@@ -844,42 +760,50 @@ class ChessGameController(InputComponent):
             game_state=self._state,
         )
         if not authorization.ok:
-            print(f"[Chess] Player click ignored: {authorization.error}")
+            log.debug("[Chess] Player click ignored: %s", authorization.error)
             return
 
-        print(f"[Chess] --- LEFT CLICK at pixel ({event.x:.0f}, {event.y:.0f}) ---")
+        log.debug("[Chess] --- LEFT CLICK at pixel (%.0f, %.0f) ---", event.x, event.y)
 
         ray = event.viewport.screen_point_to_ray(event.x, event.y)
         if ray is None:
-            print("[Chess]   screen_point_to_ray returned None, no camera?")
+            log.warning("[Chess] screen_point_to_ray returned None, no camera?")
             return
-        print(f"[Chess]   ray origin=({ray.origin.x:.2f},{ray.origin.y:.2f},{ray.origin.z:.2f}) dir=({ray.direction.x:.2f},{ray.direction.y:.2f},{ray.direction.z:.2f})")
+        log.debug(
+            "[Chess] ray origin=(%.2f,%.2f,%.2f) dir=(%.2f,%.2f,%.2f)",
+            ray.origin.x,
+            ray.origin.y,
+            ray.origin.z,
+            ray.direction.x,
+            ray.direction.y,
+            ray.direction.z,
+        )
 
         scene = event.viewport.scene
         collision_world = CollisionWorld.from_scene(scene)
         if collision_world is None:
-            print("[Chess]   ERROR: scene has no CollisionWorld extension")
+            log.error("[Chess] scene has no CollisionWorld extension")
             return
 
         hit = collision_world.raycast_closest(ray)
         if hit is None or not hit.hit():
-            print("[Chess]   raycast: no hit -> clearing selection")
+            log.debug("[Chess] raycast: no hit -> clearing selection")
             self._clear_selection()
             return
 
         try:
             hit_entity = hit.collider.transform().entity
-        except Exception as exc:
-            print(f"[Chess]   ERROR: raycast hit collider has no attached entity: {exc}")
+        except Exception:
+            log.exception("[Chess] raycast hit collider has no attached entity")
             self._clear_selection()
             return
 
         if hit_entity is None:
-            print("[Chess]   raycast: hit valid but attached entity is None -> clearing selection")
+            log.warning("[Chess] raycast hit valid but attached entity is None -> clearing selection")
             self._clear_selection()
             return
 
-        print(f"[Chess]   raycast hit: entity='{hit_entity.name}' distance={hit.distance:.3f}")
+        log.debug("[Chess] raycast hit: entity=%r distance=%.3f", hit_entity.name, hit.distance)
 
         # Walk up parents for debug
         p = hit_entity.parent
@@ -887,21 +811,21 @@ class ChessGameController(InputComponent):
         while p is not None:
             parents.append(p.name)
             p = p.parent
-        print(f"[Chess]   hit entity parents: {' -> '.join(parents) if parents else '(root)'}")
+        log.debug("[Chess] hit entity parents: %s", " -> ".join(parents) if parents else "(root)")
 
         square = None
         if self._is_ancestor_of(hit_entity, "ChessUnits"):
             square = entity_to_square(hit_entity)
-            print(f"[Chess]   identified as PIECE entity -> square={square}")
+            log.debug("[Chess] identified as PIECE entity -> square=%s", square)
         elif self._is_ancestor_of(hit_entity, "ChessBoard"):
             square = tile_name_to_square(hit_entity.name)
-            print(f"[Chess]   identified as TILE entity '{hit_entity.name}' -> square={square}")
+            log.debug("[Chess] identified as TILE entity %r -> square=%s", hit_entity.name, square)
         else:
-            print("[Chess]   hit entity is NOT a child of ChessUnits or ChessBoard -> ignoring")
+            log.debug("[Chess] hit entity is not a child of ChessUnits or ChessBoard -> ignoring")
             return
 
         if square is None:
-            print("[Chess]   could not determine square -> clearing selection")
+            log.debug("[Chess] could not determine square -> clearing selection")
             self._clear_selection()
             return
 
@@ -914,23 +838,23 @@ class ChessGameController(InputComponent):
             game_state=self._state,
         )
         if not authorization.ok:
-            print(f"[Chess]   ignoring click on {square}: {authorization.error}")
+            log.debug("[Chess] ignoring click on %s: %s", square, authorization.error)
             return
 
         sq_index = chess.parse_square(square)
         piece = self._board.piece_at(sq_index)
         turn_str = "WHITE" if self._board.turn else "BLACK"
-        print(f"[Chess]   handle_click: square={square}, piece={piece}, state={self._state}, turn={turn_str}")
+        log.debug("[Chess] handle_click: square=%s, piece=%s, state=%s, turn=%s", square, piece, self._state, turn_str)
 
         if self._state == STATE_IDLE:
             if piece and piece.color == self._board.turn:
-                print(f"[Chess]   -> selecting own piece {piece} at {square}")
+                log.debug("[Chess] selecting own piece %s at %s", piece, square)
                 self._select_piece(square)
             else:
-                print(f"[Chess]   -> idle, no own piece at {square} (piece={piece}), ignoring")
+                log.debug("[Chess] idle, no own piece at %s (piece=%s), ignoring", square, piece)
         elif self._state == STATE_SELECTED:
             if piece and piece.color == self._board.turn:
-                print(f"[Chess]   -> reselecting own piece {piece} at {square}")
+                log.debug("[Chess] reselecting own piece %s at %s", piece, square)
                 self._clear_highlight()
                 self._select_piece(square)
                 return
@@ -942,10 +866,10 @@ class ChessGameController(InputComponent):
 
             move = self._preferred_move(matching_moves)
             if move:
-                print(f"[Chess]   -> valid move found: {move.uci()}")
+                log.debug("[Chess] valid move found: %s", move.uci())
                 self._execute_move(move, actor=MoveActor.human())
             else:
-                print(f"[Chess]   -> {square} is not a valid move from {self._selected_square}, clearing")
+                log.debug("[Chess] %s is not a valid move from %s, clearing", square, self._selected_square)
                 self._clear_selection()
 
     def _select_piece(self, square: str):
@@ -957,7 +881,7 @@ class ChessGameController(InputComponent):
             if chess.square_name(m.from_square) == square
         ]
         move_strs = [m.uci() for m in self._valid_moves]
-        print(f"[Chess]   selected {square}, valid moves ({len(self._valid_moves)}): {move_strs}")
+        log.debug("[Chess] selected %s, valid moves (%s): %s", square, len(self._valid_moves), move_strs)
         self._apply_highlight()
         self._mark_state_dirty()
 
@@ -1005,7 +929,7 @@ class ChessGameController(InputComponent):
             "to": to_sq,
             "choices": choices,
         }
-        print(f"[Chess] promotion pending: {from_sq}->{to_sq}, choices={[choice['piece'] for choice in choices]}")
+        log.info("[Chess] promotion pending: %s->%s, choices=%s", from_sq, to_sq, [choice["piece"] for choice in choices])
         self._mark_state_dirty()
         self._notify_ui()
 
@@ -1029,10 +953,12 @@ class ChessGameController(InputComponent):
             self._set_tile_material(to_name, self._highlight_valid, "VALID")
 
         valid_sqs = [chess.square_name(m.to_square) for m in self._valid_moves]
-        print(
-            "[Chess]   board highlights: "
-            f"last={self._last_move_squares}, check={self._check_square}, "
-            f"selected={self._selected_square}, valid={valid_sqs}"
+        log.debug(
+            "[Chess] board highlights: last=%s, check=%s, selected=%s, valid=%s",
+            self._last_move_squares,
+            self._check_square,
+            self._selected_square,
+            valid_sqs,
         )
 
     def _set_tile_material(self, square: str, material: object | None, label: str) -> bool:
@@ -1043,7 +969,7 @@ class ChessGameController(InputComponent):
         tile = self._tiles[square]
         mr = self._get_mesh_renderer_ref(tile)
         if not mr:
-            print(f"[Chess]   WARNING: tile {square} has no MeshRenderer for {label} highlight")
+            log.warning("[Chess] tile %s has no MeshRenderer for %s highlight", square, label)
             return False
         mr.set_field("material", material)
         self._dirty_highlight_squares.add(square)
@@ -1061,10 +987,10 @@ class ChessGameController(InputComponent):
                 mr.set_field("material", mat)
                 restored += 1
         self._dirty_highlight_squares.clear()
-        print(f"[Chess]   cleared highlight, restored {restored} tile materials")
+        log.debug("[Chess] cleared highlight, restored %s tile materials", restored)
 
     def _clear_selection(self):
-        print(f"[Chess]   clearing selection (was: {self._selected_square})")
+        log.debug("[Chess] clearing selection (was: %s)", self._selected_square)
         self._pending_promotion = None
         self._selected_square = None
         self._valid_moves = []
@@ -1073,7 +999,7 @@ class ChessGameController(InputComponent):
         self._mark_state_dirty()
 
     def _execute_move(self, move: chess.Move, trigger_bot: bool = True, actor: MoveActor | None = None) -> bool:
-        with self._mcp_state_lock:
+        with self._mcp_runtime.locked():
             if actor is None:
                 actor = MoveActor.human()
             authorization = self._session.can_make_move(
@@ -1083,32 +1009,17 @@ class ChessGameController(InputComponent):
                 move=move,
             )
             if not authorization.ok:
-                print(f"[Chess] rejected move {move.uci()} from {actor.event_label()}: {authorization.error}")
+                log.info("[Chess] rejected move %s from %s: %s", move.uci(), actor.event_label(), authorization.error)
                 return False
 
             from_sq = chess.square_name(move.from_square)
             to_sq = chess.square_name(move.to_square)
             san = self._board.san(move)
-            print(f"[Chess] === EXECUTING MOVE: {move.uci()} ({from_sq} -> {to_sq}) ===")
+            log.info("[Chess] === EXECUTING MOVE: %s (%s -> %s) ===", move.uci(), from_sq, to_sq)
 
-            visual_move_ok = False
-            if self._board.is_castling(move):
-                print("[Chess]   move type: CASTLING")
-                visual_move_ok = self._do_castling(move)
-            elif self._board.is_en_passant(move):
-                print("[Chess]   move type: EN PASSANT")
-                visual_move_ok = self._do_en_passant(move)
-            elif move.promotion:
-                print(f"[Chess]   move type: PROMOTION to {chess.piece_name(move.promotion)}")
-                visual_move_ok = self._do_promotion(move)
-            else:
-                is_capture = to_sq in self._pieces
-                print(f"[Chess]   move type: {'CAPTURE' if is_capture else 'NORMAL'}")
-                visual_move_ok = self._do_normal_move(move)
-
-            if not visual_move_ok:
-                print(f"[Chess] ERROR: visual move failed for {move.uci()}, logical board was not advanced")
-                self._scan_pieces()
+            if not self._piece_sync.apply_visual_move(self._board, move):
+                log.error("[Chess] visual move failed for %s, logical board was not advanced", move.uci())
+                self._piece_sync.scan()
                 self._mark_state_dirty()
                 self._notify_ui()
                 return False
@@ -1116,7 +1027,7 @@ class ChessGameController(InputComponent):
             self._board.push(move)
             self._last_move_squares = (from_sq, to_sq)
             self._update_check_square()
-            print(f"[Chess]   board.push done. FEN: {self._board.fen()}")
+            log.debug("[Chess] board.push done. FEN: %s", self._board.fen())
             self._clear_selection()
             self._record_mcp_event(
                 {
@@ -1133,15 +1044,15 @@ class ChessGameController(InputComponent):
             turn_str = "White" if self._board.turn else "Black"
             if self._board.is_checkmate():
                 winner = "Black" if self._board.turn else "White"
-                print(f"[Chess] *** CHECKMATE! {winner} wins! ***")
+                log.info("[Chess] *** CHECKMATE! %s wins! ***", winner)
                 self._state = STATE_GAME_OVER
             elif self._board.is_stalemate():
-                print("[Chess] *** STALEMATE! Draw. ***")
+                log.info("[Chess] *** STALEMATE! Draw. ***")
                 self._state = STATE_GAME_OVER
             elif self._board.is_check():
-                print(f"[Chess] CHECK! {turn_str} to move.")
+                log.info("[Chess] CHECK! %s to move.", turn_str)
             else:
-                print(f"[Chess] {turn_str} to move.")
+                log.info("[Chess] %s to move.", turn_str)
 
             self._mark_state_dirty()
             self._notify_ui()
@@ -1167,16 +1078,16 @@ class ChessGameController(InputComponent):
         if not self._is_bot_turn():
             return
         if self._bot_is_moving:
-            print("[ChessBot] Bot move already in progress, skipping nested call.")
+            log.debug("[ChessBot] Bot move already in progress, skipping nested call.")
             return
 
         self._bot_is_moving = True
         try:
             move = self._choose_bot_move()
             if move is None:
-                print("[ChessBot] No legal move found.")
+                log.info("[ChessBot] No legal move found.")
                 return
-            print(f"[ChessBot] Selected move: {move.uci()}")
+            log.info("[ChessBot] Selected move: %s", move.uci())
             self._execute_move(move, trigger_bot=False, actor=MoveActor.bot())
         finally:
             self._bot_is_moving = False
@@ -1249,21 +1160,8 @@ class ChessGameController(InputComponent):
         self._ui_component.update_status(turn, status)
         self._ui_dirty = False
 
-    def _selected_move_payloads(self) -> list[dict[str, object]]:
-        moves = []
-        for move in self._valid_moves:
-            moves.append(
-                {
-                    "uci": move.uci(),
-                    "san": self._board.san(move),
-                    "from": chess.square_name(move.from_square),
-                    "to": chess.square_name(move.to_square),
-                    "promotion": chess.piece_name(move.promotion) if move.promotion else None,
-                    "capture": self._board.is_capture(move),
-                    "check": self._board.gives_check(move),
-                }
-            )
-        return moves
+    def _selected_move_payloads(self) -> list[LegalMovePayload]:
+        return [legal_move_payload(self._board, move) for move in self._valid_moves]
 
     def _selection_hint(self) -> str | None:
         if self._selected_square is None:
@@ -1278,7 +1176,7 @@ class ChessGameController(InputComponent):
         count = len({chess.square_name(move.to_square) for move in self._valid_moves})
         return f"{count} legal move{'s' if count != 1 else ''} from {self._selected_square}"
 
-    def _captured_summary_payload(self) -> dict[str, object]:
+    def _captured_summary_payload(self) -> CapturedSummaryPayload:
         white_remaining = self._piece_counts(chess.WHITE)
         black_remaining = self._piece_counts(chess.BLACK)
         return {
@@ -1299,7 +1197,7 @@ class ChessGameController(InputComponent):
         return counts
 
     @staticmethod
-    def _missing_piece_payload(remaining: dict[int, int]) -> list[dict[str, object]]:
+    def _missing_piece_payload(remaining: dict[int, int]) -> list[CapturedPiecePayload]:
         starting_counts = {
             chess.PAWN: 8,
             chess.KNIGHT: 2,
@@ -1319,115 +1217,3 @@ class ChessGameController(InputComponent):
                     }
                 )
         return payload
-
-    def _move_piece_entity(self, from_sq: str, to_sq: str) -> bool:
-        if from_sq not in self._pieces:
-            print(f"[Chess]   WARNING: _move_piece_entity: no piece entity at {from_sq}! pieces={sorted(self._pieces.keys())}")
-            return False
-        entity = self._pieces.pop(from_sq)
-        world_pos = square_to_world(to_sq)
-        print(f"[Chess]   moving entity '{entity.name}' from {from_sq} to {to_sq} world=({world_pos.x:.1f},{world_pos.y:.1f},{world_pos.z:.1f})")
-        entity.transform.set_local_position(world_pos)
-        self._pieces[to_sq] = entity
-        return True
-
-    def _capture_piece(self, sq: str) -> bool:
-        if sq in self._pieces:
-            entity = self._pieces.pop(sq)
-            print(f"[Chess]   capturing '{entity.name}' at {sq}")
-            scene = entity.scene
-            if scene:
-                scene.remove(entity)
-            else:
-                print("[Chess]   WARNING: captured entity has no scene!")
-            return True
-        else:
-            print(f"[Chess]   WARNING: _capture_piece: no piece at {sq}")
-            return False
-
-    def _do_normal_move(self, move: chess.Move) -> bool:
-        from_sq = chess.square_name(move.from_square)
-        to_sq = chess.square_name(move.to_square)
-        if from_sq not in self._pieces:
-            print(f"[Chess]   WARNING: no moving piece entity at {from_sq}")
-            return False
-        if self._board.is_capture(move) and to_sq not in self._pieces:
-            print(f"[Chess]   WARNING: capture target entity missing at {to_sq}")
-            return False
-        if to_sq in self._pieces and not self._capture_piece(to_sq):
-            return False
-        return self._move_piece_entity(from_sq, to_sq)
-
-    def _do_castling(self, move: chess.Move) -> bool:
-        from_sq = chess.square_name(move.from_square)
-        to_sq = chess.square_name(move.to_square)
-        rook_move: tuple[str, str] | None = None
-        if move.to_square == chess.G1:
-            print("[Chess]   castling: white kingside, rook h1->f1")
-            rook_move = ("h1", "f1")
-        elif move.to_square == chess.C1:
-            print("[Chess]   castling: white queenside, rook a1->d1")
-            rook_move = ("a1", "d1")
-        elif move.to_square == chess.G8:
-            print("[Chess]   castling: black kingside, rook h8->f8")
-            rook_move = ("h8", "f8")
-        elif move.to_square == chess.C8:
-            print("[Chess]   castling: black queenside, rook a8->d8")
-            rook_move = ("a8", "d8")
-        if rook_move is None:
-            return False
-        rook_from, rook_to = rook_move
-        if from_sq not in self._pieces or rook_from not in self._pieces:
-            print(f"[Chess]   WARNING: castling entity missing king={from_sq in self._pieces}, rook={rook_from in self._pieces}")
-            return False
-        return self._move_piece_entity(from_sq, to_sq) and self._move_piece_entity(rook_from, rook_to)
-
-    def _do_en_passant(self, move: chess.Move) -> bool:
-        from_sq = chess.square_name(move.from_square)
-        to_sq = chess.square_name(move.to_square)
-
-        captured_file = to_sq[0]
-        captured_rank = from_sq[1]
-        captured_sq = f"{captured_file}{captured_rank}"
-        print(f"[Chess]   en passant: capturing pawn at {captured_sq}")
-
-        if from_sq not in self._pieces or captured_sq not in self._pieces:
-            print(f"[Chess]   WARNING: en passant entity missing mover={from_sq in self._pieces}, captured={captured_sq in self._pieces}")
-            return False
-        return self._capture_piece(captured_sq) and self._move_piece_entity(from_sq, to_sq)
-
-    def _do_promotion(self, move: chess.Move) -> bool:
-        from_sq = chess.square_name(move.from_square)
-        to_sq = chess.square_name(move.to_square)
-
-        if from_sq not in self._pieces:
-            print(f"[Chess]   WARNING: promotion pawn entity missing at {from_sq}")
-            return False
-        if self._board.is_capture(move) and to_sq not in self._pieces:
-            print(f"[Chess]   WARNING: promotion capture target entity missing at {to_sq}")
-            return False
-
-        is_white = self._board.turn
-        piece_type = chess.piece_name(move.promotion)
-        print(f"[Chess]   promotion: creating {piece_type} at {to_sq}, is_white={is_white}")
-        scene = self.entity.scene
-        units_entity = scene.find_entity_by_name("ChessUnits")
-        if not units_entity:
-            print("[Chess]   WARNING: ChessUnits entity not found for promotion!")
-            return False
-        from Scripts.UnitsCreator import UnitsCreator
-        uc = units_entity.get_component(UnitsCreator)
-        if not uc:
-            print("[Chess]   WARNING: UnitsCreator component not found on ChessUnits!")
-            return False
-        new_entity = uc.create_piece(piece_type, is_white, to_sq)
-        if not new_entity:
-            print("[Chess]   WARNING: create_piece returned None!")
-            return False
-        if to_sq in self._pieces and not self._capture_piece(to_sq):
-            return False
-        if not self._capture_piece(from_sq):
-            return False
-        self._pieces[to_sq] = new_entity
-        print(f"[Chess]   promotion: {piece_type} entity created: '{new_entity.name}'")
-        return True

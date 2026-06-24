@@ -13,10 +13,15 @@ import time
 import atexit
 from dataclasses import dataclass
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import logging
 from pathlib import Path
 from typing import Any
 
 import chess
+
+from Scripts.ChessMcpPayloads import ConnectionPayload, McpStatePayload, UiConnectionPayload
+
+log = logging.getLogger(__name__)
 
 SIDE_SEAT_ALLOWED_TOOLS = frozenset(
     {
@@ -141,7 +146,7 @@ class ChessGameMcpServer:
                 self._make_handler(),
             )
         except OSError as exc:
-            print(f"[ChessMCP] failed to bind {self._config.host}:{self._config.port}: {exc}")
+            log.error("[ChessMCP] failed to bind %s:%s: %s", self._config.host, self._config.port, exc)
             return False
 
         self._thread = threading.Thread(
@@ -153,8 +158,8 @@ class ChessGameMcpServer:
         self._register_atexit()
         self._install_signal_handlers()
         self._write_session_file()
-        print(f"[ChessMCP] listening on {self.url}")
-        print(f"[ChessMCP] session file: {self._config.session_file}")
+        log.info("[ChessMCP] listening on %s", self.url)
+        log.info("[ChessMCP] session file: %s", self._config.session_file)
         return True
 
     def stop(self) -> None:
@@ -175,23 +180,23 @@ class ChessGameMcpServer:
         if server is not None:
             try:
                 server.shutdown()
-            except Exception as exc:
-                print(f"[ChessMCP] failed to shutdown HTTP server: {exc}")
+            except Exception:
+                log.exception("[ChessMCP] failed to shutdown HTTP server")
             try:
                 server.server_close()
-            except Exception as exc:
-                print(f"[ChessMCP] failed to close HTTP server: {exc}")
+            except Exception:
+                log.exception("[ChessMCP] failed to close HTTP server")
 
         if thread is not None and thread is not threading.current_thread():
             thread.join(timeout=2.0)
             if thread.is_alive():
-                print("[ChessMCP] HTTP server thread did not stop within 2 seconds")
+                log.warning("[ChessMCP] HTTP server thread did not stop within 2 seconds")
 
     def _remove_session_file(self) -> None:
         try:
             self._config.session_file.unlink(missing_ok=True)
         except OSError as exc:
-            print(f"[ChessMCP] failed to remove session file: {exc}")
+            log.warning("[ChessMCP] failed to remove session file: %s", exc)
 
     def reset_session_state(self) -> None:
         """Clear live seat status for a new in-game chess session."""
@@ -204,8 +209,8 @@ class ChessGameMcpServer:
             }
         self._write_session_file()
 
-    def ui_connection_payload(self) -> dict[str, object]:
-        state = self._controller.get_mcp_state()
+    def ui_connection_payload(self) -> UiConnectionPayload:
+        state: McpStatePayload = self._controller.get_mcp_state()
         seat_statuses = self._seat_status_payload()
         seats = []
         active_sides = set(state["active_mcp_sides"])
@@ -255,14 +260,14 @@ class ChessGameMcpServer:
             atexit.unregister(self.stop)
         except ValueError:
             pass
-        except Exception as exc:
-            print(f"[ChessMCP] failed to unregister atexit cleanup: {exc}")
+        except Exception:
+            log.exception("[ChessMCP] failed to unregister atexit cleanup")
         finally:
             self._atexit_registered = False
 
     def _install_signal_handlers(self) -> None:
         if threading.current_thread() is not threading.main_thread():
-            print("[ChessMCP] signal handlers are only installed from the main thread")
+            log.warning("[ChessMCP] signal handlers are only installed from the main thread")
             return
 
         for signum in (signal.SIGINT, signal.SIGTERM):
@@ -270,7 +275,7 @@ class ChessGameMcpServer:
             self._previous_signal_handlers[signum] = previous
 
             def handler(received: int, frame: object, *, previous_handler: object = previous) -> None:
-                print(f"[ChessMCP] received signal {received}; stopping server")
+                log.info("[ChessMCP] received signal %s; stopping server", received)
                 self.stop()
                 if callable(previous_handler):
                     previous_handler(received, frame)
@@ -282,7 +287,7 @@ class ChessGameMcpServer:
             try:
                 signal.signal(signum, handler)
             except ValueError as exc:
-                print(f"[ChessMCP] failed to install signal handler {signum}: {exc}")
+                log.warning("[ChessMCP] failed to install signal handler %s: %s", signum, exc)
 
     def _restore_signal_handlers(self) -> None:
         if not self._previous_signal_handlers:
@@ -291,7 +296,7 @@ class ChessGameMcpServer:
             try:
                 signal.signal(signum, previous)
             except ValueError as exc:
-                print(f"[ChessMCP] failed to restore signal handler {signum}: {exc}")
+                log.warning("[ChessMCP] failed to restore signal handler %s: %s", signum, exc)
         self._previous_signal_handlers.clear()
 
     def _write_session_file(self) -> None:
@@ -355,7 +360,7 @@ class ChessGameMcpServer:
             os.chmod(tmp, 0o600)
             tmp.replace(path)
         except OSError as exc:
-            print(f"[ChessMCP] failed to write session file: {exc}")
+            log.warning("[ChessMCP] failed to write session file: %s", exc)
 
     def _make_handler(self):
         owner = self
@@ -383,7 +388,7 @@ class ChessGameMcpServer:
                     body = self.rfile.read(length).decode("utf-8")
                     request = json.loads(body)
                 except Exception as exc:
-                    print(f"[ChessMCP] invalid request JSON: {exc}")
+                    log.warning("[ChessMCP] invalid request JSON: %s", exc)
                     self._send_json(owner._rpc_error(None, -32700, "Parse error"))
                     return
 
@@ -476,7 +481,7 @@ class ChessGameMcpServer:
                 return self._handle_resource_unsubscribe(request_id, request.get("params"))
             return self._rpc_error(request_id, -32601, f"Method not found: {method}")
         except Exception as exc:
-            print(f"[ChessMCP] request handling failed: {exc}")
+            log.exception("[ChessMCP] request handling failed")
             return self._rpc_error(request_id, -32603, f"Internal error: {exc}")
 
     def _handle_tool_call(self, request_id: object, params: object, *, mcp_side: bool) -> dict[str, object]:
@@ -710,8 +715,8 @@ class ChessGameMcpServer:
             },
         ]
 
-    def _connection_payload(self, mcp_side: bool) -> dict[str, object]:
-        state = self._controller.get_mcp_state(caller_side=mcp_side)
+    def _connection_payload(self, mcp_side: bool) -> ConnectionPayload:
+        state: McpStatePayload = self._controller.get_mcp_state(caller_side=mcp_side)
         caller_token = self._token_for_side(mcp_side)
         seat_statuses = self._seat_status_payload()
         seats = []
@@ -829,7 +834,7 @@ class ChessGameMcpServer:
 
     def _restricted_tool_payload(self, tool_name: str, mcp_side: bool) -> dict[str, object]:
         reason = SIDE_SEAT_RESTRICTED_TOOLS[tool_name]
-        print(f"[ChessMCP] rejected side-seat tool '{tool_name}' for {_side_name(mcp_side)}: {reason}")
+        log.info("[ChessMCP] rejected side-seat tool %r for %s: %s", tool_name, _side_name(mcp_side), reason)
         return {
             "ok": False,
             "error": reason,
@@ -863,7 +868,7 @@ def _env_int(name: str, default: int) -> int:
     try:
         return int(value)
     except ValueError:
-        print(f"[ChessMCP] invalid {name}={value!r}; using {default}")
+        log.warning("[ChessMCP] invalid %s=%r; using %s", name, value, default)
         return default
 
 def _side_name(side: bool) -> str:

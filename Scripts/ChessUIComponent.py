@@ -2,19 +2,23 @@
 
 from __future__ import annotations
 
+import logging
 import subprocess
 import sys
 
 from termin.ui_components import UIComponent
 from tcgui.widgets import Button, Label, Panel, Separator, VStack, px
 
-print("[ChessUI] ChessUIComponent module loaded.")
+from Scripts import chess_ui_text as ui_text
+
+log = logging.getLogger(__name__)
+log.debug("[ChessUI] ChessUIComponent module loaded.")
 
 
 class ChessUIComponent(UIComponent):
 
     def __init__(self):
-        print("[ChessUI] ChessUIComponent.__init__()")
+        log.debug("[ChessUI] ChessUIComponent.__init__()")
         super().__init__(priority=100)
         self._status_label: Label | None = None
         self._turn_label: Label | None = None
@@ -30,20 +34,20 @@ class ChessUIComponent(UIComponent):
         self._game_controller = None
 
     def start(self) -> None:
-        print("[ChessUI] start() called")
+        log.info("[ChessUI] start() called")
         super().start()
         self._find_game_controller()
         self._build_ui()
-        print("[ChessUI] UI built successfully")
+        log.info("[ChessUI] UI built successfully")
 
     def _find_game_controller(self):
         scene = self.entity.scene
         comps = scene.get_components_of_type("ChessGameController")
         if comps:
             self._game_controller = comps[0]
-            print("[ChessUI] Found ChessGameController")
+            log.info("[ChessUI] Found ChessGameController")
         else:
-            print("[ChessUI] WARNING: ChessGameController not found in scene!")
+            log.warning("[ChessUI] ChessGameController not found in scene")
 
     def _build_ui(self):
         self._status_label = None
@@ -108,7 +112,7 @@ class ChessUIComponent(UIComponent):
 
         root_panel.add_child(stack)
         self.root = root_panel
-        print("[ChessUI] Start menu root widget set")
+        log.debug("[ChessUI] Start menu root widget set")
 
     def _build_game_panel(self):
         # Root panel — right side of screen
@@ -274,24 +278,24 @@ class ChessUIComponent(UIComponent):
 
         root_panel.add_child(stack)
         self.root = root_panel
-        print("[ChessUI] Root widget set")
+        log.debug("[ChessUI] Root widget set")
 
     def _add_connection_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
         title = self._make_info_label("MCP Connection", width=width, font_size=14)
         title.color = (0.92, 0.95, 1.0, 1.0)
         stack.add_child(title)
 
-        active_seats = self._seat_payloads(info)
+        active_seats = ui_text.seat_payloads(info)
         if active_seats:
             agent_memo_title = self._make_info_label("Agent Mnemo:", width=width, font_size=13)
             agent_memo_title.color = (1.0, 0.78, 0.36, 1.0)
             stack.add_child(agent_memo_title)
         for seat in active_seats:
             memo_button = self._make_button(
-                self._agent_memo_button_label(seat, active_seats),
+                ui_text.agent_memo_button_label(seat, active_seats),
                 lambda seat_payload=seat: self._copy_text(
                     f"{str(seat_payload['side'])} agent memo",
-                    self._agent_memo_text(info, seat_payload),
+                    ui_text.agent_memo_text(info, seat_payload),
                 ),
                 width=width,
             )
@@ -305,7 +309,7 @@ class ChessUIComponent(UIComponent):
         stack.add_child(self._make_button("Copy URL", lambda value=url: self._copy_text("MCP URL", value), width=width))
 
         self._connection_labels["session_file"] = self._make_info_label(
-            f"Session: {self._short_path(session_file)}",
+            f"Session: {ui_text.short_path(session_file)}",
             width=width,
         )
         stack.add_child(self._connection_labels["session_file"])
@@ -372,19 +376,12 @@ class ChessUIComponent(UIComponent):
         btn.pressed_color = (0.62, 0.34, 0.08, 1.0)
         btn.text_color = (0.08, 0.06, 0.04, 1.0)
 
-    @staticmethod
-    def _agent_memo_button_label(seat: dict[str, object], active_seats: list[dict[str, object]]) -> str:
-        if len(active_seats) == 1:
-            return "Copy & Paste to Your Agent"
-        side = str(seat["side"]).title()
-        return f"Copy & Paste to {side} Agent"
-
     def _add_promotion_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
-        title = self._make_info_label(self._promotion_title(info), width=width, font_size=13)
+        title = self._make_info_label(ui_text.promotion_title(info), width=width, font_size=13)
         title.color = (1.0, 0.82, 0.36, 1.0)
         stack.add_child(title)
 
-        for choice in self._promotion_choices(info):
+        for choice in ui_text.promotion_choices(info):
             piece = str(choice["piece"])
             label = str(choice["label"])
             stack.add_child(
@@ -404,81 +401,81 @@ class ChessUIComponent(UIComponent):
     # --- Button callbacks ---
 
     def _on_start_human_vs_agent(self):
-        print("[ChessUI] 'Start Game With Agent' clicked")
+        log.info("[ChessUI] 'Start Game With Agent' clicked")
         if self._game_controller is not None:
             self._game_controller.start_human_vs_agent()
             self._build_ui()
             self._update_status()
         else:
-            print("[ChessUI] No game controller found!")
+            log.warning("[ChessUI] No game controller found")
 
     def _on_start_agent_vs_agent(self):
-        print("[ChessUI] 'Start Two-Agent Game' clicked")
+        log.info("[ChessUI] 'Start Two-Agent Game' clicked")
         if self._game_controller is not None:
             self._game_controller.start_agent_vs_agent()
             self._build_ui()
             self._update_status()
         else:
-            print("[ChessUI] No game controller found!")
+            log.warning("[ChessUI] No game controller found")
 
     def _on_start_local_sandbox(self):
-        print("[ChessUI] 'Local Sandbox' clicked")
+        log.info("[ChessUI] 'Local Sandbox' clicked")
         if self._game_controller is not None:
             self._game_controller.start_local_sandbox()
             self._build_ui()
             self._update_status()
         else:
-            print("[ChessUI] No game controller found!")
+            log.warning("[ChessUI] No game controller found")
 
     def _on_new_game(self):
-        print("[ChessUI] 'New Game' clicked")
+        log.info("[ChessUI] 'New Game' clicked")
         if self._game_controller is not None:
             self._game_controller.new_game()
             self._update_status()
         else:
-            print("[ChessUI] No game controller found!")
+            log.warning("[ChessUI] No game controller found")
 
     def _on_return_to_menu(self):
-        print("[ChessUI] 'Return to Menu' clicked")
+        log.info("[ChessUI] 'Return to Menu' clicked")
         if self._game_controller is not None:
             self._game_controller.return_to_start_menu()
             self._build_ui()
         else:
-            print("[ChessUI] No game controller found!")
+            log.warning("[ChessUI] No game controller found")
 
     def _on_copy_fen(self):
-        print("[ChessUI] 'Copy FEN' clicked")
+        log.info("[ChessUI] 'Copy FEN' clicked")
         if self._game_controller is None:
-            print("[ChessUI] No game controller!")
+            log.warning("[ChessUI] No game controller")
             return
 
         fen = self._game_controller.get_fen()
-        print(f"[ChessUI] FEN: {fen}")
+        log.debug("[ChessUI] FEN: %s", fen)
         self._copy_text("FEN", fen)
 
     def _on_copy_pgn(self):
-        print("[ChessUI] 'Copy PGN' clicked")
+        log.info("[ChessUI] 'Copy PGN' clicked")
         if self._game_controller is None:
-            print("[ChessUI] No game controller!")
+            log.warning("[ChessUI] No game controller")
             return
 
         pgn = self._game_controller.get_pgn()
-        print(f"[ChessUI] PGN:\n{pgn}")
+        log.debug("[ChessUI] PGN:\n%s", pgn)
         self._copy_text("PGN", pgn)
 
     def _on_choose_promotion(self, piece_name: str):
-        print(f"[ChessUI] promotion choice clicked: {piece_name}")
+        log.info("[ChessUI] promotion choice clicked: %s", piece_name)
         if self._game_controller is None:
-            print("[ChessUI] No game controller!")
+            log.warning("[ChessUI] No game controller")
             return
         self._game_controller.choose_promotion(piece_name)
         self._build_ui()
         self._update_status()
 
     def _on_cancel_promotion(self):
-        print("[ChessUI] promotion cancelled")
+        log.info("[ChessUI] promotion cancelled")
         if self._game_controller is None:
-            print("[ChessUI] No game controller!")
+            log.warning("[ChessUI] No game controller")
             return
         self._game_controller.cancel_promotion()
         self._build_ui()
@@ -493,12 +490,12 @@ class ChessUIComponent(UIComponent):
                     text=True,
                     check=True,
                 )
-                print(f"[ChessUI] {label} copied to clipboard ({command[0]})")
+                log.info("[ChessUI] %s copied to clipboard (%s)", label, command[0])
                 return
             except (FileNotFoundError, subprocess.CalledProcessError) as exc:
-                print(f"[ChessUI] clipboard command failed for {label}: {command[0]} ({exc})")
+                log.debug("[ChessUI] clipboard command failed for %s: %s (%s)", label, command[0], exc)
         names = "/".join(command[0] for command in self._clipboard_commands())
-        print(f"[ChessUI] WARNING: {names} not found or failed, cannot copy {label} to clipboard")
+        log.warning("[ChessUI] %s not found or failed, cannot copy %s to clipboard", names, label)
 
     @staticmethod
     def _clipboard_commands(platform: str | None = None) -> list[list[str]]:
@@ -517,10 +514,10 @@ class ChessUIComponent(UIComponent):
         ]
 
     def _on_exit(self):
-        print("[ChessUI] 'Exit' clicked")
+        log.info("[ChessUI] 'Exit' clicked")
         from termin.player import request_quit
         if not request_quit(0):
-            print("[ChessUI] Player runtime is not active; exit request ignored")
+            log.info("[ChessUI] Player runtime is not active; exit request ignored")
 
     # --- Status update (called by game controller) ---
 
@@ -592,22 +589,22 @@ class ChessUIComponent(UIComponent):
         if not info["ok"]:
             return False
 
-        self._turn_label.text = self._turn_text(info)
-        status_text = self._status_text(info)
+        self._turn_label.text = ui_text.turn_text(info)
+        status_text = ui_text.status_text(info)
         self._status_label.text = status_text
         self._apply_status_color(status_text)
         if self._owners_label is not None:
-            self._owners_label.text = self._owners_text(info)
+            self._owners_label.text = ui_text.owners_text(info)
         if self._last_move_label is not None:
-            self._last_move_label.text = self._last_move_text(info)
+            self._last_move_label.text = ui_text.last_move_text(info)
         if self._captures_label is not None:
-            self._captures_label.text = self._captures_text(info)
+            self._captures_label.text = ui_text.captures_text(info)
         if self._board_hint_label is not None:
-            self._board_hint_label.text = self._board_hint_text(info)
+            self._board_hint_label.text = ui_text.board_hint_text(info)
         if self._files_label is not None:
-            self._files_label.text = self._files_text(info)
+            self._files_label.text = ui_text.files_text(info)
         if self._ranks_label is not None:
-            self._ranks_label.text = self._ranks_text(info)
+            self._ranks_label.text = ui_text.ranks_text(info)
         return True
 
     def _refresh_connection_info(self) -> None:
@@ -620,195 +617,12 @@ class ChessUIComponent(UIComponent):
         turn = str(info["turn"]).title()
         status = str(info["status"])
         self._connection_labels["connection_turn"].text = f"Turn: {turn} / {status}"
-        self._connection_labels["last_event"].text = self._last_event_text(info)
-        for seat in self._seat_payloads(info):
+        self._connection_labels["last_event"].text = ui_text.last_event_text(info)
+        for seat in ui_text.seat_payloads(info):
             side = str(seat["side"])
             key = f"{side}_status"
             if key in self._connection_labels:
-                self._connection_labels[key].text = self._seat_status_text(seat)
-
-    @staticmethod
-    def _seat_payloads(info: dict[str, object]) -> list[dict[str, object]]:
-        seats = info["seats"]
-        if not isinstance(seats, list):
-            return []
-        return [seat for seat in seats if isinstance(seat, dict) and bool(seat["active"])]
-
-    @staticmethod
-    def _seat_status_text(seat: dict[str, object]) -> str:
-        side = str(seat["side"]).title()
-        state = "connected" if bool(seat["connected"]) else "waiting"
-        requests = int(seat["request_count"])
-        method = seat["last_method"]
-        method_text = str(method) if method is not None else "no calls"
-        return f"{side}: {state}, {requests} req, {method_text}"
-
-    @staticmethod
-    def _agent_memo_text(info: dict[str, object], seat: dict[str, object]) -> str:
-        side = str(seat["side"])
-        url = str(info["url"])
-        token = str(seat["token"])
-        authorization = str(seat.get("authorization", f"Bearer {token}"))
-        mode = str(info["mode"])
-        session_file = str(info["session_file"])
-        active_sides = info.get("active_mcp_sides")
-        if isinstance(active_sides, list):
-            active_text = ", ".join(str(active_side) for active_side in active_sides)
-        else:
-            active_text = side
-
-        return "\n".join(
-            [
-                "You are playing chess as an MCP-connected agent.",
-                "",
-                "Connection:",
-                f"- Endpoint URL: {url}",
-                f"- Authorization header: {authorization}",
-                f"- Token: {token}",
-                f"- Your side: {side}",
-                f"- Game mode: {mode}",
-                f"- Active MCP sides: {active_text}",
-                f"- Local session file, if accessible: {session_file}",
-                "",
-                "Expected conduct:",
-                "- Play your own chess moves. Do not ask the user/operator to choose moves for you.",
-                "- Do not use external tools, chess engines, web search, opening books, or tablebases unless the user explicitly allows it.",
-                "- Use only the chess MCP connection above for game state and moves.",
-                "- If it is not your turn, call `wait_for_move` with a reasonable timeout instead of polling or asking the user for updates.",
-                "- On your turn, call `get_state` or `legal_moves`, choose one legal move, then call `make_move`.",
-                "- Side-seat agents must not try to call `new_game` or `set_bot_enabled`; those controls are reserved for the in-game UI.",
-                "",
-                "Useful MCP tools:",
-                "- `get_connection_info`: verify your seat, mode, endpoint and policy.",
-                "- `get_state`: inspect FEN, legal moves, turn owner, game status and last move.",
-                "- `legal_moves`: list legal UCI/SAN moves for the current position.",
-                "- `make_move`: play your selected legal UCI or SAN move.",
-                "- `wait_for_move`: wait until your side can move or the game ends.",
-            ]
-        )
-
-    @staticmethod
-    def _last_event_text(info: dict[str, object]) -> str:
-        event = info["last_event"]
-        return ChessUIComponent._event_text(event, prefix="Last event")
-
-    @staticmethod
-    def _last_move_text(info: dict[str, object]) -> str:
-        event = info["last_move"]
-        return ChessUIComponent._event_text(event, prefix="Last move")
-
-    @staticmethod
-    def _event_text(event: object, *, prefix: str) -> str:
-        if not isinstance(event, dict):
-            return f"{prefix}: none"
-        event_type = str(event["type"])
-        san = event.get("san")
-        actor = event.get("actor")
-        if san is None:
-            return f"{prefix}: {event_type}"
-        return f"{prefix}: {san} by {actor}"
-
-    @staticmethod
-    def _owners_text(info: dict[str, object]) -> str:
-        owners = info["side_owners"]
-        if not isinstance(owners, dict):
-            return "White: unknown | Black: unknown"
-        white = str(owners["white"]).replace("_", " ")
-        black = str(owners["black"]).replace("_", " ")
-        return f"White: {white} | Black: {black}"
-
-    @staticmethod
-    def _captures_text(info: dict[str, object]) -> str:
-        captured = info.get("captured")
-        if not isinstance(captured, dict):
-            return "Captured: none"
-        by_white = ChessUIComponent._captured_side_text(captured.get("by_white"))
-        by_black = ChessUIComponent._captured_side_text(captured.get("by_black"))
-        if by_white == "-" and by_black == "-":
-            return "Captured: none"
-        return f"Captured W: {by_white} | B: {by_black}"
-
-    @staticmethod
-    def _captured_side_text(items: object) -> str:
-        if not isinstance(items, list) or not items:
-            return "-"
-        parts = []
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            symbol = str(item["symbol"])
-            count = int(item["count"])
-            parts.append(symbol if count == 1 else f"{symbol}x{count}")
-        return " ".join(parts) if parts else "-"
-
-    @staticmethod
-    def _board_view(info: dict[str, object]) -> str:
-        human_sides = info.get("human_sides")
-        if not isinstance(human_sides, list):
-            return "white"
-        sides = {str(side) for side in human_sides}
-        if sides == {"black"}:
-            return "black"
-        return "white"
-
-    @staticmethod
-    def _board_hint_text(info: dict[str, object]) -> str:
-        human_sides = info.get("human_sides")
-        if not isinstance(human_sides, list):
-            return "Board: white view"
-        sides = {str(side) for side in human_sides}
-        if sides == {"white", "black"}:
-            return "Board: sandbox white view"
-        if not sides:
-            return "Board: default white view"
-        view = ChessUIComponent._board_view(info)
-        return f"Board: {view} view"
-
-    @staticmethod
-    def _files_text(info: dict[str, object]) -> str:
-        files = list("abcdefgh")
-        if ChessUIComponent._board_view(info) == "black":
-            files.reverse()
-        return f"Files: {' '.join(files)}"
-
-    @staticmethod
-    def _ranks_text(info: dict[str, object]) -> str:
-        ranks = [str(rank) for rank in range(1, 9)]
-        if ChessUIComponent._board_view(info) == "black":
-            ranks.reverse()
-        return f"Ranks: {' '.join(ranks)}"
-
-    @staticmethod
-    def _turn_text(info: dict[str, object]) -> str:
-        turn = str(info["turn"]).title()
-        turn_owner = info["turn_owner"]
-        actor = "unknown"
-        if isinstance(turn_owner, dict):
-            actor = str(turn_owner["actor"])
-        return f"{turn} to move ({actor})"
-
-    @staticmethod
-    def _status_text(info: dict[str, object]) -> str:
-        status = str(info["status"])
-        if status.startswith("checkmate:"):
-            winner = status.split(":", 1)[1].title()
-            return f"Checkmate! {winner} wins!"
-        if status == "stalemate":
-            return "Stalemate! Draw."
-        if status.startswith("draw:"):
-            reason = status.split(":", 1)[1].replace("_", " ")
-            return f"Draw: {reason}"
-        if status == "check":
-            return "Check!"
-        promotion = info.get("pending_promotion")
-        if isinstance(promotion, dict) and bool(promotion["pending"]):
-            return ChessUIComponent._promotion_title(promotion)
-        if bool(info["game_over"]):
-            return "Game over"
-        hint = info.get("selection_hint")
-        if hint is not None:
-            return str(hint)
-        return ""
+                self._connection_labels[key].text = ui_text.seat_status_text(seat)
 
     def _apply_status_color(self, status_text: str) -> None:
         if self._status_label is None:
@@ -819,22 +633,3 @@ class ChessUIComponent(UIComponent):
             self._status_label.color = (1.0, 0.6, 0.2, 1.0)
         else:
             self._status_label.color = (0.7, 0.7, 0.7, 1.0)
-
-    @staticmethod
-    def _short_path(path: str) -> str:
-        if len(path) <= 34:
-            return path
-        return f"...{path[-31:]}"
-
-    @staticmethod
-    def _promotion_title(info: dict[str, object]) -> str:
-        from_sq = str(info["from"])
-        to_sq = str(info["to"])
-        return f"Promote {from_sq}-{to_sq}"
-
-    @staticmethod
-    def _promotion_choices(info: dict[str, object]) -> list[dict[str, object]]:
-        choices = info["choices"]
-        if not isinstance(choices, list):
-            return []
-        return [choice for choice in choices if isinstance(choice, dict)]

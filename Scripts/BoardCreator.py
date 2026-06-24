@@ -4,6 +4,8 @@ BoardCreatorComponent component.
 
 from __future__ import annotations
 
+import logging
+
 from termin.scene import PythonComponent
 from termin.inspect import InspectField
 from termin.geombase import Vec3
@@ -11,7 +13,8 @@ from termin.mesh import TcMesh
 from termin.materials import TcMaterial
 from termin.render_components import WorldTextAnchor, WorldTextComponent, WorldTextOrientation  # noqa: F401 - registers native component
 
-print("BoardCreatorComponent loaded.")
+log = logging.getLogger(__name__)
+log.debug("BoardCreatorComponent loaded.")
 
 TILE_SIZE = 2
 TILE_HEIGHT = 0.5
@@ -32,7 +35,7 @@ BOARD_BORDER_MATERIAL = "WoodMaterial"
 
 def _on_make_board_click(component: "BoardCreatorComponent") -> None:
     """Called when the "Make Board" button is clicked."""
-    print("Make Board button clicked.")
+    log.info("Make Board button clicked.")
     component.make_board()
 
 
@@ -103,7 +106,7 @@ class BoardCreatorComponent(PythonComponent):
         from termin.editor_core.render_request import request_scene_tree_rebuild
         request_scene_tree_rebuild()
 
-        print("Board created.")
+        log.info("Board created.")
 
     def ensure_coordinate_labels(self, rebuild: bool = False) -> None:
         labels_root = self._find_child(BOARD_COORDINATES_ENTITY)
@@ -157,12 +160,12 @@ class BoardCreatorComponent(PythonComponent):
                 Vec3(-1, 0, 0),
             )
 
-        print("Board coordinate labels ready.")
+        log.debug("Board coordinate labels ready.")
 
     def _make_board_border(self, parent) -> None:
         border_material = TcMaterial.from_name(BOARD_BORDER_MATERIAL)
         if border_material is None or not border_material.is_valid:
-            print(f"WARNING: {BOARD_BORDER_MATERIAL} not found; board border skipped.")
+            log.warning("%s not found; board border skipped.", BOARD_BORDER_MATERIAL)
             return
 
         inner_min = BOARD_EDGE_MIN

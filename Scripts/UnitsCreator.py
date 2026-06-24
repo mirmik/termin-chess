@@ -4,6 +4,8 @@ UnitsCreator component.
 
 from __future__ import annotations
 
+import logging
+
 from termin.scene import PythonComponent
 from termin.inspect import InspectField
 from termin.geombase import Quat, Vec3
@@ -13,6 +15,8 @@ from termin.materials import TcMaterial
 W = 2
 H = 0.5
 WHITE_PIECE_ROTATION = Quat(0.0, 0.0, 1.0, 0.0)
+
+log = logging.getLogger(__name__)
 
 class UnitsCreator(PythonComponent):
     """
@@ -83,7 +87,7 @@ class UnitsCreator(PythonComponent):
 
     def make_rook(self, material, position, rotation=None):
         rook_mesh = TcMesh.from_name("Hex_Rook")
-        print(f"Making rook at {position}: {rook_mesh}")
+        log.debug("Making rook at %s: %s", position, rook_mesh)
         return self.make_unit(material, rook_mesh, position, name="Rook", rotation=rotation)
 
     def make_knight(self, material, position, rotation=None):
@@ -123,7 +127,7 @@ class UnitsCreator(PythonComponent):
         return self.make_unit(material, mesh, pos, name=name, rotation=rotation)
 
     def make_units(self):
-        print("Make Units button clicked.")
+        log.info("Make Units button clicked.")
 
         self.entity.destroy_children()
 
