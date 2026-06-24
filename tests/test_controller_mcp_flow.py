@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import sys
-import queue
-import threading
 import types
 from pathlib import Path
 
@@ -112,15 +110,7 @@ class FakeTile:
 
 
 def make_headless_controller() -> object:
-    controller = ChessGameController.__new__(ChessGameController)
-    controller._board = chess.Board()
-    controller._state = STATE_IDLE
-    controller._selected_square = None
-    controller._valid_moves = []
-    controller._last_move_squares = None
-    controller._check_square = None
-    controller._tiles = {}
-    controller._original_materials = {}
+    controller = ChessGameController()
     controller._highlight_selected = "selected"
     controller._highlight_valid = "valid"
     controller._highlight_last_move = "last"
@@ -128,19 +118,9 @@ def make_headless_controller() -> object:
     controller._game_started = True
     controller._start_menu_visible = False
     controller._bot_enabled = False
-    controller._bot_color = chess.BLACK
-    controller._mcp_state_lock = threading.RLock()
-    controller._mcp_commands = queue.Queue()
-    controller._mcp_condition = threading.Condition()
-    controller._mcp_events = []
-    controller._mcp_next_event_id = 1
-    controller._mcp_max_events = 200
-    controller._mcp_server_stopping = False
-    controller._mcp_server = None
     controller._ui_component = None
-    controller._pending_promotion = None
-    controller._session = session_module.ChessGameSession()
     controller._session.configure_agent_vs_agent()
+    controller._mark_state_dirty()
     return controller
 
 

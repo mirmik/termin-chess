@@ -126,7 +126,7 @@ class ChessGameController(InputComponent):
     def update(self, dt: float) -> None:
         self._process_mcp_commands()
         self._ui_refresh_accum += dt
-        if self._ui_refresh_accum >= 0.5 and getattr(self, "_ui_dirty", True):
+        if self._ui_refresh_accum >= 0.5 and self._ui_dirty:
             self._ui_refresh_accum = 0.0
             self._notify_ui()
 
@@ -277,7 +277,7 @@ class ChessGameController(InputComponent):
         return dict(self._pending_promotion)
 
     def _mark_state_dirty(self, *, ui: bool = True) -> None:
-        self._mcp_state_revision = getattr(self, "_mcp_state_revision", 0) + 1
+        self._mcp_state_revision += 1
         self._mcp_state_cache = None
         self._mcp_state_cache_revision = -1
         if ui:
@@ -364,13 +364,12 @@ class ChessGameController(InputComponent):
 
     def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
         with self._mcp_state_lock:
-            revision = getattr(self, "_mcp_state_revision", 0)
-            cache_revision = getattr(self, "_mcp_state_cache_revision", -1)
-            cache = getattr(self, "_mcp_state_cache", None)
-            if cache is None or cache_revision != revision:
+            if self._mcp_state_cache is None or self._mcp_state_cache_revision != self._mcp_state_revision:
                 cache = self._build_mcp_state()
                 self._mcp_state_cache = cache
-                self._mcp_state_cache_revision = revision
+                self._mcp_state_cache_revision = self._mcp_state_revision
+            else:
+                cache = self._mcp_state_cache
 
             state = deepcopy(cache)
             if caller_side is not None:
@@ -1047,17 +1046,12 @@ class ChessGameController(InputComponent):
             print(f"[Chess]   WARNING: tile {square} has no MeshRenderer for {label} highlight")
             return False
         mr.set_field("material", material)
-        dirty = getattr(self, "_dirty_highlight_squares", None)
-        if dirty is None:
-            dirty = set()
-            self._dirty_highlight_squares = dirty
-        dirty.add(square)
+        self._dirty_highlight_squares.add(square)
         return True
 
     def _clear_highlight(self):
         restored = 0
-        dirty = getattr(self, "_dirty_highlight_squares", set())
-        for sq in list(dirty):
+        for sq in list(self._dirty_highlight_squares):
             mat = self._original_materials.get(sq)
             if mat is None or sq not in self._tiles:
                 continue
@@ -1066,7 +1060,7 @@ class ChessGameController(InputComponent):
             if mr:
                 mr.set_field("material", mat)
                 restored += 1
-        dirty.clear()
+        self._dirty_highlight_squares.clear()
         print(f"[Chess]   cleared highlight, restored {restored} tile materials")
 
     def _clear_selection(self):
