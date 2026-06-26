@@ -134,6 +134,7 @@ AgentStatePayload = TypedDict(
         "caller_can_move": bool,
         "caller_error": str | None,
         "legal_moves": list[str],
+        "legal_moves_san": list[str],
     },
 )
 

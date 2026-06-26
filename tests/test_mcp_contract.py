@@ -97,6 +97,7 @@ class FakeController:
             "caller_can_move": state["caller_can_move"],
             "caller_error": state["caller_error"],
             "legal_moves": [str(move["uci"]) for move in state["legal_moves"]],
+            "legal_moves_san": [str(move["san"]) for move in state["legal_moves"]],
         }
 
     def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
@@ -291,6 +292,7 @@ def test_side_seat_tools_are_caller_aware(tmp_path: Path) -> None:
     assert payload["turn_owner"]["actor"] == "agent:white"
     assert payload["moves"] == ["e2e4"]
     assert payload["legal_moves"] == ["e2e4"]
+    assert payload["legal_moves_san"] == ["e4"]
     assert payload["caller_side"] == "black"
     assert payload["caller_can_move"] is False
     assert payload["caller_error"] == "white is controlled by agent"
@@ -315,11 +317,26 @@ def test_get_state_returns_compact_agent_snapshot(tmp_path: Path) -> None:
     assert payload["fen"] == chess.STARTING_FEN
     assert payload["board_ascii"] == str(chess.Board())
     assert payload["legal_moves"] == ["e2e4"]
+    assert payload["legal_moves_san"] == ["e4"]
     assert payload["caller_side"] == "black"
     assert "selected_legal_moves" not in payload
     assert "captured" not in payload
     assert "next_event_id" not in payload
 
+
+def test_wait_for_move_timeout_is_not_tool_error(tmp_path: Path) -> None:
+    server = make_server(tmp_path / "session.json")
+
+    response = server._handle_tool_call(
+        1,
+        {"name": "wait_for_move", "arguments": {"timeout": 0}},
+        mcp_side=chess.BLACK,
+    )
+
+    payload = response["result"]["structuredContent"]
+    assert response["result"]["isError"] is False
+    assert payload["ok"] is False
+    assert payload["timeout"] is True
 
 def test_get_pgn_is_explicit_tool(tmp_path: Path) -> None:
     server = make_server(tmp_path / "session.json")

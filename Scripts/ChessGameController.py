@@ -404,6 +404,7 @@ class ChessGameController(InputComponent):
             "caller_can_move": bool(state["caller_can_move"]),
             "caller_error": state["caller_error"],
             "legal_moves": [str(move["uci"]) for move in state["legal_moves"] if isinstance(move, dict)],
+            "legal_moves_san": [str(move["san"]) for move in state["legal_moves"] if isinstance(move, dict)],
         }
 
     def _build_game_state(self) -> GameStatePayload:

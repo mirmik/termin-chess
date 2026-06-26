@@ -507,6 +507,7 @@ class ChessGameMcpServer:
                 "ok": True,
                 "moves": state["legal_moves"],
                 "legal_moves": state["legal_moves"],
+                "legal_moves_san": state.get("legal_moves_san", []),
                 "turn": state["turn"],
                 "turn_owner": state["turn_owner"],
                 "caller_side": state["caller_side"],
@@ -536,11 +537,12 @@ class ChessGameMcpServer:
             return self._rpc_error(request_id, -32602, f"Unknown tool: {name}")
 
         text = self._compact_json(payload)
+        is_timeout = bool(payload.get("timeout") is True and payload.get("error") is None)
         return self._rpc_result(
             request_id,
             {
                 "content": [{"type": "text", "text": text}],
-                "isError": not bool(payload.get("ok", True)),
+                "isError": not (bool(payload.get("ok", True)) or is_timeout),
                 "structuredContent": payload,
             },
         )
@@ -619,7 +621,7 @@ class ChessGameMcpServer:
         return [
             {
                 "name": "get_state",
-                "description": "Return a compact caller-aware chess position snapshot with FEN, board ASCII and UCI legal moves.",
+                "description": "Return a compact caller-aware chess position snapshot with FEN, board ASCII and legal UCI/SAN move lists.",
                 "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
             {
@@ -629,7 +631,7 @@ class ChessGameMcpServer:
             },
             {
                 "name": "legal_moves",
-                "description": "Return legal UCI moves for the side to move plus caller/turn ownership.",
+                "description": "Return legal UCI and SAN move lists for the side to move plus caller/turn ownership.",
                 "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
             {

@@ -78,10 +78,10 @@ side can move.
 ## Tools
 
 - `get_state`: compact caller-aware state: FEN, board ASCII, side to move,
-  turn owner, status, last move and legal UCI moves.
+  turn owner, status, last move and legal UCI/SAN move lists.
 - `get_connection_info`: endpoint, caller seat, mode, live seat status and
   connection hints.
-- `legal_moves`: legal UCI moves plus caller/turn ownership.
+- `legal_moves`: legal UCI and SAN move lists plus caller/turn ownership.
 - `make_move`: make a legal UCI or SAN move for the MCP seat identified by the
   request token.
 - `wait_for_move`: wait until the caller's side can move, or until the game
@@ -113,6 +113,7 @@ snapshot. Important fields for agents:
   the request token.
 - `legal_moves[]`: legal UCI strings for the side to move, including promotion
   suffixes such as `e7e8q`.
+- `legal_moves_san[]`: legal SAN strings in the same order as `legal_moves[]`.
 
 The compact state intentionally omits UI-only selection/highlight/capture data,
 seat metadata, event counters and move history. Use `get_connection_info` for

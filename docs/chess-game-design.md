@@ -232,7 +232,7 @@ Important fields:
 
 ### `legal_moves`
 
-Returns legal moves. If called by a side-scoped seat, it should indicate whether
+Returns legal moves as parallel UCI and SAN string lists. If called by a side-scoped seat, it should indicate whether
 the seat is allowed to play any of them now.
 
 ### `make_move`
@@ -257,7 +257,8 @@ The move wait path is intentionally not indexed by ply or event id. A caller
 that is already allowed to move receives an immediate `ready: true` response.
 
 Current implementation: responses include caller-aware state and a
-`waiting_for` object with side, owner, label, and actor.
+`waiting_for` object with side, owner, label, and actor. A timeout is a normal
+tool result with `timeout: true`, not an MCP tool error.
 
 ### `new_game`
 
