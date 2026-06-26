@@ -19,7 +19,7 @@ from typing import Any
 
 import chess
 
-from Scripts.ChessMcpPayloads import ConnectionPayload, McpStatePayload, UiConnectionPayload
+from Scripts.ChessMcpPayloads import ConnectionPayload, GameStatePayload, UiConnectionPayload
 
 log = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ SIDE_SEAT_ALLOWED_TOOLS = frozenset(
         "legal_moves",
         "make_move",
         "wait_for_move",
+        "get_pgn",
     }
 )
 
@@ -210,7 +211,7 @@ class ChessGameMcpServer:
         self._write_session_file()
 
     def ui_connection_payload(self) -> UiConnectionPayload:
-        state: McpStatePayload = self._controller.get_mcp_state()
+        state: GameStatePayload = self._controller.get_game_state()
         seat_statuses = self._seat_status_payload()
         seats = []
         active_sides = set(state["active_mcp_sides"])
@@ -300,7 +301,7 @@ class ChessGameMcpServer:
         self._previous_signal_handlers.clear()
 
     def _write_session_file(self) -> None:
-        state = self._controller.get_mcp_state()
+        state = self._controller.get_game_state()
         payload = {
             "pid": os.getpid(),
             "url": self.url,
@@ -497,12 +498,14 @@ class ChessGameMcpServer:
         if name in SIDE_SEAT_RESTRICTED_TOOLS:
             payload = self._restricted_tool_payload(str(name), mcp_side)
         elif name == "get_state":
-            payload = self._controller.get_mcp_state(caller_side=mcp_side)
+            payload = self._controller.get_agent_state(caller_side=mcp_side)
         elif name == "get_connection_info":
             payload = self._connection_payload(mcp_side)
         elif name == "legal_moves":
-            state = self._controller.get_mcp_state(caller_side=mcp_side)
+            state = self._controller.get_agent_state(caller_side=mcp_side)
             payload = {
+                "ok": True,
+                "moves": state["legal_moves"],
                 "legal_moves": state["legal_moves"],
                 "turn": state["turn"],
                 "turn_owner": state["turn_owner"],
@@ -527,10 +530,12 @@ class ChessGameMcpServer:
                 timeout=timeout,
                 caller_side=mcp_side,
             )
+        elif name == "get_pgn":
+            payload = {"ok": True, "pgn": self._controller.get_mcp_pgn()}
         else:
             return self._rpc_error(request_id, -32602, f"Unknown tool: {name}")
 
-        text = json.dumps(payload, ensure_ascii=False, indent=2)
+        text = self._compact_json(payload)
         return self._rpc_result(
             request_id,
             {
@@ -539,6 +544,10 @@ class ChessGameMcpServer:
                 "structuredContent": payload,
             },
         )
+
+    @staticmethod
+    def _compact_json(payload: object) -> str:
+        return json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
 
     @staticmethod
     def _timeout_argument(arguments: dict[str, object], *, default: float) -> float | None:
@@ -561,14 +570,10 @@ class ChessGameMcpServer:
             return self._rpc_error(request_id, -32602, "Resource URI must be a string")
 
         if uri == "chess://game/state":
-            text = json.dumps(
-                self._controller.get_mcp_state(caller_side=mcp_side),
-                ensure_ascii=False,
-                indent=2,
-            )
+            text = self._compact_json(self._controller.get_agent_state(caller_side=mcp_side))
             mime_type = "application/json"
         elif uri == "chess://game/connection":
-            text = json.dumps(self._connection_payload(mcp_side), ensure_ascii=False, indent=2)
+            text = self._compact_json(self._connection_payload(mcp_side))
             mime_type = "application/json"
         elif uri == "chess://game/help":
             text = self._help_text(mcp_side)
@@ -577,7 +582,7 @@ class ChessGameMcpServer:
             text = self._controller.get_mcp_pgn()
             mime_type = "text/plain"
         elif uri == "chess://game/events":
-            text = json.dumps(self._controller.get_mcp_events(), ensure_ascii=False, indent=2)
+            text = self._compact_json(self._controller.get_mcp_events())
             mime_type = "application/json"
         else:
             return self._rpc_error(request_id, -32002, f"Resource not found: {uri}")
@@ -614,7 +619,7 @@ class ChessGameMcpServer:
         return [
             {
                 "name": "get_state",
-                "description": "Return the current chess position, legal moves, status and event counters.",
+                "description": "Return a compact caller-aware chess position snapshot with FEN, board ASCII and UCI legal moves.",
                 "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
             {
@@ -624,7 +629,7 @@ class ChessGameMcpServer:
             },
             {
                 "name": "legal_moves",
-                "description": "Return legal moves for the side to move in UCI and SAN notation.",
+                "description": "Return legal UCI moves for the side to move plus caller/turn ownership.",
                 "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
             {
@@ -650,6 +655,11 @@ class ChessGameMcpServer:
                     },
                     "additionalProperties": False,
                 },
+            },
+            {
+                "name": "get_pgn",
+                "description": "Return PGN move history for the current game when explicitly requested.",
+                "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
             {
                 "name": "new_game",
@@ -716,7 +726,7 @@ class ChessGameMcpServer:
         ]
 
     def _connection_payload(self, mcp_side: bool) -> ConnectionPayload:
-        state: McpStatePayload = self._controller.get_mcp_state(caller_side=mcp_side)
+        state: GameStatePayload = self._controller.get_game_state(caller_side=mcp_side)
         caller_token = self._token_for_side(mcp_side)
         seat_statuses = self._seat_status_payload()
         seats = []
@@ -841,7 +851,7 @@ class ChessGameMcpServer:
             "tool": tool_name,
             "caller_side": _side_name(mcp_side),
             "policy": self._tool_policy_payload(mcp_side),
-            "state": self._controller.get_mcp_state(caller_side=mcp_side),
+            "state": self._controller.get_agent_state(caller_side=mcp_side),
         }
 
     @staticmethod

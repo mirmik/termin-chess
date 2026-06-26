@@ -9,7 +9,7 @@ import time
 from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 
-from Scripts.ChessMcpPayloads import McpEventPayload, McpStatePayload
+from Scripts.ChessMcpPayloads import GameStatePayload, McpEventPayload
 
 Command = dict[str, object]
 
@@ -27,7 +27,7 @@ class ChessMcpRuntime:
         self._server_stopping = False
         self._state_revision = 0
         self._state_cache_revision = -1
-        self._state_cache: McpStatePayload | None = None
+        self._state_cache: GameStatePayload | None = None
 
     @contextmanager
     def locked(self) -> Iterator[None]:
@@ -49,9 +49,9 @@ class ChessMcpRuntime:
 
     def get_state(
         self,
-        build_state: Callable[[], McpStatePayload],
-        apply_caller_fields: Callable[[McpStatePayload], None] | None = None,
-    ) -> McpStatePayload:
+        build_state: Callable[[], GameStatePayload],
+        apply_caller_fields: Callable[[GameStatePayload], None] | None = None,
+    ) -> GameStatePayload:
         with self._state_lock:
             if self._state_cache is None or self._state_cache_revision != self._state_revision:
                 cache = build_state()

@@ -571,7 +571,7 @@ class ChessUIComponent(UIComponent):
     def _game_state_info(self) -> dict[str, object]:
         if self._game_controller is None:
             return {"ok": False, "error": "No game controller"}
-        return self._game_controller.get_mcp_state()
+        return self._game_controller.get_game_state()
 
     def _promotion_info(self) -> dict[str, object]:
         if self._game_controller is None:

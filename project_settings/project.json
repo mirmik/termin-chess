@@ -1,6 +1,12 @@
 {
   "render_sync_mode": "none",
+  "build_output_dir": "dist",
   "ignored_resource_paths": [
     "tests"
-  ]
+  ],
+  "player_window": {
+    "width": 1280,
+    "height": 710,
+    "fullscreen": false
+  }
 }

@@ -117,8 +117,28 @@ UiConnectionPayload = TypedDict(
     },
 )
 
-McpStatePayload = TypedDict(
-    "McpStatePayload",
+AgentStatePayload = TypedDict(
+    "AgentStatePayload",
+    {
+        "ok": bool,
+        "fen": str,
+        "board_ascii": str,
+        "turn": str,
+        "turn_owner": dict[str, object],
+        "ply": int,
+        "status": str,
+        "check": bool,
+        "game_over": bool,
+        "last_move": dict[str, object] | None,
+        "caller_side": str,
+        "caller_can_move": bool,
+        "caller_error": str | None,
+        "legal_moves": list[str],
+    },
+)
+
+GameStatePayload = TypedDict(
+    "GameStatePayload",
     {
         "ok": bool,
         "fen": str,
@@ -162,7 +182,6 @@ McpStatePayload = TypedDict(
         "next_event_id": int,
     },
 )
-
 
 def legal_move_payload(board: chess.Board, move: chess.Move) -> LegalMovePayload:
     return {

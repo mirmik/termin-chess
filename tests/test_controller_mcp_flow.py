@@ -171,9 +171,9 @@ def test_wait_for_mcp_event_returns_ready_immediately_on_caller_turn() -> None:
     assert payload["state"]["caller_can_move"] is True
 
 
-def test_get_mcp_state_caches_shared_snapshot_but_scopes_caller_fields() -> None:
+def test_get_game_state_caches_shared_snapshot_but_scopes_caller_fields() -> None:
     controller = make_headless_controller()
-    original_build = controller._build_mcp_state
+    original_build = controller._build_game_state
     build_count = 0
 
     def counting_build() -> dict[str, object]:
@@ -181,10 +181,10 @@ def test_get_mcp_state_caches_shared_snapshot_but_scopes_caller_fields() -> None
         build_count += 1
         return original_build()
 
-    controller._build_mcp_state = counting_build
+    controller._build_game_state = counting_build
 
-    white_state = controller.get_mcp_state(caller_side=chess.WHITE)
-    black_state = controller.get_mcp_state(caller_side=chess.BLACK)
+    white_state = controller.get_game_state(caller_side=chess.WHITE)
+    black_state = controller.get_game_state(caller_side=chess.BLACK)
 
     assert build_count == 1
     assert white_state["caller_side"] == "white"
@@ -193,7 +193,7 @@ def test_get_mcp_state_caches_shared_snapshot_but_scopes_caller_fields() -> None
     assert black_state["caller_can_move"] is False
 
     controller._mark_state_dirty()
-    controller.get_mcp_state(caller_side=chess.WHITE)
+    controller.get_game_state(caller_side=chess.WHITE)
 
     assert build_count == 2
 
@@ -243,7 +243,7 @@ def test_local_sandbox_controller_mode_disables_mcp_and_allows_human_board_input
     controller = make_headless_controller()
 
     controller._configure_requested_game_mode(GameMode.LOCAL_SANDBOX)
-    state = controller.get_mcp_state()
+    state = controller.get_game_state()
     connection_info = controller.get_connection_panel_info()
     human_authorization = controller._session.can_make_move(
         actor=MoveActor.human(),
@@ -292,7 +292,7 @@ def test_selected_promotion_state_reports_piece_choice_hint() -> None:
         if chess.square_name(move.from_square) == "e7"
     ]
 
-    state = controller.get_mcp_state()
+    state = controller.get_game_state()
 
     assert state["selected_square"] == "e7"
     assert state["selection_hint"] == "Promotion: choose target square, then pick a piece."
@@ -362,7 +362,7 @@ def test_captured_summary_reports_missing_pieces_by_capturing_side() -> None:
     controller = make_headless_controller()
     controller._board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBN1 w Qkq - 0 1")
 
-    state = controller.get_mcp_state()
+    state = controller.get_game_state()
 
     assert state["captured"]["by_white"] == []
     assert state["captured"]["by_black"] == [{"piece": "rook", "symbol": "R", "count": 1}]

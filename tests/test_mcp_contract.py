@@ -19,8 +19,8 @@ class FakeController:
         self.calls: list[tuple[str, bool | None]] = []
         self.shutdown_notifications = 0
 
-    def get_mcp_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
-        self.calls.append(("get_mcp_state", caller_side))
+    def get_game_state(self, *, caller_side: bool | None = None) -> dict[str, object]:
+        self.calls.append(("get_game_state", caller_side))
         caller_name = None
         caller_can_move = None
         caller_error = None
@@ -78,6 +78,25 @@ class FakeController:
             "bot_enabled": False,
             "bot_color": "black",
             "next_event_id": 1,
+        }
+
+    def get_agent_state(self, *, caller_side: bool) -> dict[str, object]:
+        state = self.get_game_state(caller_side=caller_side)
+        return {
+            "ok": True,
+            "fen": state["fen"],
+            "board_ascii": state["board_ascii"],
+            "turn": state["turn"],
+            "turn_owner": state["turn_owner"],
+            "ply": state["ply"],
+            "status": state["status"],
+            "check": state["check"],
+            "game_over": state["game_over"],
+            "last_move": state["last_move"],
+            "caller_side": state["caller_side"],
+            "caller_can_move": state["caller_can_move"],
+            "caller_error": state["caller_error"],
+            "legal_moves": [str(move["uci"]) for move in state["legal_moves"]],
         }
 
     def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
@@ -270,13 +289,49 @@ def test_side_seat_tools_are_caller_aware(tmp_path: Path) -> None:
     assert response["result"]["isError"] is False
     assert payload["turn"] == "white"
     assert payload["turn_owner"]["actor"] == "agent:white"
+    assert payload["moves"] == ["e2e4"]
+    assert payload["legal_moves"] == ["e2e4"]
     assert payload["caller_side"] == "black"
     assert payload["caller_can_move"] is False
     assert payload["caller_error"] == "white is controlled by agent"
     assert restricted["result"]["isError"] is True
     assert restricted_payload["ok"] is False
     assert restricted_payload["caller_side"] == "white"
+    assert restricted_payload["state"]["legal_moves"] == ["e2e4"]
+    assert "selected_legal_moves" not in restricted_payload["state"]
     assert "new_game is reserved" in restricted_payload["error"]
+
+
+def test_get_state_returns_compact_agent_snapshot(tmp_path: Path) -> None:
+    server = make_server(tmp_path / "session.json")
+
+    response = server._handle_tool_call(
+        1,
+        {"name": "get_state", "arguments": {}},
+        mcp_side=chess.BLACK,
+    )
+
+    payload = response["result"]["structuredContent"]
+    assert payload["fen"] == chess.STARTING_FEN
+    assert payload["board_ascii"] == str(chess.Board())
+    assert payload["legal_moves"] == ["e2e4"]
+    assert payload["caller_side"] == "black"
+    assert "selected_legal_moves" not in payload
+    assert "captured" not in payload
+    assert "next_event_id" not in payload
+
+
+def test_get_pgn_is_explicit_tool(tmp_path: Path) -> None:
+    server = make_server(tmp_path / "session.json")
+
+    response = server._handle_tool_call(
+        1,
+        {"name": "get_pgn", "arguments": {}},
+        mcp_side=chess.BLACK,
+    )
+
+    payload = response["result"]["structuredContent"]
+    assert payload == {"ok": True, "pgn": ""}
 
 
 def test_invalid_timeout_argument_returns_invalid_params(tmp_path: Path) -> None:

@@ -25,7 +25,8 @@ from Scripts.ChessMcpPayloads import (
     CapturedSummaryPayload,
     LegalMovePayload,
     McpEventPayload,
-    McpStatePayload,
+    AgentStatePayload,
+    GameStatePayload,
     legal_move_payload,
 )
 from Scripts.ChessMcpRuntime import ChessMcpRuntime
@@ -355,8 +356,8 @@ class ChessGameController(InputComponent):
         self._notify_ui()
         self._maybe_make_bot_move()
 
-    def get_mcp_state(self, *, caller_side: bool | None = None) -> McpStatePayload:
-        def apply_caller_fields(state: McpStatePayload) -> None:
+    def get_game_state(self, *, caller_side: bool | None = None) -> GameStatePayload:
+        def apply_caller_fields(state: GameStatePayload) -> None:
             if caller_side is None:
                 return
             caller_authorization = self._session.can_move_now(
@@ -369,11 +370,43 @@ class ChessGameController(InputComponent):
             state["caller_error"] = caller_authorization.error if not caller_authorization.ok else None
 
         return self._mcp_runtime.get_state(
-            self._build_mcp_state,
+            self._build_game_state,
             apply_caller_fields if caller_side is not None else None,
         )
 
-    def _build_mcp_state(self) -> McpStatePayload:
+    def get_agent_state(self, *, caller_side: bool) -> AgentStatePayload:
+        state = self.get_game_state(caller_side=caller_side)
+        last_move = state["last_move"]
+        compact_last_move = None
+        if isinstance(last_move, dict):
+            compact_last_move = {
+                "type": last_move.get("type"),
+                "actor": last_move.get("actor"),
+                "uci": last_move.get("uci"),
+                "san": last_move.get("san"),
+            }
+            promotion = last_move.get("promotion")
+            if promotion is not None:
+                compact_last_move["promotion"] = promotion
+
+        return {
+            "ok": True,
+            "fen": state["fen"],
+            "board_ascii": state["board_ascii"],
+            "turn": state["turn"],
+            "turn_owner": state["turn_owner"],
+            "ply": state["ply"],
+            "status": state["status"],
+            "check": state["check"],
+            "game_over": state["game_over"],
+            "last_move": compact_last_move,
+            "caller_side": str(state["caller_side"]),
+            "caller_can_move": bool(state["caller_can_move"]),
+            "caller_error": state["caller_error"],
+            "legal_moves": [str(move["uci"]) for move in state["legal_moves"] if isinstance(move, dict)],
+        }
+
+    def _build_game_state(self) -> GameStatePayload:
         legal_moves = [legal_move_payload(self._board, move) for move in self._board.legal_moves]
         human_authorization = self._session.can_move_now(
             actor=MoveActor.human(),
@@ -435,21 +468,21 @@ class ChessGameController(InputComponent):
     def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
         move_text = move_text.strip()
         if move_text == "":
-            return {"ok": False, "error": "move must not be empty", "state": self.get_mcp_state(caller_side=side)}
+            return {"ok": False, "error": "move must not be empty", "state": self.get_agent_state(caller_side=side)}
         return self._submit_mcp_command({"kind": "move", "move": move_text, "side": side}, timeout=timeout)
 
     def request_mcp_new_game(self, *, timeout: float) -> dict[str, object]:
         return {
             "ok": False,
             "error": "new_game is reserved for in-game UI or system control",
-            "state": self.get_mcp_state(),
+            "state": self.get_game_state(),
         }
 
     def request_mcp_set_bot_enabled(self, enabled: bool, *, timeout: float) -> dict[str, object]:
         return {
             "ok": False,
             "error": "set_bot_enabled is a local sandbox/debug control and is not available to MCP side seats",
-            "state": self.get_mcp_state(),
+            "state": self.get_game_state(),
         }
 
     def wait_for_mcp_event(
@@ -458,8 +491,13 @@ class ChessGameController(InputComponent):
         timeout: float,
         caller_side: bool | None = None,
     ) -> dict[str, object]:
+        def response_state() -> dict[str, object]:
+            if caller_side is None:
+                return self.get_game_state()
+            return self.get_agent_state(caller_side=caller_side)
+
         def ready_payload(state: dict[str, object]) -> dict[str, object]:
-            return {"ok": True, "ready": True, "event": None, "waiting_for": state["turn_owner"], "state": state}
+            return {"ok": True, "ready": True, "event": None, "waiting_for": state["turn_owner"], "state": response_state()}
 
         def game_over_payload(state: dict[str, object]) -> dict[str, object]:
             return {
@@ -468,10 +506,10 @@ class ChessGameController(InputComponent):
                 "game_over": True,
                 "event": state["last_move"],
                 "waiting_for": state["turn_owner"],
-                "state": state,
+                "state": response_state(),
             }
 
-        state = self.get_mcp_state(caller_side=caller_side)
+        state = self.get_game_state(caller_side=caller_side)
         if state["caller_can_move"] is True:
             return ready_payload(state)
         if state["game_over"] is True:
@@ -489,7 +527,7 @@ class ChessGameController(InputComponent):
                 if server_stopping:
                     break
 
-                state = self.get_mcp_state(caller_side=caller_side)
+                state = self.get_game_state(caller_side=caller_side)
                 if state["caller_can_move"] is True:
                     return ready_payload(state)
                 if state["game_over"] is True:
@@ -501,16 +539,16 @@ class ChessGameController(InputComponent):
                     continue
                 observed_next_event_id = state["next_event_id"]
 
-        state = self.get_mcp_state(caller_side=caller_side)
+        state = self.get_game_state(caller_side=caller_side)
         if self._mcp_runtime.server_stopping:
             return {
                 "ok": False,
                 "shutdown": True,
                 "error": "MCP server is shutting down",
                 "waiting_for": state["turn_owner"],
-                "state": state,
+                "state": response_state(),
             }
-        return {"ok": False, "timeout": True, "waiting_for": state["turn_owner"], "state": state}
+        return {"ok": False, "timeout": True, "waiting_for": state["turn_owner"], "state": response_state()}
 
     def new_game(self, *, trigger_bot: bool = True):
         """Reset the board and pieces to starting position."""
@@ -541,7 +579,9 @@ class ChessGameController(InputComponent):
     def _submit_mcp_command(self, command: dict[str, object], *, timeout: float) -> dict[str, object]:
         result = self._mcp_runtime.submit_command(command, timeout=timeout)
         if result is None:
-            return {"ok": False, "timeout": True, "state": self.get_mcp_state()}
+            caller_side = command.get("side")
+            state = self.get_agent_state(caller_side=caller_side) if isinstance(caller_side, bool) else self.get_game_state()
+            return {"ok": False, "timeout": True, "state": state}
         return result
 
     def _process_mcp_commands(self) -> None:
@@ -560,7 +600,7 @@ class ChessGameController(InputComponent):
                 result = {
                     "ok": False,
                     "error": f"MCP command failed: {exc}",
-                    "state": self.get_mcp_state(),
+                    "state": self.get_game_state(),
                 }
                 log.exception("[ChessMCP] command failed")
             finally:
@@ -575,7 +615,7 @@ class ChessGameController(InputComponent):
             "timeout": True,
             "cancelled": True,
             "error": "MCP command timed out before it could be processed",
-            "state": self.get_mcp_state(caller_side=caller_side),
+            "state": self.get_agent_state(caller_side=caller_side) if caller_side is not None else self.get_game_state(),
         }
 
     def _handle_mcp_command(self, command: dict[str, object]) -> dict[str, object]:
@@ -583,14 +623,14 @@ class ChessGameController(InputComponent):
         if kind == "move":
             side = command.get("side")
             if not isinstance(side, bool):
-                return {"ok": False, "error": "MCP move command has no seat side", "state": self.get_mcp_state()}
+                return {"ok": False, "error": "MCP move command has no seat side", "state": self.get_game_state()}
             return self._apply_mcp_move(str(command.get("move", "")), side=side)
-        return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_mcp_state()}
+        return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_game_state()}
 
     def _apply_mcp_move(self, move_text: str, *, side: bool) -> dict[str, object]:
         with self._mcp_runtime.locked():
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
-                return {"ok": False, "error": "game is over", "state": self.get_mcp_state(caller_side=side)}
+                return {"ok": False, "error": "game is over", "state": self.get_agent_state(caller_side=side)}
 
             actor = MoveActor.agent(side)
             turn_authorization = self._session.can_move_now(
@@ -607,7 +647,7 @@ class ChessGameController(InputComponent):
                 return {
                     "ok": False,
                     "error": turn_authorization.error,
-                    "state": self.get_mcp_state(caller_side=side),
+                    "state": self.get_agent_state(caller_side=side),
                 }
 
             move = self._parse_mcp_move(move_text)
@@ -615,7 +655,7 @@ class ChessGameController(InputComponent):
                 return {
                     "ok": False,
                     "error": f"illegal or unparseable move: {move_text}",
-                    "state": self.get_mcp_state(caller_side=side),
+                    "state": self.get_agent_state(caller_side=side),
                 }
 
             authorization = self._session.can_make_move(
@@ -626,10 +666,10 @@ class ChessGameController(InputComponent):
             )
             if not authorization.ok:
                 log.info("[ChessMCP] rejected move %s: %s", move.uci(), authorization.error)
-                return {"ok": False, "error": authorization.error, "state": self.get_mcp_state(caller_side=side)}
+                return {"ok": False, "error": authorization.error, "state": self.get_agent_state(caller_side=side)}
 
             self._execute_move(move, actor=actor)
-            return {"ok": True, "move": move.uci(), "state": self.get_mcp_state(caller_side=side)}
+            return {"ok": True, "move": move.uci(), "state": self.get_agent_state(caller_side=side)}
 
     def _parse_mcp_move(self, move_text: str) -> chess.Move | None:
         try:
