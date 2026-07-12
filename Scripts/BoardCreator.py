@@ -8,7 +8,7 @@ import logging
 
 from termin.scene import PythonComponent
 from termin.inspect import InspectField
-from termin.geombase import Vec3
+from termin.geombase import Vec3, Vec4
 from termin.mesh import TcMesh
 from termin.materials import TcMaterial
 from termin.render_components import WorldTextAnchor, WorldTextComponent, WorldTextOrientation  # noqa: F401 - registers native component
@@ -26,7 +26,7 @@ BOARD_EDGE_MAX = BOARD_LAST_FILE_CENTER + TILE_SIZE * 0.5
 COORDINATE_LABEL_OFFSET = 0.8
 COORDINATE_LABEL_Z = 0.15
 COORDINATE_LABEL_SIZE = 0.7
-COORDINATE_LABEL_COLOR = (0.86, 0.82, 0.72, 1.0)
+COORDINATE_LABEL_COLOR = Vec4(0.86, 0.82, 0.72, 1.0)
 BOARD_BORDER_WIDTH = 1.2
 BOARD_BORDER_HEIGHT = 0.4
 BOARD_BORDER_Z = -0.1
@@ -237,6 +237,6 @@ class BoardCreatorComponent(PythonComponent):
         text_component.color = COORDINATE_LABEL_COLOR
         text_component.anchor = WorldTextAnchor.Center
         text_component.orientation = WorldTextOrientation.Fixed
-        text_component.plane_normal = (0, 0, 1)
-        text_component.text_up = (text_up.x, text_up.y, text_up.z)
+        text_component.plane_normal = Vec3(0, 0, 1)
+        text_component.text_up = text_up
         text_component.phase_mark = "transparent"
