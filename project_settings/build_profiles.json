@@ -1,33 +1,99 @@
 {
-  "version": 1,
+  "version": 2,
   "profiles": {
     "dev": {
-      "target": "desktop",
-      "entry_scene": "scene2.scene",
+      "target": {
+        "kind": "desktop",
+        "os": "linux",
+        "arch": "x86_64"
+      },
+      "configuration": "dev",
       "output_dir": "dist/Chess",
-      "shader_targets": [
-        "vulkan",
-        "opengl"
-      ]
+      "content": {
+        "entry_scene": "scene2.scene",
+        "scenes": [
+          "scene2.scene"
+        ],
+        "modules": [
+          "chess"
+        ],
+        "python": {
+          "requirements": []
+        },
+        "resources": {
+          "policy": "strict",
+          "include": []
+        }
+      },
+      "runtime": {
+        "backends": [
+          "vulkan",
+          "opengl"
+        ]
+      }
     },
     "dev-linux": {
-      "target": "desktop",
-      "entry_scene": "scene2.scene",
+      "target": {
+        "kind": "desktop",
+        "os": "linux",
+        "arch": "x86_64"
+      },
+      "configuration": "dev",
       "output_dir": "dist/Chess-linux",
-      "shader_targets": [
-        "vulkan",
-        "opengl"
-      ]
+      "content": {
+        "entry_scene": "scene2.scene",
+        "scenes": [
+          "scene2.scene"
+        ],
+        "modules": [
+          "chess"
+        ],
+        "python": {
+          "requirements": []
+        },
+        "resources": {
+          "policy": "strict",
+          "include": []
+        }
+      },
+      "runtime": {
+        "backends": [
+          "vulkan",
+          "opengl"
+        ]
+      }
     },
     "dev-windows": {
-      "target": "desktop",
-      "entry_scene": "scene2.scene",
+      "target": {
+        "kind": "desktop",
+        "os": "windows",
+        "arch": "x86_64"
+      },
+      "configuration": "dev",
       "output_dir": "dist/Chess-windows",
-      "shader_targets": [
-        "vulkan",
-        "opengl",
-        "d3d11"
-      ]
+      "content": {
+        "entry_scene": "scene2.scene",
+        "scenes": [
+          "scene2.scene"
+        ],
+        "modules": [
+          "chess"
+        ],
+        "python": {
+          "requirements": []
+        },
+        "resources": {
+          "policy": "strict",
+          "include": []
+        }
+      },
+      "runtime": {
+        "backends": [
+          "vulkan",
+          "opengl",
+          "d3d11"
+        ]
+      }
     }
   }
 }

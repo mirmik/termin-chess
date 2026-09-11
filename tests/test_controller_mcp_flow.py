@@ -21,7 +21,7 @@ def load_controller_module():
     tcbase = types.ModuleType("tcbase")
     tcbase.Action = types.SimpleNamespace(PRESS="press")
     tcbase.MouseButton = types.SimpleNamespace(LEFT="left")
-    sys.modules["tcbase"] = tcbase
+    sys.modules["termin.base"] = tcbase
 
     termin_pkg = types.ModuleType("termin")
     termin_pkg.__path__ = []

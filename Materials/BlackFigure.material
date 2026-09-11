@@ -1,7 +1,7 @@
 {
   "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
   "shader": "CookTorrancePBR",
-  "shader_uuid": "f2fbdec3-6cc4-4a51-9add-8f96494ab198",
+  "shader_uuid": "termin-stdlib-shader-cook-torrance-pbr",
   "uniforms": {
     "u_color": [
       0.7519951462745667,

@@ -7,7 +7,7 @@ state and chess actions.
 ## Start
 
 ```bash
-CHESS_MCP=1 termin play .
+CHESS_MCP=1 termin play . --scene scene2.scene
 ```
 
 By default the endpoint binds to `127.0.0.1:8790` and writes connection data to:

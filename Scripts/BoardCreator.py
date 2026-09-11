@@ -8,7 +8,8 @@ import logging
 
 from termin.scene import PythonComponent
 from termin.inspect import InspectField
-from termin.geombase import Vec3, Vec4
+from termin.geombase import Vec3
+from termin.geombase import SrgbColor
 from termin.mesh import TcMesh
 from termin.materials import TcMaterial
 from termin.render_components import WorldTextAnchor, WorldTextComponent, WorldTextOrientation  # noqa: F401 - registers native component
@@ -26,7 +27,7 @@ BOARD_EDGE_MAX = BOARD_LAST_FILE_CENTER + TILE_SIZE * 0.5
 COORDINATE_LABEL_OFFSET = 0.8
 COORDINATE_LABEL_Z = 0.15
 COORDINATE_LABEL_SIZE = 0.7
-COORDINATE_LABEL_COLOR = Vec4(0.86, 0.82, 0.72, 1.0)
+COORDINATE_LABEL_COLOR = SrgbColor(0.86, 0.82, 0.72, 1.0)
 BOARD_BORDER_WIDTH = 1.2
 BOARD_BORDER_HEIGHT = 0.4
 BOARD_BORDER_Z = -0.1
@@ -103,8 +104,6 @@ class BoardCreatorComponent(PythonComponent):
 
         self.ensure_coordinate_labels(rebuild=True)
 
-        from termin.editor_core.render_request import request_scene_tree_rebuild
-        request_scene_tree_rebuild()
 
         log.info("Board created.")
 

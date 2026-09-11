@@ -10,7 +10,7 @@ import time
 import chess
 import chess.pgn
 
-from tcbase import Action, MouseButton
+from termin.base import Action, MouseButton
 from termin.input import InputComponent
 from termin.collision import CollisionWorld
 from termin.materials import TcMaterial
@@ -131,6 +131,11 @@ class ChessGameController(InputComponent):
 
     def on_destroy(self) -> None:
         self._stop_mcp_server()
+        self._ui_component = None
+        self._piece_sync = None
+        self._tiles.clear()
+        self._original_materials.clear()
+        self._board_entity = None
 
     def _configure_runtime_options(self) -> None:
         from Scripts.ChessMcpServer import chess_mcp_enabled

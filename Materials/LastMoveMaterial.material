@@ -1,7 +1,7 @@
 {
   "uuid": "a1b2c3d4-lastmv-mat-0001-000000000003",
   "shader": "CookTorrancePBR",
-  "shader_uuid": "f2fbdec3-6cc4-4a51-9add-8f96494ab198",
+  "shader_uuid": "termin-stdlib-shader-cook-torrance-pbr",
   "uniforms": {
     "u_color": [
       0.25,
@@ -12,8 +12,8 @@
     "u_shininess": 32.0,
     "u_emission_color": [
       0.08,
-      0.30,
-      0.80,
+      0.3,
+      0.8,
       1.0
     ],
     "u_emission_intensity": 0.35,

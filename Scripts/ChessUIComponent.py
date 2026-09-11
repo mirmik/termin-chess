@@ -6,8 +6,13 @@ import logging
 import subprocess
 import sys
 
+from termin.scene import PythonComponent
 from termin.ui_components import UIComponent
-from tcgui.widgets import Button, Label, Panel, Separator, VStack, px
+from termin.gui_native import (
+    Button, Label, VStack, CrossAxisAlignment, EdgeInsets, LayoutPolicy,
+    OverlayAnchor, Point, Size, SrgbColor, StyleField, StyleOverride,
+    UiDocumentAsset,
+)
 
 from Scripts import chess_ui_text as ui_text
 
@@ -15,11 +20,13 @@ log = logging.getLogger(__name__)
 log.debug("[ChessUI] ChessUIComponent module loaded.")
 
 
-class ChessUIComponent(UIComponent):
+class ChessUIComponent(PythonComponent):
 
     def __init__(self):
         log.debug("[ChessUI] ChessUIComponent.__init__()")
-        super().__init__(priority=100)
+        super().__init__()
+        self._ui = None
+        self._layout_dirty = False
         self._status_label: Label | None = None
         self._turn_label: Label | None = None
         self._mode_label: Label | None = None
@@ -37,8 +44,18 @@ class ChessUIComponent(UIComponent):
         log.info("[ChessUI] start() called")
         super().start()
         self._find_game_controller()
-        self._build_ui()
+        self._rebuild_ui()
         log.info("[ChessUI] UI built successfully")
+
+    def on_destroy(self) -> None:
+        self._game_controller = None
+        self._ui = None
+        self._document = None
+        self._overlay = None
+        self._connection_labels.clear()
+        for field in ("status", "turn", "mode", "owners", "last_move", "captures",
+                      "board_hint", "files", "ranks"):
+            setattr(self, f"_{field}_label", None)
 
     def _find_game_controller(self):
         scene = self.entity.scene
@@ -50,246 +67,132 @@ class ChessUIComponent(UIComponent):
             log.warning("[ChessUI] ChessGameController not found in scene")
 
     def _build_ui(self):
-        self._status_label = None
-        self._turn_label = None
-        self._mode_label = None
-        self._owners_label = None
-        self._last_move_label = None
-        self._captures_label = None
-        self._board_hint_label = None
-        self._files_label = None
-        self._ranks_label = None
+        # Button callbacks run inside native input dispatch. Rebuild next frame,
+        # after the widget that owns the callback has finished dispatching.
+        self._layout_dirty = True
+
+    def update(self, dt: float) -> None:
+        if self._layout_dirty:
+            self._rebuild_ui()
+            self._update_status()
+
+    def _rebuild_ui(self):
+        self._layout_dirty = False
+        if self._ui is None:
+            self._ui = self.entity.get_component(UIComponent)
+            if self._ui is None:
+                self._ui = UIComponent(priority=100)
+                self.entity.add_component(self._ui)
+            asset = UiDocumentAsset.declare_source(
+                "chess-runtime-ui", "Chess UI", "chess-runtime-ui.uiscript",
+                "uiscript: 2\nroot: {type: termin.gui.OverlayLayout}\n",
+            )
+            self._ui.ui_layout = asset
+        self._document = self._ui.document
+        while self._document.root_count:
+            self._document.destroy_widget_recursive(self._document.root_at(0))
+        self._overlay = self._document.create_overlay_layout()
+        self._overlay.widget.mouse_transparent = True
+        self._document.add_root(self._overlay.handle)
+        for field in ("status", "turn", "mode", "owners", "last_move", "captures",
+                      "board_hint", "files", "ranks"):
+            setattr(self, f"_{field}_label", None)
         self._connection_labels = {}
         self._promotion_panel_visible = False
         if self._game_controller is not None and self._game_controller.is_start_menu_visible():
             self._build_start_menu()
-            return
-        self._build_game_panel()
+        else:
+            self._build_game_panel()
+
+    def _stack(self, width: int, *, padding: int = 0) -> VStack:
+        stack = self._document.create_vstack()
+        stack.set_spacing(8)
+        stack.set_padding(EdgeInsets(padding, padding, padding, padding))
+        stack.set_cross_axis_alignment(CrossAxisAlignment.Center)
+        stack.preferred_size = Size(width, 0)
+        return stack
+
+    @staticmethod
+    def _add(stack: VStack, child) -> None:
+        stack.add_child(child.widget, LayoutPolicy.Preferred)
+
+    def _separator(self, stack: VStack, width: int) -> None:
+        separator = self._document.create_separator()
+        separator.set_color(SrgbColor(0.4, 0.4, 0.5, 0.6))
+        separator.preferred_size = Size(width, 2)
+        self._add(stack, separator)
+
+    def _mount_panel(self, stack: VStack, *, centered: bool = False) -> None:
+        stack.set_background(SrgbColor(0.12, 0.12, 0.15, 0.94))
+        stack.set_corner_radius(8)
+        # The MCP panel can exceed the viewport height. Keep every action reachable.
+        scroll = self._document.create_scroll_area()
+        scroll.set_content(stack.widget)
+        scroll.widget.preferred_size = Size(stack.preferred_size.width + 16, 260 if centered else 680)
+        if centered:
+            row = self._document.create_hstack()
+            row.set_cross_axis_alignment(CrossAxisAlignment.Center)
+            left = self._document.create_spacer(Size())
+            right = self._document.create_spacer(Size())
+            row.add_child(left.widget, LayoutPolicy.Flex, 1)
+            row.add_child(scroll.widget, LayoutPolicy.Preferred)
+            row.add_child(right.widget, LayoutPolicy.Flex, 1)
+            self._overlay.add_child(row.widget, OverlayAnchor.Fill)
+        else:
+            self._overlay.add_child(scroll.widget, OverlayAnchor.TopRight, Point(-10, 10))
 
     def _build_start_menu(self):
-        root_panel = Panel()
-        root_panel.anchor = "center"
-        root_panel.preferred_width = px(300)
-        root_panel.padding = 16
-        root_panel.background_color = (0.10, 0.11, 0.14, 0.92)
-        root_panel.border_radius = 8
-
-        stack = VStack()
-        stack.spacing = 10
-        stack.alignment = "center"
-        stack.preferred_width = px(268)
-
-        title = Label()
-        title.text = "Chess"
-        title.font_size = 26
-        title.color = (1.0, 1.0, 1.0, 1.0)
-        title.alignment = "center"
-        title.preferred_width = px(268)
-        title.preferred_height = px(34)
-        stack.add_child(title)
-
-        sep = Separator()
-        sep.orientation = "horizontal"
-        sep.color = (0.4, 0.4, 0.5, 0.65)
-        sep.preferred_width = px(268)
-        stack.add_child(sep)
-
-        stack.add_child(self._make_button("Start Game With Agent", self._on_start_human_vs_agent, width=268))
-        stack.add_child(self._make_button("Start Two-Agent Game", self._on_start_agent_vs_agent, width=268))
-        stack.add_child(self._make_button("Local Sandbox", self._on_start_local_sandbox, width=268))
-
-        sep2 = Separator()
-        sep2.orientation = "horizontal"
-        sep2.color = (0.4, 0.4, 0.5, 0.65)
-        sep2.preferred_width = px(268)
-        stack.add_child(sep2)
-
-        btn_exit = self._make_button("Quit", self._on_exit, width=268)
-        btn_exit.background_color = (0.5, 0.15, 0.15, 1.0)
-        btn_exit.hover_color = (0.65, 0.2, 0.2, 1.0)
-        btn_exit.pressed_color = (0.4, 0.1, 0.1, 1.0)
-        stack.add_child(btn_exit)
-
-        root_panel.add_child(stack)
-        self.root = root_panel
-        log.debug("[ChessUI] Start menu root widget set")
+        stack = self._stack(300, padding=16)
+        self._add(stack, self._make_info_label("Chess", width=268, font_size=26))
+        self._separator(stack, 268)
+        for text, callback in (
+            ("Start Game With Agent", self._on_start_human_vs_agent),
+            ("Start Two-Agent Game", self._on_start_agent_vs_agent),
+            ("Local Sandbox", self._on_start_local_sandbox),
+            ("Quit", self._on_exit),
+        ):
+            self._add(stack, self._make_button(text, callback, width=268))
+        self._mount_panel(stack, centered=True)
 
     def _build_game_panel(self):
-        # Root panel — right side of screen
         connection_info = self._connection_info()
-        content_width = 296 if connection_info["ok"] else 176
-        root_panel = Panel()
-        root_panel.anchor = "top-right"
-        root_panel.offset_x = -10
-        root_panel.offset_y = 10
-        root_panel.preferred_width = px(content_width + 24)
-        root_panel.padding = 12
-        root_panel.background_color = (0.12, 0.12, 0.15, 0.85)
-        root_panel.border_radius = 8
-
-        # Vertical stack for content
-        stack = VStack()
-        stack.spacing = 8
-        stack.alignment = "center"
-        stack.preferred_width = px(content_width)
-
-        # Title
-        title = Label()
-        title.text = "Chess"
-        title.font_size = 20
-        title.color = (1.0, 1.0, 1.0, 1.0)
-        title.alignment = "center"
-        title.preferred_width = px(content_width)
-        title.preferred_height = px(28)
-        stack.add_child(title)
-
-        # Separator
-        sep1 = Separator()
-        sep1.orientation = "horizontal"
-        sep1.color = (0.4, 0.4, 0.5, 0.6)
-        sep1.preferred_width = px(content_width)
-        stack.add_child(sep1)
-
-        self._mode_label = Label()
-        self._mode_label.text = self._mode_text()
-        self._mode_label.font_size = 12
-        self._mode_label.color = (0.72, 0.78, 0.88, 1.0)
-        self._mode_label.alignment = "center"
-        self._mode_label.preferred_width = px(content_width)
-        self._mode_label.preferred_height = px(18)
-        stack.add_child(self._mode_label)
-
-        self._owners_label = Label()
-        self._owners_label.text = ""
-        self._owners_label.font_size = 12
-        self._owners_label.color = (0.78, 0.80, 0.86, 1.0)
-        self._owners_label.alignment = "center"
-        self._owners_label.preferred_width = px(content_width)
-        self._owners_label.preferred_height = px(18)
-        stack.add_child(self._owners_label)
-
-        # Turn label
-        self._turn_label = Label()
-        self._turn_label.text = "White to move"
-        self._turn_label.font_size = 14
-        self._turn_label.color = (0.9, 0.9, 0.8, 1.0)
-        self._turn_label.alignment = "center"
-        self._turn_label.preferred_width = px(content_width)
-        self._turn_label.preferred_height = px(20)
-        stack.add_child(self._turn_label)
-
-        # Status label (check, checkmate, etc.)
-        self._status_label = Label()
-        self._status_label.text = ""
-        self._status_label.font_size = 13
-        self._status_label.color = (1.0, 0.6, 0.2, 1.0)
-        self._status_label.alignment = "center"
-        self._status_label.preferred_width = px(content_width)
-        self._status_label.preferred_height = px(18)
-        stack.add_child(self._status_label)
-
-        self._last_move_label = Label()
-        self._last_move_label.text = "Last move: none"
-        self._last_move_label.font_size = 12
-        self._last_move_label.color = (0.72, 0.74, 0.80, 1.0)
-        self._last_move_label.alignment = "center"
-        self._last_move_label.preferred_width = px(content_width)
-        self._last_move_label.preferred_height = px(18)
-        stack.add_child(self._last_move_label)
-
-        self._captures_label = Label()
-        self._captures_label.text = "Captured: none"
-        self._captures_label.font_size = 12
-        self._captures_label.color = (0.72, 0.74, 0.80, 1.0)
-        self._captures_label.alignment = "center"
-        self._captures_label.preferred_width = px(content_width)
-        self._captures_label.preferred_height = px(18)
-        stack.add_child(self._captures_label)
-
-        self._board_hint_label = Label()
-        self._board_hint_label.text = "Board: white view"
-        self._board_hint_label.font_size = 11
-        self._board_hint_label.color = (0.62, 0.66, 0.74, 1.0)
-        self._board_hint_label.alignment = "center"
-        self._board_hint_label.preferred_width = px(content_width)
-        self._board_hint_label.preferred_height = px(18)
-        stack.add_child(self._board_hint_label)
-
-        self._files_label = Label()
-        self._files_label.text = "Files: a b c d e f g h"
-        self._files_label.font_size = 11
-        self._files_label.color = (0.62, 0.66, 0.74, 1.0)
-        self._files_label.alignment = "center"
-        self._files_label.preferred_width = px(content_width)
-        self._files_label.preferred_height = px(18)
-        stack.add_child(self._files_label)
-
-        self._ranks_label = Label()
-        self._ranks_label.text = "Ranks: 1 2 3 4 5 6 7 8"
-        self._ranks_label.font_size = 11
-        self._ranks_label.color = (0.62, 0.66, 0.74, 1.0)
-        self._ranks_label.alignment = "center"
-        self._ranks_label.preferred_width = px(content_width)
-        self._ranks_label.preferred_height = px(18)
-        stack.add_child(self._ranks_label)
-
+        width = 296 if connection_info["ok"] else 240
+        stack = self._stack(width + 24, padding=12)
+        self._add(stack, self._make_info_label("Chess", width=width, font_size=20))
+        for field, text in (
+            ("mode", self._mode_text()), ("owners", ""), ("turn", "White to move"),
+            ("status", ""), ("last_move", "Last move: none"), ("captures", "Captured: none"),
+            ("board_hint", "Board: white view"), ("files", "Files: a b c d e f g h"),
+            ("ranks", "Ranks: 1 2 3 4 5 6 7 8"),
+        ):
+            label = self._make_info_label(text, width=width)
+            setattr(self, f"_{field}_label", label)
+            self._add(stack, label)
         promotion_info = self._promotion_info()
-        if bool(promotion_info["pending"]):
+        if promotion_info["pending"]:
             self._promotion_panel_visible = True
-            self._add_promotion_section(stack, promotion_info, content_width)
-
-        # Separator
-        sep2 = Separator()
-        sep2.orientation = "horizontal"
-        sep2.color = (0.4, 0.4, 0.5, 0.6)
-        sep2.preferred_width = px(content_width)
-        stack.add_child(sep2)
-
+            self._add_promotion_section(stack, promotion_info, width)
+        self._separator(stack, width)
         if connection_info["ok"]:
-            self._add_connection_section(stack, connection_info, content_width)
-
-        # New Game button
-        btn_new = self._make_button("New Game", self._on_new_game, width=content_width)
-        stack.add_child(btn_new)
-
-        # Copy FEN button
-        btn_fen = self._make_button("Copy FEN", self._on_copy_fen, width=content_width)
-        stack.add_child(btn_fen)
-
-        btn_pgn = self._make_button("Copy PGN", self._on_copy_pgn, width=content_width)
-        stack.add_child(btn_pgn)
-
-        btn_menu = self._make_button("Return to Menu", self._on_return_to_menu, width=content_width)
-        stack.add_child(btn_menu)
-
-        # Separator
-        sep3 = Separator()
-        sep3.orientation = "horizontal"
-        sep3.color = (0.4, 0.4, 0.5, 0.6)
-        sep3.preferred_width = px(content_width)
-        stack.add_child(sep3)
-
-        # Exit button
-        btn_exit = self._make_button("Exit", self._on_exit, width=content_width)
-        btn_exit.background_color = (0.5, 0.15, 0.15, 1.0)
-        btn_exit.hover_color = (0.65, 0.2, 0.2, 1.0)
-        btn_exit.pressed_color = (0.4, 0.1, 0.1, 1.0)
-        stack.add_child(btn_exit)
-
-        root_panel.add_child(stack)
-        self.root = root_panel
-        log.debug("[ChessUI] Root widget set")
+            self._add_connection_section(stack, connection_info, width)
+        for text, callback in (
+            ("New Game", self._on_new_game), ("Copy FEN", self._on_copy_fen),
+            ("Copy PGN", self._on_copy_pgn), ("Return to Menu", self._on_return_to_menu),
+            ("Exit", self._on_exit),
+        ):
+            self._add(stack, self._make_button(text, callback, width=width))
+        self._mount_panel(stack)
 
     def _add_connection_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
         title = self._make_info_label("MCP Connection", width=width, font_size=14)
-        title.color = (0.92, 0.95, 1.0, 1.0)
-        stack.add_child(title)
+        title.set_color(SrgbColor(0.92, 0.95, 1.0, 1.0))
+        self._add(stack, title)
 
         active_seats = ui_text.seat_payloads(info)
         if active_seats:
             agent_memo_title = self._make_info_label("Agent Mnemo:", width=width, font_size=13)
-            agent_memo_title.color = (1.0, 0.78, 0.36, 1.0)
-            stack.add_child(agent_memo_title)
+            agent_memo_title.set_color(SrgbColor(1.0, 0.78, 0.36, 1.0))
+            self._add(stack, agent_memo_title)
         for seat in active_seats:
             memo_button = self._make_button(
                 ui_text.agent_memo_button_label(seat, active_seats),
@@ -300,20 +203,20 @@ class ChessUIComponent(UIComponent):
                 width=width,
             )
             self._style_agent_memo_button(memo_button)
-            stack.add_child(memo_button)
+            self._add(stack, memo_button)
 
         url = str(info["url"])
         session_file = str(info["session_file"])
         self._connection_labels["endpoint"] = self._make_info_label(f"URL: {url}", width=width)
-        stack.add_child(self._connection_labels["endpoint"])
-        stack.add_child(self._make_button("Copy URL", lambda value=url: self._copy_text("MCP URL", value), width=width))
+        self._add(stack, self._connection_labels["endpoint"])
+        self._add(stack, self._make_button("Copy URL", lambda value=url: self._copy_text("MCP URL", value), width=width))
 
         self._connection_labels["session_file"] = self._make_info_label(
             f"Session: {ui_text.short_path(session_file)}",
             width=width,
         )
-        stack.add_child(self._connection_labels["session_file"])
-        stack.add_child(
+        self._add(stack, self._connection_labels["session_file"])
+        self._add(stack,
             self._make_button(
                 "Copy Session File",
                 lambda value=session_file: self._copy_text("MCP session file", value),
@@ -322,17 +225,17 @@ class ChessUIComponent(UIComponent):
         )
 
         self._connection_labels["connection_turn"] = self._make_info_label("", width=width)
-        stack.add_child(self._connection_labels["connection_turn"])
+        self._add(stack, self._connection_labels["connection_turn"])
         self._connection_labels["last_event"] = self._make_info_label("", width=width)
-        stack.add_child(self._connection_labels["last_event"])
+        self._add(stack, self._connection_labels["last_event"])
 
         for seat in active_seats:
             side = str(seat["side"])
             label = self._make_info_label("", width=width)
             self._connection_labels[f"{side}_status"] = label
-            stack.add_child(label)
+            self._add(stack, label)
             token = str(seat["token"])
-            stack.add_child(
+            self._add(stack,
                 self._make_button(
                     f"Copy {side.title()} Token",
                     lambda seat_side=side, value=token: self._copy_text(f"{seat_side} token", value),
@@ -342,49 +245,37 @@ class ChessUIComponent(UIComponent):
 
         self._refresh_connection_info()
 
-    @staticmethod
-    def _make_info_label(text: str, *, width: int, font_size: int = 12) -> Label:
-        label = Label()
-        label.text = text
-        label.font_size = font_size
-        label.color = (0.78, 0.80, 0.86, 1.0)
-        label.alignment = "center"
-        label.preferred_width = px(width)
-        label.preferred_height = px(18)
+    def _make_info_label(self, text: str, *, width: int, font_size: int = 12) -> Label:
+        label = self._document.create_label(text)
+        label.set_font_size(font_size)
+        label.set_color(SrgbColor(0.78, 0.80, 0.86, 1.0))
+        label.preferred_size = Size(width, max(18, font_size + 8))
         return label
 
-    @staticmethod
-    def _make_button(text: str, callback, *, width: int = 176) -> Button:
-        btn = Button()
-        btn.text = text
-        btn.font_size = 14
-        btn.preferred_width = px(width)
-        btn.preferred_height = px(34)
-        btn.border_radius = 5
-        btn.background_color = (0.25, 0.28, 0.35, 1.0)
-        btn.hover_color = (0.35, 0.38, 0.48, 1.0)
-        btn.pressed_color = (0.18, 0.2, 0.25, 1.0)
-        btn.text_color = (1.0, 1.0, 1.0, 1.0)
-        btn.on_click = callback
-        return btn
+    def _make_button(self, text: str, callback, *, width: int = 176) -> Button:
+        button = self._document.create_button(text, debug_name=text)
+        button.widget.preferred_size = Size(width, 34)
+        button.connect_clicked(callback)
+        return button
 
     @staticmethod
-    def _style_agent_memo_button(btn: Button) -> None:
-        btn.font_size = 15
-        btn.background_color = (0.82, 0.50, 0.12, 1.0)
-        btn.hover_color = (0.96, 0.62, 0.18, 1.0)
-        btn.pressed_color = (0.62, 0.34, 0.08, 1.0)
-        btn.text_color = (0.08, 0.06, 0.04, 1.0)
+    def _style_agent_memo_button(button: Button) -> None:
+        style = StyleOverride()
+        style.fields = StyleField.Background | StyleField.Foreground | StyleField.FontSize
+        style.value.background = SrgbColor(0.82, 0.50, 0.12, 1.0)
+        style.value.foreground = SrgbColor(0.08, 0.06, 0.04, 1.0)
+        style.value.font_size = 15
+        button.widget.style_override = style
 
     def _add_promotion_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
         title = self._make_info_label(ui_text.promotion_title(info), width=width, font_size=13)
-        title.color = (1.0, 0.82, 0.36, 1.0)
-        stack.add_child(title)
+        title.set_color(SrgbColor(1.0, 0.82, 0.36, 1.0))
+        self._add(stack, title)
 
         for choice in ui_text.promotion_choices(info):
             piece = str(choice["piece"])
             label = str(choice["label"])
-            stack.add_child(
+            self._add(stack,
                 self._make_button(
                     f"Promote: {label}",
                     lambda value=piece: self._on_choose_promotion(value),
@@ -393,10 +284,7 @@ class ChessUIComponent(UIComponent):
             )
 
         cancel = self._make_button("Cancel Promotion", self._on_cancel_promotion, width=width)
-        cancel.background_color = (0.35, 0.24, 0.18, 1.0)
-        cancel.hover_color = (0.48, 0.32, 0.22, 1.0)
-        cancel.pressed_color = (0.24, 0.16, 0.12, 1.0)
-        stack.add_child(cancel)
+        self._add(stack, cancel)
 
     # --- Button callbacks ---
 
@@ -628,8 +516,8 @@ class ChessUIComponent(UIComponent):
         if self._status_label is None:
             return
         if "checkmate" in status_text.lower() or "stalemate" in status_text.lower() or "draw:" in status_text.lower():
-            self._status_label.color = (1.0, 0.3, 0.3, 1.0)
+            self._status_label.set_color(SrgbColor(1.0, 0.3, 0.3, 1.0))
         elif "check" in status_text.lower():
-            self._status_label.color = (1.0, 0.6, 0.2, 1.0)
+            self._status_label.set_color(SrgbColor(1.0, 0.6, 0.2, 1.0))
         else:
-            self._status_label.color = (0.7, 0.7, 0.7, 1.0)
+            self._status_label.set_color(SrgbColor(0.7, 0.7, 0.7, 1.0))

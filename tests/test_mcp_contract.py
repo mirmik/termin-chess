@@ -179,6 +179,7 @@ def test_stop_closes_http_server_joins_thread_and_removes_session_file(tmp_path:
     server.stop()
     server.stop()
 
+    assert server._controller is None
     assert controller.shutdown_notifications == 1
     assert httpd.shutdown_called is True
     assert httpd.server_close_called is True

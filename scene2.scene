@@ -74,7 +74,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -101,7 +103,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -188,7 +192,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -215,7 +221,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -302,7 +310,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -329,7 +339,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -416,7 +428,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -443,7 +457,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -530,7 +546,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -557,7 +575,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -644,7 +664,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -671,7 +693,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -758,7 +782,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -785,7 +811,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -872,7 +900,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -899,7 +929,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -986,7 +1018,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1013,7 +1047,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1100,7 +1136,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1127,7 +1165,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1214,7 +1254,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1241,7 +1283,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1328,7 +1372,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1355,7 +1401,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1442,7 +1490,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1469,7 +1519,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1556,7 +1608,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1583,7 +1637,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1670,7 +1726,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1697,7 +1755,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1784,7 +1844,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1811,7 +1873,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -1898,7 +1962,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -1925,7 +1991,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2012,7 +2080,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2039,7 +2109,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2126,7 +2198,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2153,7 +2227,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2240,7 +2316,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2267,7 +2345,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2354,7 +2434,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2381,7 +2463,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2468,7 +2552,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2495,7 +2581,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2582,7 +2670,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2609,7 +2699,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2696,7 +2788,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2723,7 +2817,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2810,7 +2906,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2837,7 +2935,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -2924,7 +3024,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -2951,7 +3053,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3038,7 +3142,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3065,7 +3171,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3152,7 +3260,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3179,7 +3289,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3266,7 +3378,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3293,7 +3407,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3380,7 +3496,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3407,7 +3525,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3494,7 +3614,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3521,7 +3643,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3608,7 +3732,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3635,7 +3761,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3722,7 +3850,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3749,7 +3879,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3836,7 +3968,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3863,7 +3997,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -3950,7 +4086,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -3977,7 +4115,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4064,7 +4204,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4091,7 +4233,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4178,7 +4322,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4205,7 +4351,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4292,7 +4440,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4319,7 +4469,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4406,7 +4558,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4433,7 +4587,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4520,7 +4676,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4547,7 +4705,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4634,7 +4794,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4661,7 +4823,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4748,7 +4912,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4775,7 +4941,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4862,7 +5030,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -4889,7 +5059,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -4976,7 +5148,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5003,7 +5177,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5090,7 +5266,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5117,7 +5295,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5204,7 +5384,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5231,7 +5413,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5318,7 +5502,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5345,7 +5531,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5432,7 +5620,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5459,7 +5649,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5546,7 +5738,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5573,7 +5767,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5660,7 +5856,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5687,7 +5885,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5774,7 +5974,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5801,7 +6003,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -5888,7 +6092,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -5915,7 +6121,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6002,7 +6210,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6029,7 +6239,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6116,7 +6328,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6143,7 +6357,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6230,7 +6446,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6257,7 +6475,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6344,7 +6564,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6371,7 +6593,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6458,7 +6682,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6485,7 +6711,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6572,7 +6800,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6599,7 +6829,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6686,7 +6918,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6713,7 +6947,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6800,7 +7036,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6827,7 +7065,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -6914,7 +7154,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -6941,7 +7183,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7028,7 +7272,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7055,7 +7301,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7142,7 +7390,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7169,7 +7419,9 @@
                   "material": {
                     "uuid": "b127f308-cf9c-4134-a364-ff2d7991e29f",
                     "name": "BlackMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7256,7 +7508,9 @@
                   "mesh": {
                     "uuid": "00000000-0000-0000-0003-000000000001",
                     "name": "Cube",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7283,7 +7537,9 @@
                   "material": {
                     "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
                     "name": "WhiteMaterial",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7458,7 +7714,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7485,7 +7743,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7572,7 +7832,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7599,7 +7861,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7686,7 +7950,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7713,7 +7979,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7800,7 +8068,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7827,7 +8097,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -7914,7 +8186,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -7941,7 +8215,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8028,7 +8304,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8055,7 +8333,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8142,7 +8422,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8169,7 +8451,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8256,7 +8540,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8283,7 +8569,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8370,7 +8658,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8397,7 +8687,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8484,7 +8776,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8511,7 +8805,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8598,7 +8894,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8625,7 +8923,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8712,7 +9012,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8739,7 +9041,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8826,7 +9130,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8853,7 +9159,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -8940,7 +9248,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -8967,7 +9277,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9054,7 +9366,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9081,7 +9395,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9168,7 +9484,9 @@
                   "mesh": {
                     "uuid": "ffa209a5-ed07-4e62-aa4b-0eae8bc67eab",
                     "name": "Hex_Pawn",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9195,7 +9513,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9282,7 +9602,9 @@
                   "mesh": {
                     "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
                     "name": "Hex_Rook",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9309,7 +9631,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9396,7 +9720,9 @@
                   "mesh": {
                     "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
                     "name": "Hex_Rook",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9423,7 +9749,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9510,7 +9838,9 @@
                   "mesh": {
                     "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
                     "name": "Hex_Rook",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9537,7 +9867,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9624,7 +9956,9 @@
                   "mesh": {
                     "uuid": "1c9b4e97-e2a4-48c3-8c51-45031c746894",
                     "name": "Hex_Rook",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9651,7 +9985,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9738,7 +10074,9 @@
                   "mesh": {
                     "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
                     "name": "Hex_Knight",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9765,7 +10103,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9852,7 +10192,9 @@
                   "mesh": {
                     "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
                     "name": "Hex_Knight",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9879,7 +10221,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -9966,7 +10310,9 @@
                   "mesh": {
                     "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
                     "name": "Hex_Knight",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -9993,7 +10339,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10080,7 +10428,9 @@
                   "mesh": {
                     "uuid": "762fb9b9-716c-4fb3-8526-266e66d3d9cd",
                     "name": "Hex_Knight",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10107,7 +10457,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10194,7 +10546,9 @@
                   "mesh": {
                     "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
                     "name": "Hex_Bishop",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10221,7 +10575,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10308,7 +10664,9 @@
                   "mesh": {
                     "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
                     "name": "Hex_Bishop",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10335,7 +10693,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10422,7 +10782,9 @@
                   "mesh": {
                     "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
                     "name": "Hex_Bishop",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10449,7 +10811,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10536,7 +10900,9 @@
                   "mesh": {
                     "uuid": "81ed1773-c727-4953-94f9-eb390ee4b103",
                     "name": "Hex_Bishop",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10563,7 +10929,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10650,7 +11018,9 @@
                   "mesh": {
                     "uuid": "92a6e748-e5de-44fc-9bef-6a8986915407",
                     "name": "Hex_Queen",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10677,7 +11047,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10764,7 +11136,9 @@
                   "mesh": {
                     "uuid": "92a6e748-e5de-44fc-9bef-6a8986915407",
                     "name": "Hex_Queen",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10791,7 +11165,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10878,7 +11254,9 @@
                   "mesh": {
                     "uuid": "ae2f2ffe-92ac-4837-bc77-451a7dfb045c",
                     "name": "Hex_King",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -10905,7 +11283,9 @@
                   "material": {
                     "uuid": "98f65ecd-49b3-4583-a692-c3d38830f9a8",
                     "name": "WhiteFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -10992,7 +11372,9 @@
                   "mesh": {
                     "uuid": "ae2f2ffe-92ac-4837-bc77-451a7dfb045c",
                     "name": "Hex_King",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_mesh",
+                    "role": "mesh"
                   },
                   "mesh_offset_enabled": false,
                   "mesh_offset_position": [
@@ -11019,7 +11401,9 @@
                   "material": {
                     "uuid": "13ce2cc8-7ade-4769-b003-e0068c224678",
                     "name": "BlackFigure",
-                    "type": "uuid"
+                    "type": "uuid",
+                    "kind": "tc_material",
+                    "role": "material"
                   },
                   "cast_shadow": true,
                   "mesh_offset_enabled": false,
@@ -11286,7 +11670,9 @@
               "material": {
                 "uuid": "11ad46ba-1f33-43e6-a637-30bfbb165ea9",
                 "name": "WoodMaterial",
-                "type": "uuid"
+                "type": "uuid",
+                "kind": "tc_material",
+                "role": "material"
               },
               "cast_shadow": true,
               "mesh_offset_enabled": false,

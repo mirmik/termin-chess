@@ -154,6 +154,3 @@ class UnitsCreator(PythonComponent):
         self.make_queen(black_material, self.chessboard_position_to_world("d8"))
         self.make_king(white_material, self.chessboard_position_to_world("e1"), rotation=WHITE_PIECE_ROTATION)
         self.make_king(black_material, self.chessboard_position_to_world("e8"))
-
-        from termin.editor_core.render_request import request_scene_tree_rebuild
-        request_scene_tree_rebuild()

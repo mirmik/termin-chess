@@ -16,72 +16,18 @@ def load_ui_module():
     termin_pkg.__path__ = []
     sys.modules["termin"] = termin_pkg
 
-    visualization_pkg = types.ModuleType("termin.visualization")
-    visualization_pkg.__path__ = []
-    sys.modules["termin.visualization"] = visualization_pkg
-
-    ui_pkg = types.ModuleType("termin.visualization.ui")
-    ui_pkg.__path__ = []
-    sys.modules["termin.visualization.ui"] = ui_pkg
-
-    widgets_pkg = types.ModuleType("termin.visualization.ui.widgets")
-    widgets_pkg.__path__ = []
-    sys.modules["termin.visualization.ui.widgets"] = widgets_pkg
-
-    component_module = types.ModuleType("termin.visualization.ui.widgets.component")
-
-    class UIComponent:
-        def __init__(self, *, priority: int = 0) -> None:
-            self.priority = priority
-
-        def start(self) -> None:
-            return None
-
-    component_module.UIComponent = UIComponent
-    sys.modules["termin.visualization.ui.widgets.component"] = component_module
-
-    ui_components_module = types.ModuleType("termin.ui_components")
-    ui_components_module.UIComponent = UIComponent
-    sys.modules["termin.ui_components"] = ui_components_module
-
-    tcgui_pkg = types.ModuleType("tcgui")
-    tcgui_pkg.__path__ = []
-    sys.modules["tcgui"] = tcgui_pkg
-
-    tcgui_widgets = types.ModuleType("tcgui.widgets")
-
-    class Widget:
-        def __init__(self) -> None:
-            self.children = []
-
-        def add_child(self, child: object) -> None:
-            self.children.append(child)
-
-    class Button(Widget):
-        pass
-
-    class Label(Widget):
-        pass
-
-    class Panel(Widget):
-        pass
-
-    class Separator(Widget):
-        pass
-
-    class VStack(Widget):
-        pass
-
-    def px(value: int) -> int:
-        return value
-
-    tcgui_widgets.Button = Button
-    tcgui_widgets.Label = Label
-    tcgui_widgets.Panel = Panel
-    tcgui_widgets.Separator = Separator
-    tcgui_widgets.VStack = VStack
-    tcgui_widgets.px = px
-    sys.modules["tcgui.widgets"] = tcgui_widgets
+    scene = types.ModuleType("termin.scene")
+    scene.PythonComponent = type("PythonComponent", (), {})
+    sys.modules["termin.scene"] = scene
+    components = types.ModuleType("termin.ui_components")
+    components.UIComponent = type("UIComponent", (), {})
+    sys.modules["termin.ui_components"] = components
+    gui = types.ModuleType("termin.gui_native")
+    for name in ("Button", "Label", "VStack", "CrossAxisAlignment", "EdgeInsets",
+                 "LayoutPolicy", "OverlayAnchor", "Point", "Size", "SrgbColor",
+                 "StyleField", "StyleOverride", "UiDocumentAsset"):
+        setattr(gui, name, type(name, (), {}))
+    sys.modules["termin.gui_native"] = gui
 
     return load_script_module("chess_ui_component_under_test", "ChessUIComponent.py")
 
@@ -196,17 +142,6 @@ def test_agent_memo_contains_connection_and_conduct_hints() -> None:
     assert "Do not use external tools" in memo
     assert "wait_for_move" in memo
     assert "new_game" in memo
-
-
-def test_agent_memo_button_uses_accent_style() -> None:
-    button = ui_module.Button()
-
-    ChessUIComponent._style_agent_memo_button(button)
-
-    assert button.font_size == 15
-    assert button.background_color == (0.82, 0.50, 0.12, 1.0)
-    assert button.hover_color == (0.96, 0.62, 0.18, 1.0)
-    assert button.text_color == (0.08, 0.06, 0.04, 1.0)
 
 
 def test_agent_memo_button_label_says_copy_paste_to_agent() -> None:

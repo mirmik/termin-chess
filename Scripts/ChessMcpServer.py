@@ -193,6 +193,10 @@ class ChessGameMcpServer:
             if thread.is_alive():
                 log.warning("[ChessMCP] HTTP server thread did not stop within 2 seconds")
 
+        # The HTTP handler class captures this server. Release the scene component
+        # after all request threads have joined, before Termin unloads the module.
+        self._controller = None
+
     def _remove_session_file(self) -> None:
         try:
             self._config.session_file.unlink(missing_ok=True)
