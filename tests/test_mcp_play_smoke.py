@@ -95,11 +95,12 @@ class PlayProcess:
                 "CHESS_MCP_SESSION_FILE": str(session_file),
             }
         )
-        launch = (["run", "dev-linux"] if os.environ.get("CHESS_SMOKE_PACKAGED") == "1"
-                  else ["play", ".", "--scene", "scene2.scene"])
+        packaged = os.environ.get("CHESS_SMOKE_PACKAGED") == "1"
+        executable = PROJECT_ROOT / "dist/Chess-linux/Chess" if packaged else TERMIN_BIN
+        launch = [] if packaged else ["play", ".", "--scene", "scene2.scene"]
         try:
             self.process = subprocess.Popen(
-                [str(TERMIN_BIN), *launch,
+                [str(executable), *launch,
                  "--mcp", "--mcp-port", str(self.player_port),
                  "--mcp-token", self.player_token,
                  "--mcp-session-file", str(session_file.with_suffix(".player.json"))],
@@ -256,9 +257,6 @@ def test_native_ui_and_scene_regeneration(tmp_path: Path) -> None:
             assert controller._piece_sync.piece_count == 32
             assert ui._ui.has_document
             assert ui._status_label is not None
-            memo = next(w for w in ui._ui.document.inspect_snapshot()["widgets"]
-                        if w["debug_name"] == "Copy & Paste to White Agent")
-            assert memo["style_override"].value.font_size == 15
             ui._on_return_to_menu()
         """)
         play.execute("""
@@ -283,12 +281,15 @@ def test_native_ui_and_scene_regeneration(tmp_path: Path) -> None:
         ))
         assert screenshot["ok"], screenshot
         play.execute("""
-            click_button("Local Sandbox")
+            ui._select_mode(1, "Вдвоём за доской")
+        """)
+        play.execute("""
+            click_button("Начать новую партию")
         """)
         play.execute("""
             assert not controller.is_start_menu_visible()
             assert controller._piece_sync.piece_count == 32
-            assert ui._turn_label.text.startswith("White to move")
+            assert ui._turn_label.text == "Ход: белые"
             from Scripts.BoardCreator import BoardCreatorComponent
             board = scene.find_entity_by_name("ChessBoard")
             board.get_component(BoardCreatorComponent).make_board()
@@ -319,3 +320,135 @@ def test_native_ui_and_scene_regeneration(tmp_path: Path) -> None:
             assert controller._board.peek().uci() == "e2e4"
             assert controller._piece_sync.piece_at("e4") is not None
         """)
+
+
+def test_native_white_agent_invitation_and_black_player(tmp_path: Path) -> None:
+    with PlayProcess(mode="agent_vs_agent", port=8824, session_file=tmp_path / "colors.json") as play:
+        play.execute('''
+            from termin.gui_native import Rect, PointerEvent, PointerEventType
+            controller = scene.get_components_of_type("ChessGameController")[0]
+            ui = scene.get_components_of_type("ChessUIComponent")[0]
+            def click_button(text):
+                document = ui._document
+                widget = next(w for w in document.inspect_snapshot()["widgets"] if w["debug_name"] == text)
+                bounds = document.ref(widget["handle"]).bounds_in_document
+                event = PointerEvent()
+                event.x, event.y = bounds.x + bounds.width / 2, bounds.y + bounds.height / 2
+                event.type = PointerEventType.Down
+                document.dispatch_pointer_event(event)
+                event.type = PointerEventType.Up
+                document.dispatch_pointer_event(event)
+            ui._on_return_to_menu()
+        ''')
+        play.execute('click_button("Чёрные")')
+        play.execute('click_button("Начать новую партию")')
+        play.execute('''
+            assert controller.get_game_state()["human_sides"] == ["black"]
+            assert controller.get_game_state()["board_view"] == "black"
+            assert ui._screen == "invite"
+            assert ui._invite_side == "white"
+            assert "Your side: white" in ui._memo_editor.text
+            assert ui._document.set_focus(ui._memo_editor.handle)
+            ui._memo_editor.caret = len(ui._memo_editor.text.encode("utf-8"))
+            ui._document.dispatch_text_event("\\nОсобое пожелание: объясняй ходы.")
+            assert "Особое пожелание" in ui._drafts["white"]
+        ''')
+        shot = tool_payload(rpc(f"http://127.0.0.1:{play.player_port}/mcp", play.player_token, 1,
+                               "capture_player_screenshot", {"path": str(tmp_path / "invitation.png")}))
+        assert shot['ok']
+        play.execute('''
+            click_button("К доске")
+        ''')
+        play.execute('click_button("Пригласить агента")')
+        play.execute('''
+            assert "Особое пожелание" in ui._memo_editor.text
+            copied_invites = []
+            ui._copy_text = lambda label, text: copied_invites.append(text)
+            click_button("Скопировать сообщение")
+            assert copied_invites == [ui._memo_editor.text]
+            click_button("К доске")
+        ''')
+        session_path = (tmp_path / "colors.json").with_suffix(".white.json")
+        cli = (PROJECT_ROOT / "dist/Chess-linux/package/modules/python/Scripts/chess_agent_cli.py"
+               if os.environ.get("CHESS_SMOKE_PACKAGED") == "1" else PROJECT_ROOT / "Scripts/chess_agent_cli.py")
+        import sys
+        prefix = [sys.executable, str(cli), "--session", str(session_path), "--json"]
+        def cli_call(*args):
+            result = subprocess.run([*prefix, *args], capture_output=True, text=True, timeout=15)
+            assert result.returncode == 0, result.stdout + result.stderr
+            return json.loads(result.stdout)
+        state = cli_call('status')
+        assert state['caller_side'] == 'white' and state['caller_can_move']
+        moved = cli_call('move', 'e2e4')
+        assert moved['ok'] and moved['state']['turn'] == 'black'
+        play.execute('''
+            from types import SimpleNamespace
+            from termin.base import Action, MouseButton
+            from termin.geombase import Vec3, Rect2
+            from termin.render_components import CameraComponent
+            camera = scene.find_entity_by_name("GameCamera").get_component(CameraComponent)
+            def board_click(x, y, z):
+                projected = camera.try_project_world_point(Vec3(x, y, z), Rect2(0, 0, 1280, 710))
+                controller.on_mouse_button(SimpleNamespace(viewport=viewport, button=MouseButton.LEFT,
+                    action=Action.PRESS, x=projected.screen.x, y=projected.screen.y))
+            board_click(0, 4, 0.5)
+            assert controller._selected_square == "e7", controller._selected_square
+            board_click(0, 0, 0.25)
+            assert controller._board.peek().uci() == "e7e5"
+            assert controller._piece_sync.piece_at("e5") is not None
+            before_menu = controller.get_fen()
+            before_game = controller._game_id
+            ui._on_return_to_menu()
+        ''')
+        play.execute('click_button("Продолжить партию")')
+        play.execute('''
+            assert controller.get_fen() == before_menu
+            assert controller._game_id == before_game
+        ''')
+        shot = tool_payload(rpc(f"http://127.0.0.1:{play.player_port}/mcp", play.player_token, 1,
+                               "capture_player_screenshot", {"path": str(tmp_path / "black-view.png")}))
+        assert shot['ok']
+        ready = cli_call('wait', '--timeout', '0')
+        assert ready['ready']
+        assert '1. e4 e5' in cli_call('pgn')['pgn']
+        play.execute('''
+            for test_width, test_height in ((640, 480), (360, 640)):
+                ui._viewport = (test_width, test_height)
+                ui._screen = "invite"
+                ui._rebuild_ui()
+                document = ui._document
+                document.layout_roots(Rect(0, 0, test_width, test_height))
+                editor_bounds = ui._memo_editor.widget.bounds_in_document
+                assert 0 <= editor_bounds.x and editor_bounds.x + editor_bounds.width <= test_width
+                event = PointerEvent()
+                event.type = PointerEventType.Wheel
+                event.x, event.y, event.wheel_y = test_width / 2, test_height - 40, -1000
+                document.dispatch_pointer_event(event)
+                document.layout_roots(Rect(0, 0, test_width, test_height))
+                copy_widget = next(w for w in document.inspect_snapshot()["widgets"] if w["debug_name"] == "Скопировать сообщение")
+                copy_bounds = document.ref(copy_widget["handle"]).bounds_in_document
+                assert 0 <= copy_bounds.y < test_height, copy_bounds.y
+            ui._viewport = (1280, 710)
+            ui._screen = "game"
+            ui._build_ui()
+        ''')
+
+
+@pytest.mark.skipif(not os.environ.get('CHESS_MCP_CLIENT_PYTHON'), reason='set CHESS_MCP_CLIENT_PYTHON to a Python with mcp SDK')
+def test_standard_mcp_client(tmp_path: Path):
+    with PlayProcess(mode='agent_vs_agent', port=8825, session_file=tmp_path / 'sdk.json') as play:
+        import urllib.error
+        headers = {"Authorization": "Bearer " + play.white_token, "Content-Type": "application/json"}
+        notification = json.dumps({"jsonrpc": "2.0", "method": "notifications/initialized"}).encode()
+        request = urllib.request.Request(str(play.session['url']), data=notification, headers=headers)
+        with urllib.request.urlopen(request, timeout=5) as response:
+            assert response.status == 202 and response.read() == b''
+        for extra, expected in [({}, 405), ({"MCP-Protocol-Version": "unsupported"}, 400), ({"Origin": "https://unrelated.example"}, 403)]:
+            request = urllib.request.Request(str(play.session['url']), headers={**headers, **extra})
+            with pytest.raises(urllib.error.HTTPError) as error:
+                urllib.request.urlopen(request, timeout=5)
+            assert error.value.code == expected
+        result = subprocess.run([os.environ['CHESS_MCP_CLIENT_PYTHON'], str(PROJECT_ROOT / 'tests/mcp_client_probe.py'),
+                                 str(play.session_file.with_suffix('.white.json'))],
+                                capture_output=True, text=True, timeout=30)
+        assert result.returncode == 0, result.stdout + result.stderr

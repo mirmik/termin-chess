@@ -33,7 +33,7 @@ SDL_VIDEODRIVER=x11 CHESS_PLAY_SMOKE=1 CHESS_SMOKE_PACKAGED=1 xvfb-run -a \
   python3 -m pytest tests/test_mcp_play_smoke.py -q
 ```
 
-Tests use game MCP ports 8821–8823 and diagnostic MCP ports 18821–18823.
+Tests use game MCP ports 8821–8825 and diagnostic MCP ports 18821–18825.
 Logs and screenshots are saved under pytest's temporary directory. Native tests
 skip when the player cannot create a display; a skip does not verify rendering.
 The fast tests use import stubs only for domain/formatting checks; the old
@@ -47,3 +47,33 @@ Known SDK issues recorded on the Termin board: #1659 (editor startup UI metrics)
 and #2350 (packaged CLI ignores diagnostic MCP flags). The integration launcher
 also supplies `TERMIN_PLAYER_MCP_*` environment variables to support the native
 packaged host. These are diagnostic settings, separate from game `CHESS_MCP_*`.
+
+
+## Menu and agent update (2026-09-13)
+
+Fast tests cover side configuration, reset boundaries, pause/resume, stale moves,
+waiting across reset, queued-command shutdown, independent invitation drafts,
+clipboard feedback and the standalone CLI. Native tests also type Unicode into
+the invitation editor, reopen/copy its edited draft, play a white agent via the
+CLI and reply by picking black pieces with the rotated camera.
+
+The optional official MCP client probe (verified with mcp 1.30.0) runs the actual initialization lifecycle,
+resource read, tool listing, move and wait against a live player. Install the
+`mcp` Python SDK in a separate test environment and point to its Python:
+
+```bash
+CHESS_PLAY_SMOKE=1 CHESS_MCP_CLIENT_PYTHON=/path/to/mcp-venv/bin/python \
+  python3 -m pytest tests/test_mcp_play_smoke.py -q
+```
+
+On this workstation, the desktop graphics session works outside the agent's
+filesystem/network sandbox. Inside it, SDL may report `x11 not available` or
+fall back to `offscreen`, where Vulkan cannot create a window. A skipped test in
+that environment is not a broken backend; rerun with access to the desktop.
+
+
+Итог проверки обновления: 50 быстрых тестов; пять native-сценариев исходного
+проекта и пять сценариев собранного `dev-linux` прошли. В packaged-режиме тесты
+запускают `dist/Chess-linux/Chess` напрямую, чтобы управлять жизненным циклом
+проверяемого процесса. CLI берётся из `package/modules/python/Scripts` сборки.
+Также проверены раскладки 640×480 и 360×640 и прокрутка к кнопке копирования.

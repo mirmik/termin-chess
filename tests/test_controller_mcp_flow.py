@@ -366,3 +366,122 @@ def test_captured_summary_reports_missing_pieces_by_capturing_side() -> None:
 
     assert state["captured"]["by_white"] == []
     assert state["captured"]["by_black"] == [{"piece": "rook", "symbol": "R", "count": 1}]
+
+
+def resettable_controller():
+    controller = make_headless_controller()
+    controller._piece_sync.remove_all = lambda: None
+    controller._piece_sync.recreate_starting_position = lambda: None
+    controller._piece_sync.scan = lambda: None
+    return controller
+
+
+def test_new_game_clears_last_move_and_rejects_old_game_and_position():
+    controller = resettable_controller()
+    old = controller.get_agent_state(caller_side=chess.WHITE)
+    controller._record_mcp_event({'type': 'move', 'actor': 'agent:white', 'uci': 'e2e4', 'san': 'e4'})
+    controller.new_game(trigger_bot=False)
+    state = controller.get_agent_state(caller_side=chess.WHITE)
+    assert state['last_move'] is None
+    assert state['ply'] == 0
+    assert state['fen'] == chess.STARTING_FEN
+    assert state['game_id'] != old['game_id']
+    assert controller._move_history() == []
+    command = {'kind': 'move', 'side': chess.WHITE, 'move': 'e2e4', 'game_id': old['game_id'], 'expected_fen': old['fen']}
+    assert controller._handle_mcp_command(command)['game_changed']
+    command['game_id'] = state['game_id']
+    command['expected_fen'] = 'outdated position'
+    assert controller._handle_mcp_command(command)['stale_position']
+    assert controller.get_fen() == chess.STARTING_FEN
+
+
+def test_wait_reports_game_change_instead_of_new_game_ready():
+    controller = resettable_controller()
+    def change_game(observed, timeout):
+        controller.new_game(trigger_bot=False)
+        return False, controller._mcp_runtime.next_event_id
+    controller._mcp_runtime.wait_for_event_change = change_game
+    result = controller.wait_for_mcp_event(timeout=5, caller_side=chess.BLACK)
+    assert result['game_changed']
+    assert result['state']['last_move'] is None
+
+
+def test_menu_pauses_moves_and_resume_keeps_position_and_game_id():
+    controller = make_headless_controller()
+    controller._board.push_uci('e2e4')
+    controller._mark_state_dirty()
+    before = controller.get_agent_state(caller_side=chess.BLACK)
+    controller.return_to_start_menu()
+    paused = controller.get_agent_state(caller_side=chess.BLACK)
+    assert paused['paused']
+    assert not paused['caller_can_move']
+    assert controller._apply_mcp_move('e7e5', side=chess.BLACK)['error'] == 'game is paused'
+    controller.resume_game()
+    resumed = controller.get_agent_state(caller_side=chess.BLACK)
+    assert resumed['fen'] == before['fen']
+    assert resumed['game_id'] == before['game_id']
+    assert resumed['caller_can_move']
+
+
+def test_mcp_env_respects_white_agent_without_explicit_mode(monkeypatch):
+    controller = make_headless_controller()
+    monkeypatch.setenv('CHESS_MCP', '1')
+    monkeypatch.setenv('CHESS_AGENT_SIDE', 'white')
+    monkeypatch.delenv('CHESS_GAME_MODE', raising=False)
+    monkeypatch.delenv('CHESS_MODE', raising=False)
+    controller._configure_runtime_options()
+    assert controller._session.side_owners_payload() == {'white': 'agent', 'black': 'human'}
+
+
+def test_start_game_resolves_random_only_once_and_honors_explicit_color(monkeypatch):
+    controller = resettable_controller()
+    controller._start_mcp_server = lambda: None
+    choices = []
+    def choose(colors):
+        choices.append(colors)
+        return chess.BLACK
+    monkeypatch.setattr(session_module.random, 'choice', choose)
+    monkeypatch.setenv('CHESS_AGENT_SIDE', 'black')
+    controller.start_game('human_vs_agent', 'random')
+    assert len(choices) == 1
+    assert controller.get_game_state()['human_sides'] == ['black']
+    assert controller.get_game_state()['board_view'] == 'black'
+    controller.flip_board()
+    assert controller.get_game_state()['human_sides'] == ['black']
+    assert len(choices) == 1
+    controller.start_game('human_vs_agent', 'white')
+    assert controller.get_game_state()['human_sides'] == ['white']
+    monkeypatch.setattr(session_module.random, 'choice', lambda _: chess.WHITE)
+    controller.start_game('human_vs_agent', 'random')
+    assert controller.get_game_state()['human_sides'] == ['white']
+
+
+def test_shutdown_releases_queued_command_without_waiting_for_main_thread():
+    import threading
+    controller = make_headless_controller()
+    runtime = controller._mcp_runtime
+    queued = threading.Event()
+    original_put = runtime._commands.put
+    def put(command):
+        original_put(command)
+        queued.set()
+    runtime._commands.put = put
+    results = []
+    thread = threading.Thread(target=lambda: results.append(runtime.submit_command({'kind': 'move'}, timeout=10)))
+    thread.start()
+    assert queued.wait(1)
+    runtime.notify_server_stopping()
+    thread.join(1)
+    assert not thread.is_alive()
+    assert results[0]['shutdown']
+    assert runtime.submit_command({'kind': 'move'}, timeout=10)['shutdown']
+
+
+def test_agent_move_reports_scene_failure_without_advancing_board():
+    controller = make_headless_controller()
+    controller._piece_sync.apply_visual_move = lambda board, move: False
+    controller._piece_sync.scan = lambda: None
+    result = controller._apply_mcp_move('e2e4', side=chess.WHITE)
+    assert result['ok'] is False
+    assert result['error'] == 'could not update board scene'
+    assert controller.get_fen() == chess.STARTING_FEN

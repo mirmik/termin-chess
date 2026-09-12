@@ -73,6 +73,11 @@ class ChessMcpRuntime:
         with self._condition:
             self._server_stopping = True
             self._condition.notify_all()
+            # stop() joins HTTP workers on the main thread. Release workers whose
+            # commands would otherwise need that same thread to complete.
+            while (command := self.next_command()) is not None:
+                command["cancelled"] = True
+                self.complete_command(command, {"ok": False, "shutdown": True, "error": "game connection closed"})
 
     def wait_for_event_change(self, observed_next_event_id: int, timeout: float) -> tuple[bool, int]:
         with self._condition:
@@ -91,6 +96,8 @@ class ChessMcpRuntime:
     def last_move_event(self) -> McpEventPayload | None:
         with self._condition:
             for event in reversed(self._events):
+                if event.get("type") == "reset":
+                    return None
                 if event.get("type") == "move":
                     return dict(event)
         return None
@@ -127,7 +134,10 @@ class ChessMcpRuntime:
         command["result"] = None
         command["cancelled"] = False
         command["expires_at"] = time.monotonic() + wait_timeout
-        self._commands.put(command)
+        with self._condition:
+            if self._server_stopping:
+                return {"ok": False, "shutdown": True, "error": "game connection closed"}
+            self._commands.put(command)
         if not done.wait(timeout=wait_timeout):
             command["cancelled"] = True
             return None

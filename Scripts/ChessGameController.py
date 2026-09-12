@@ -6,6 +6,7 @@ import logging
 import random
 import os
 import time
+import uuid
 
 import chess
 import chess.pgn
@@ -19,7 +20,7 @@ from Scripts.chess_coords import (
     entity_to_square,
     tile_name_to_square,
 )
-from Scripts.ChessGameSession import ChessGameSession, GameMode, MoveActor, SideOwner, side_name
+from Scripts.ChessGameSession import ChessGameSession, GameMode, MoveActor, SideOwner, side_name, resolve_human_color
 from Scripts.ChessMcpPayloads import (
     CapturedPiecePayload,
     CapturedSummaryPayload,
@@ -94,9 +95,14 @@ class ChessGameController(InputComponent):
         self._bot_is_moving = False
         self._game_mcp_enabled = False
         self._game_started = False
+        self._game_id = uuid.uuid4().hex
+        self._board_view = "white"
+        self._camera_home = None
+        self._connection_error = ""
         self._start_menu_visible = True
         self._session = ChessGameSession()
         self._mcp_server = None
+        self._ui_component = None
         self._mcp_runtime = ChessMcpRuntime()
         self._ui_refresh_accum = 0.0
         self._ui_dirty = True
@@ -113,6 +119,7 @@ class ChessGameController(InputComponent):
         self._scan_board()
         self._piece_sync.scan()
         self._find_ui()
+        self._orient_for_player()
         self._start_mcp_server()
 
         log.info("[Chess] Init complete. tiles=%s, pieces=%s", len(self._tiles), self._piece_sync.piece_count)
@@ -157,11 +164,7 @@ class ChessGameController(InputComponent):
                 self._game_started = True
                 self._start_menu_visible = False
                 self._bot_enabled = False
-                self._session.configure_runtime(
-                    mcp_enabled=mcp_enabled,
-                    bot_enabled=self._bot_enabled,
-                    bot_color=self._bot_color,
-                )
+                self._configure_requested_game_mode(GameMode.HUMAN_VS_AGENT)
             else:
                 self._configure_menu_idle_mode()
         log.info("[Chess] Bot enabled: %s", self._bot_enabled)
@@ -180,7 +183,7 @@ class ChessGameController(InputComponent):
             log.warning("[Chess] unknown CHESS_GAME_MODE=%r, using default runtime mode", value)
         return mode
 
-    def _configure_requested_game_mode(self, mode: GameMode) -> None:
+    def _configure_requested_game_mode(self, mode: GameMode, human_color: bool | None = None) -> None:
         if mode == GameMode.LOCAL_SANDBOX:
             self._game_mcp_enabled = False
             self._bot_enabled = False
@@ -189,7 +192,7 @@ class ChessGameController(InputComponent):
         if mode == GameMode.HUMAN_VS_AGENT:
             self._bot_enabled = False
             self._game_mcp_enabled = True
-            agent_side = self._side_from_env("CHESS_AGENT_SIDE", chess.BLACK)
+            agent_side = not human_color if human_color is not None else self._side_from_env("CHESS_AGENT_SIDE", chess.BLACK)
             self._session.configure_human_vs_agent(agent_side=agent_side)
             return
         if mode == GameMode.AGENT_VS_AGENT:
@@ -198,8 +201,10 @@ class ChessGameController(InputComponent):
             self._session.configure_agent_vs_agent()
             return
         if mode == GameMode.HUMAN_VS_BOT:
+            if human_color is not None:
+                self._bot_color = not human_color
             self._game_mcp_enabled = False
-            if os.environ.get("CHESS_BOT_ENABLED") is None:
+            if human_color is not None or os.environ.get("CHESS_BOT_ENABLED") is None:
                 self._bot_enabled = True
             self._session.configure_human_vs_bot(bot_color=self._bot_color)
             return
@@ -239,8 +244,11 @@ class ChessGameController(InputComponent):
 
         self._mcp_runtime.reset_server_stopping()
         server = ChessGameMcpServer(self, load_chess_mcp_config())
+        self._connection_error = ""
         if server.start():
             self._mcp_server = server
+        else:
+            self._connection_error = server.start_error
 
     def _stop_mcp_server(self) -> None:
         if self._mcp_server is not None:
@@ -298,15 +306,22 @@ class ChessGameController(InputComponent):
                 "mode": self._session.mode.value,
                 "turn": "white" if self._board.turn == chess.WHITE else "black",
                 "status": self._mcp_status(),
-                "error": "MCP server is not running",
+                "error": self._connection_error or "MCP server is not running",
             }
         return self._mcp_server.ui_connection_payload()
 
     def start_local_sandbox(self) -> None:
         self._start_selected_mode(GameMode.LOCAL_SANDBOX)
 
-    def start_human_vs_agent(self) -> None:
-        self._start_selected_mode(GameMode.HUMAN_VS_AGENT)
+    def start_human_vs_agent(self, human_color: str = "white") -> None:
+        self.start_game("human_vs_agent", human_color)
+
+    def start_game(self, mode: str, human_color: str = "white") -> None:
+        self._start_selected_mode(GameMode(mode), human_color=resolve_human_color(human_color))
+
+    def retry_agent_connection(self) -> None:
+        self._start_mcp_server()
+        self._notify_ui()
 
     def start_agent_vs_agent(self) -> None:
         self._start_selected_mode(GameMode.AGENT_VS_AGENT)
@@ -340,26 +355,60 @@ class ChessGameController(InputComponent):
         self._notify_ui()
 
     def return_to_start_menu(self) -> None:
-        log.info("[Chess] Returning to start menu")
-        self._stop_mcp_server()
-        self._game_started = False
+        """Pause the current game without losing the board or its invitations."""
         self._start_menu_visible = True
-        self._configure_menu_idle_mode()
-        self._mark_state_dirty()
-        self.new_game(trigger_bot=False)
+        self._clear_selection()
+        self._record_mcp_event({"type": "pause", "actor": "system"})
         self._notify_ui()
 
-    def _start_selected_mode(self, mode: GameMode) -> None:
-        log.info("[Chess] Starting mode from menu: %s", mode.value)
+    def resume_game(self) -> None:
+        if not self._game_started:
+            return
+        self._start_menu_visible = False
+        self._record_mcp_event({"type": "resume", "actor": "system"})
+        self._notify_ui()
+        self._maybe_make_bot_move()
+
+    def _start_selected_mode(self, mode: GameMode, human_color: bool | None = None) -> None:
         self._stop_mcp_server()
         self._game_started = True
         self._start_menu_visible = False
-        self._configure_requested_game_mode(mode)
-        self._mark_state_dirty()
+        self._configure_requested_game_mode(mode, human_color)
         self.new_game(trigger_bot=False)
+        self._orient_for_player()
         self._start_mcp_server()
         self._notify_ui()
         self._maybe_make_bot_move()
+
+    def _orient_for_player(self) -> None:
+        humans = self._session.sides_for_owner_payload(SideOwner.HUMAN)
+        self._set_board_view("black" if humans == ["black"] else "white")
+
+    def flip_board(self) -> None:
+        self._set_board_view("black" if self._board_view == "white" else "white")
+        self._notify_ui()
+
+    def _set_board_view(self, side: str) -> None:
+        self._board_view = side
+        self._mark_state_dirty()
+        entity = getattr(self, "entity", None)
+        if entity is None or entity.scene is None:
+            return
+        camera = entity.scene.find_entity_by_name("GameCamera")
+        if camera is None:
+            return
+        from termin.geombase import Vec3, Quat
+        transform = camera.transform
+        if self._camera_home is None:
+            self._camera_home = (transform.global_position, transform.global_rotation)
+        position, rotation = self._camera_home
+        if side == "black":
+            # Board tile centres range from -8 to 6 on both axes.
+            transform.set_global_position(Vec3(-2 - position.x, -2 - position.y, position.z))
+            transform.set_global_orientation(Quat(0, 0, 1, 0) * rotation)
+        else:
+            transform.set_global_position(position)
+            transform.set_global_orientation(rotation)
 
     def get_game_state(self, *, caller_side: bool | None = None) -> GameStatePayload:
         def apply_caller_fields(state: GameStatePayload) -> None:
@@ -371,8 +420,8 @@ class ChessGameController(InputComponent):
                 game_state=self._state,
             )
             state["caller_side"] = side_name(caller_side)
-            state["caller_can_move"] = caller_authorization.ok
-            state["caller_error"] = caller_authorization.error if not caller_authorization.ok else None
+            state["caller_can_move"] = caller_authorization.ok and not self._start_menu_visible
+            state["caller_error"] = "game is paused" if self._start_menu_visible else (caller_authorization.error if not caller_authorization.ok else None)
 
         return self._mcp_runtime.get_state(
             self._build_game_state,
@@ -396,6 +445,8 @@ class ChessGameController(InputComponent):
 
         return {
             "ok": True,
+            "game_id": state["game_id"],
+            "paused": state["start_menu_visible"],
             "fen": state["fen"],
             "board_ascii": state["board_ascii"],
             "turn": state["turn"],
@@ -422,6 +473,9 @@ class ChessGameController(InputComponent):
 
         return {
             "ok": True,
+            "game_id": self._game_id,
+            "board_view": self._board_view,
+            "move_history": self._move_history(),
             "fen": self._board.fen(),
             "board_ascii": str(self._board),
             "turn": "white" if self._board.turn == chess.WHITE else "black",
@@ -443,7 +497,7 @@ class ChessGameController(InputComponent):
             "game_over": self._board.is_game_over(),
             "game_started": self._game_started,
             "start_menu_visible": self._start_menu_visible,
-            "board_input_enabled": self._game_started and human_authorization.ok,
+            "board_input_enabled": self._game_started and not self._start_menu_visible and human_authorization.ok,
             "board_input_error": human_authorization.error if self._game_started and not human_authorization.ok else None,
             "selected_square": self._selected_square,
             "mode": self._session.mode.value,
@@ -471,11 +525,25 @@ class ChessGameController(InputComponent):
     def get_mcp_events(self) -> dict[str, object]:
         return self._mcp_runtime.events_payload()
 
-    def request_mcp_move(self, move_text: str, *, side: bool, timeout: float) -> dict[str, object]:
+    def _move_history(self) -> list[str]:
+        board = self._board.root()
+        moves = []
+        for move in self._board.move_stack:
+            moves.append(board.san(move))
+            board.push(move)
+        return moves
+
+    def request_mcp_move(self, move_text: str, *, side: bool, timeout: float,
+                         game_id: str | None = None, expected_fen: str | None = None) -> dict[str, object]:
         move_text = move_text.strip()
         if move_text == "":
             return {"ok": False, "error": "move must not be empty", "state": self.get_agent_state(caller_side=side)}
-        return self._submit_mcp_command({"kind": "move", "move": move_text, "side": side}, timeout=timeout)
+        # Even legacy requests queued before reset cannot affect the next game.
+        with self._mcp_runtime.locked():
+            command = {"kind": "move", "move": move_text, "side": side,
+                       "game_id": self._game_id if game_id is None else game_id,
+                       "expected_fen": self._board.fen() if expected_fen is None else expected_fen}
+        return self._submit_mcp_command(command, timeout=timeout)
 
     def request_mcp_new_game(self, *, timeout: float) -> dict[str, object]:
         return {
@@ -496,6 +564,7 @@ class ChessGameController(InputComponent):
         *,
         timeout: float,
         caller_side: bool | None = None,
+        game_id: str | None = None,
     ) -> dict[str, object]:
         def response_state() -> dict[str, object]:
             if caller_side is None:
@@ -516,6 +585,11 @@ class ChessGameController(InputComponent):
             }
 
         state = self.get_game_state(caller_side=caller_side)
+        observed_game_id = state["game_id"] if game_id is None else game_id
+        def changed_game():
+            return {"ok": False, "game_changed": True, "error": "game changed; read the new position", "state": response_state()}
+        if state["game_id"] != observed_game_id:
+            return changed_game()
         if state["caller_can_move"] is True:
             return ready_payload(state)
         if state["game_over"] is True:
@@ -534,6 +608,8 @@ class ChessGameController(InputComponent):
                     break
 
                 state = self.get_game_state(caller_side=caller_side)
+                if state["game_id"] != observed_game_id:
+                    return changed_game()
                 if state["caller_can_move"] is True:
                     return ready_payload(state)
                 if state["game_over"] is True:
@@ -565,6 +641,7 @@ class ChessGameController(InputComponent):
             self._pending_promotion = None
             self._clear_selection()
             self._board = chess.Board()
+            self._game_id = uuid.uuid4().hex
             self._state = STATE_IDLE
 
             self._piece_sync.remove_all()
@@ -630,11 +707,18 @@ class ChessGameController(InputComponent):
             side = command.get("side")
             if not isinstance(side, bool):
                 return {"ok": False, "error": "MCP move command has no seat side", "state": self.get_game_state()}
-            return self._apply_mcp_move(str(command.get("move", "")), side=side)
+            with self._mcp_runtime.locked():
+                if command.get("game_id", self._game_id) != self._game_id:
+                    return {"ok": False, "game_changed": True, "error": "game changed", "state": self.get_agent_state(caller_side=side)}
+                if command.get("expected_fen", self._board.fen()) != self._board.fen():
+                    return {"ok": False, "stale_position": True, "error": "position changed", "state": self.get_agent_state(caller_side=side)}
+                return self._apply_mcp_move(str(command.get("move", "")), side=side)
         return {"ok": False, "error": f"Unknown MCP command kind: {kind}", "state": self.get_game_state()}
 
     def _apply_mcp_move(self, move_text: str, *, side: bool) -> dict[str, object]:
         with self._mcp_runtime.locked():
+            if self._start_menu_visible:
+                return {"ok": False, "error": "game is paused", "state": self.get_agent_state(caller_side=side)}
             if self._state == STATE_GAME_OVER or self._board.is_game_over():
                 return {"ok": False, "error": "game is over", "state": self.get_agent_state(caller_side=side)}
 
@@ -674,7 +758,8 @@ class ChessGameController(InputComponent):
                 log.info("[ChessMCP] rejected move %s: %s", move.uci(), authorization.error)
                 return {"ok": False, "error": authorization.error, "state": self.get_agent_state(caller_side=side)}
 
-            self._execute_move(move, actor=actor)
+            if not self._execute_move(move, actor=actor):
+                return {"ok": False, "error": "could not update board scene", "state": self.get_agent_state(caller_side=side)}
             return {"ok": True, "move": move.uci(), "state": self.get_agent_state(caller_side=side)}
 
     def _parse_mcp_move(self, move_text: str) -> chess.Move | None:
@@ -794,7 +879,7 @@ class ChessGameController(InputComponent):
         log.debug("[Chess] On mouse button")
         if event.button != MouseButton.LEFT or event.action != Action.PRESS:
             return
-        if not self._game_started:
+        if not self._game_started or self._start_menu_visible or (self._ui_component is not None and self._ui_component.blocks_board_input()):
             log.debug("[Chess] Game has not started, ignoring board click.")
             return
         if self._state == STATE_GAME_OVER:
@@ -1114,7 +1199,7 @@ class ChessGameController(InputComponent):
         self._check_square = chess.square_name(king_square) if king_square is not None else None
 
     def _is_bot_turn(self) -> bool:
-        return self._game_started and self._bot_enabled and self._session.can_move_now(
+        return self._game_started and not self._start_menu_visible and self._bot_enabled and self._session.can_move_now(
             actor=MoveActor.bot(),
             board=self._board,
             game_state=self._state,

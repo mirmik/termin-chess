@@ -1,0 +1,112 @@
+<div id="chess-invite-concept" aria-label="Настройка партии и приглашение агента">
+  <style>
+    #chess-invite-concept { --ch-bg:light-dark(#f5f3ee,#1c201f); --ch-paper:light-dark(#ffffff,#262c29); --ch-ink:light-dark(#202b25,#edf1eb); --ch-muted:light-dark(#59665e,#b3c0b7); --ch-line:light-dark(#d5ddd6,#47564b); --ch-accent:light-dark(#315b44,#acd7b7); --ch-on-accent:light-dark(#ffffff,#18251d); color:var(--ch-ink); font:16px/1.5 system-ui,sans-serif; max-width:720px; margin:auto; background:var(--ch-bg); border:1px solid var(--ch-line); border-radius:16px; overflow:hidden; }
+    #chess-invite-concept * { box-sizing:border-box; }
+    #chess-invite-concept [hidden] { display:none!important; }
+    #chess-invite-concept header { display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; align-items:center; padding:18px 26px; border-bottom:1px solid var(--ch-line); }
+    #chess-invite-concept .brand { font-weight:600; letter-spacing:.06em; }
+    #chess-invite-concept .muted { color:var(--ch-muted); }
+    #chess-invite-concept main { padding:26px; }
+    #chess-invite-concept h2 { font-size:26px; margin:0 0 6px; font-weight:500; }
+    #chess-invite-concept p { margin:0 0 24px; }
+    #chess-invite-concept fieldset { margin:22px 0; border:0; padding:0; }
+    #chess-invite-concept legend { margin-bottom:10px; }
+    #chess-invite-concept .choices { display:flex; flex-wrap:wrap; gap:10px; }
+    #chess-invite-concept .choice { flex:1 1 130px; background:var(--ch-paper); border:1px solid var(--ch-line); border-radius:10px; padding:14px 12px; cursor:pointer; }
+    #chess-invite-concept .choice:has(input:checked) { border-color:var(--ch-accent); box-shadow:inset 0 0 0 1px var(--ch-accent); }
+    #chess-invite-concept input { accent-color:var(--ch-accent); margin-right:8px; }
+    #chess-invite-concept button { font:inherit; cursor:pointer; min-height:44px; padding:10px 18px; border:1px solid var(--ch-line); border-radius:9px; background:var(--ch-paper); color:var(--ch-ink); }
+    #chess-invite-concept button.primary { background:var(--ch-accent); color:var(--ch-on-accent); border-color:var(--ch-accent); }
+    #chess-invite-concept .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:18px; }
+    #chess-invite-concept .seats { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
+    #chess-invite-concept .seat { padding:14px; background:var(--ch-paper); border-radius:10px; }
+    #chess-invite-concept .seat span { display:block; }
+    #chess-invite-concept textarea { width:100%; min-height:290px; resize:vertical; font:16px/1.6 system-ui,sans-serif; border:1px solid var(--ch-line); border-radius:10px; color:var(--ch-ink); background:var(--ch-paper); padding:16px; margin-top:10px; }
+    #chess-invite-concept details { margin-top:18px; color:var(--ch-muted); overflow-wrap:anywhere; }
+    #chess-invite-concept summary { cursor:pointer; min-height:36px; }
+    #chess-invite-concept .feedback { min-height:26px; margin-top:10px; color:var(--ch-muted); }
+    @media(max-width:420px) { #chess-invite-concept main { padding:18px; } #chess-invite-concept header { padding:16px 18px; } #chess-invite-concept .seats { grid-template-columns:1fr; } }
+  </style>
+  <header><span class="brand">TERMIN CHESS</span><span class="muted" data-step>Новая партия</span></header>
+  <main>
+    <section data-setup>
+      <h2>Сыграем?</h2>
+      <p class="muted">Выберите стороны и пригласите своего агента.</p>
+      <div class="seat"><span class="muted">Соперник</span><span>Ваш агент</span></div>
+      <fieldset><legend>Ваш цвет</legend><div class="choices">
+        <label class="choice"><input type="radio" name="chess-concept-side" value="white" checked>Белые</label>
+        <label class="choice"><input type="radio" name="chess-concept-side" value="black">Чёрные</label>
+        <label class="choice"><input type="radio" name="chess-concept-side" value="random">Случайно</label>
+      </div></fieldset>
+      <p class="muted" data-hint aria-live="polite">Вы сделаете первый ход. Агент играет чёрными.</p>
+      <button class="primary" type="button" data-create>Создать партию</button>
+    </section>
+    <section data-invite hidden>
+      <h2>Пригласить агента</h2>
+      <div class="seats">
+        <div class="seat"><span class="muted">Вы</span><span data-human-color>Белые</span></div>
+        <div class="seat"><span class="muted">Агент</span><span data-agent-color>Чёрные</span></div>
+      </div>
+      <p class="muted" data-first-move></p>
+      <label for="chess-concept-draft">Сообщение агенту</label>
+      <textarea id="chess-concept-draft" spellcheck="false"></textarea>
+      <div class="actions">
+        <button class="primary" type="button" data-copy>Скопировать сообщение</button>
+        <button type="button" data-reset>Вернуть шаблон</button>
+      </div>
+      <div class="feedback" role="status" data-feedback></div>
+      <details><summary>Параметры подключения</summary><span>Место: </span><span data-seat-name></span><br>Приглашение: DEMO — без действующего подключения</details>
+      <div class="actions"><button type="button" data-back>Настроить другую партию</button></div>
+    </section>
+  </main>
+  <script>
+    (() => {
+      const root = document.getElementById('chess-invite-concept');
+      const el = key => root.querySelector(`[data-${key}]`);
+      const draft = root.querySelector('textarea');
+      let template = '';
+      let human = 'white';
+      const color = side => side === 'white' ? 'Белые' : 'Чёрные';
+      function updateHint() {
+        const side = root.querySelector('input:checked').value;
+        el('hint').textContent = side === 'random' ? 'Цвет определится при создании партии.' : side === 'white' ? 'Вы сделаете первый ход. Агент играет чёрными.' : 'Агент сделает первый ход. Вы играете чёрными.';
+      }
+      root.querySelectorAll('input').forEach(input => input.addEventListener('change', updateHint));
+      el('create').addEventListener('click', () => {
+        const choice = root.querySelector('input:checked').value;
+        human = choice === 'random' ? (Math.random() < .5 ? 'white' : 'black') : choice;
+        const agent = human === 'white' ? 'black' : 'white';
+        el('human-color').textContent = color(human);
+        el('agent-color').textContent = color(agent);
+        el('seat-name').textContent = color(agent);
+        el('first-move').textContent = human === 'white' ? 'Первый ход — ваш. Передайте агенту приглашение.' : 'Первый ход — агента. Передайте ему приглашение.';
+        template = `Давай сыграем в шахматы. Ты играешь ${agent === 'white' ? 'белыми' : 'чёрными'}.
+
+Приглашение: DEMO (пример без подключения).
+
+Выбирай ходы самостоятельно. Не используй шахматные движки, дебютные базы или поиск без моего разрешения. Утилиту связи с игрой использовать можно.
+
+Дождись своего хода, прочитай позицию и допустимые ходы, затем сделай выбранный ход. После окончания партии сообщи результат.
+
+Мои пожелания: кратко объясняй идею каждого хода.`;
+        draft.value = template;
+        el('feedback').textContent = '';
+        el('setup').hidden = true;
+        el('invite').hidden = false;
+        el('step').textContent = 'Приглашение';
+        draft.focus();
+      });
+      el('back').addEventListener('click', () => { el('invite').hidden = true; el('setup').hidden = false; el('step').textContent = 'Новая партия'; el('create').focus(); });
+      el('reset').addEventListener('click', () => { draft.value = template; el('feedback').textContent = 'Шаблон восстановлен.'; });
+      el('copy').addEventListener('click', async () => {
+        try { await navigator.clipboard.writeText(draft.value); el('feedback').textContent = 'Сообщение скопировано.'; }
+        catch (_) { draft.focus(); draft.select(); el('feedback').textContent = 'Текст выделен. Нажмите Ctrl+C или ⌘C, чтобы скопировать.'; }
+      });
+      if (globalThis.Tweak) {
+        const appearance = { radius:16 };
+        const tweak = new Tweak({container:root, onChange:() => { root.style.borderRadius = `${appearance.radius}px`; }});
+        tweak.addSlider(appearance, 'radius', {label:'Скругление окна', min:0, max:24, unit:'px'});
+      }
+    })();
+  </script>
+</div>

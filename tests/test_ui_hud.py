@@ -139,7 +139,10 @@ def test_agent_memo_contains_connection_and_conduct_hints() -> None:
     assert "Authorization header: Bearer black-token" in memo
     assert "Your side: black" in memo
     assert "Do not ask the user/operator to choose moves for you." in memo
-    assert "Do not use external tools" in memo
+    assert "Do not use chess engines" in memo
+    assert "connection utility is allowed" in memo
+    assert "chess_agent_cli.py" in memo
+    assert "expected_fen" in memo
     assert "wait_for_move" in memo
     assert "new_game" in memo
 
@@ -163,6 +166,37 @@ def test_clipboard_commands_include_windows_backends() -> None:
 
 def test_clipboard_commands_keep_linux_backends() -> None:
     assert ChessUIComponent._clipboard_commands("linux") == [
+        ["wl-copy"],
         ["xclip", "-selection", "clipboard"],
         ["xsel", "--clipboard", "--input"],
     ]
+
+
+def test_invitation_drafts_are_separate_and_invalidated_for_new_game():
+    component = ChessUIComponent()
+    state = {'game_id': 'first'}
+    component._game_controller = types.SimpleNamespace(get_game_state=lambda: state)
+    component._sync_invitation_game()
+    component._save_draft('first', 'white', 'Белые: мой текст')
+    component._save_draft('first', 'black', 'Чёрные: другой текст')
+    component._sync_invitation_game()
+    assert component._drafts == {'white': 'Белые: мой текст', 'black': 'Чёрные: другой текст'}
+    state['game_id'] = 'second'
+    component._sync_invitation_game()
+    component._save_draft('first', 'black', 'late callback')
+    assert component._drafts == {}
+
+
+def test_clipboard_failure_is_visible_and_success_uses_edited_text(monkeypatch):
+    component = ChessUIComponent()
+    component._feedback_label = types.SimpleNamespace(text='')
+    def unavailable(*args, **kwargs):
+        raise FileNotFoundError()
+    monkeypatch.setattr(ui_module.subprocess, 'run', unavailable)
+    assert component._copy_text('Приглашение', 'Мой текст') is False
+    assert 'Не удалось' in component._feedback_label.text
+    captured = []
+    monkeypatch.setattr(ui_module.subprocess, 'run', lambda *a, **kw: captured.append(kw['input']))
+    assert component._copy_text('Приглашение', 'Мой текст') is True
+    assert captured == ['Мой текст']
+    assert 'скопировано' in component._feedback_label.text

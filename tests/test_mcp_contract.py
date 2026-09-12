@@ -363,3 +363,27 @@ def test_invalid_timeout_argument_returns_invalid_params(tmp_path: Path) -> None
 
     assert response["error"]["code"] == -32602
     assert response["error"]["message"] == "timeout must be a non-negative finite number"
+
+
+def test_side_invitation_files_contain_only_their_own_token(tmp_path):
+    server = make_server(tmp_path / 'game.json')
+    server._write_session_file()
+    for side in ('white', 'black'):
+        path = tmp_path / f'game.{side}.json'
+        payload = json.loads(path.read_text())
+        assert payload['token'] == f'{side}-token'
+        assert payload['side'] == side
+        assert 'tokens' not in payload
+        assert payload['game_id']
+        assert path.stat().st_mode & 0o777 == 0o600
+    server._remove_session_file()
+    assert not list(tmp_path.glob('game*.json'))
+
+
+def test_mcp_capabilities_match_implemented_tools_and_resources(tmp_path):
+    server = make_server(tmp_path / 'game.json')
+    initialized = server._handle_rpc({'jsonrpc': '2.0', 'id': 1, 'method': 'initialize'}, mcp_side=chess.WHITE)
+    assert initialized['result']['capabilities']['resources']['subscribe'] is False
+    assert {tool['name'] for tool in server._tool_schemas()} == {'get_state', 'get_connection_info', 'legal_moves', 'make_move', 'wait_for_move', 'get_pgn'}
+    subscription = server._handle_rpc({'jsonrpc': '2.0', 'id': 2, 'method': 'resources/subscribe', 'params': {'uri': 'chess://game/state'}}, mcp_side=chess.WHITE)
+    assert subscription['error']['code'] == -32601

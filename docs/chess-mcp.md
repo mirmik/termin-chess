@@ -1,8 +1,35 @@
-# Chess Game MCP
+# Chess agent connection and MCP
 
 Chess can expose a game-level MCP endpoint from inside the running game. This
 is separate from Termin player/editor diagnostic MCP and only exposes chess
 state and chess actions.
+
+## Agent CLI
+
+The in-game “Подключение агента” panel previews and edits an invitation. The
+primary local client is `Scripts/chess_agent_cli.py`, a standalone Python 3
+script included in the game module and packaged app. Run it directly, not as
+`python -m Scripts...`, which would import native Termin components.
+
+The server creates side-specific files next to the operator session file:
+`chess-game-mcp.white.json` and `chess-game-mcp.black.json` for active seats only.
+Each contains only its own token, URL, side and game ID. They are written
+atomically with private permissions and removed on orderly shutdown.
+
+```bash
+python3 Scripts/chess_agent_cli.py --session /tmp/chess-game-mcp.black.json status
+python3 Scripts/chess_agent_cli.py --session /tmp/chess-game-mcp.black.json wait --timeout 60
+python3 Scripts/chess_agent_cli.py --session /tmp/chess-game-mcp.black.json move e7e5
+python3 Scripts/chess_agent_cli.py --session /tmp/chess-game-mcp.black.json pgn
+```
+
+`connect` is an alias for the initial status check. Add `--json` before the
+subcommand for structured output. A successful status/wait/move stores the last
+observed position in a private `.position.json` file beside the seat file.
+`move` submits that position's `game_id` and `expected_fen`; it does not silently
+read a newer position before applying an old choice. After a game changes,
+obtain a fresh invitation and run status again. Normal wait timeouts exit 0;
+errors exit 1. The CLI's wait timeout is limited to 0–300 seconds.
 
 ## Start
 
@@ -71,9 +98,11 @@ the running game MCP process.
 - `chess://game/pgn`: PGN move history for the current game, requested explicitly.
 - `chess://game/events`: recent move/reset/bot events.
 
-The server accepts `resources/subscribe`, but the current local HTTP endpoint is
-request/response. Use `wait_for_move` when an agent needs to block until its
-side can move.
+Subscriptions are not advertised or supported. Use `wait_for_move` when an agent
+needs to block until its side can move. The request/response MCP transport returns
+JSON, HTTP 202 for notifications and HTTP 405 for GET /mcp. It validates Origin
+and rejects unsupported explicit MCP-Protocol-Version headers. The supported
+protocol version is 2025-06-18; no permanent server installation is required.
 
 ## Tools
 
@@ -87,20 +116,33 @@ side can move.
 - `wait_for_move`: wait until the caller's side can move, or until the game
   ends. If the caller is already allowed to move, returns immediately with
   `ready: true`; timeout and success responses include `waiting_for` and compact `state`.
-- `new_game`: listed for protocol visibility, but rejected for side-seat MCP
-  callers. Use the in-game UI for reset.
 - `get_pgn`: explicitly return PGN move history for agents that want the move list.
-- `set_bot_enabled`: listed for protocol visibility, but rejected for side-seat
-  MCP callers. This remains a local sandbox/debug control.
 
-In-game reset starts a new MCP session id, clears live seat connection status,
-and rewrites the session file. Seat tokens stay stable for the running server.
+`new_game` and `set_bot_enabled` are operator controls, absent from tools/list
+and still rejected if a legacy client calls them.
+
+In-game reset starts a new game ID and MCP session id, clears live seat connection status,
+and rewrites the session file. Seat tokens stay stable for the running server. Last move and move history are
+reset. Opening the menu pauses play without changing the game ID, position or
+invitations; state exposes `paused` and agents cannot move until resume.
+
+`make_move` accepts optional `game_id` and `expected_fen` guards. Their checks run
+on the main thread immediately before applying the move. Mismatches return
+`game_changed` or `stale_position` with the current state. Legacy calls without
+guards remain accepted; they are guarded against changes after admission to the
+command queue, but cannot detect a position change before the request arrived.
+The CLI always supplies both guards. `wait_for_move` accepts `game_id` and returns
+`game_changed` if a different game is observed, including during a pending wait.
+Server shutdown wakes pending waits and cancels queued commands before joining
+HTTP workers.
 
 ## State Payload
 
 `get_state` and `chess://game/state` return the same compact caller-aware
 snapshot. Important fields for agents:
 
+- `game_id`: identifier of the chess game, replaced on reset.
+- `paused`: true while the in-game menu is open.
 - `fen`: full FEN string.
 - `board_ascii`: simple text board.
 - `turn`: `white` or `black`.

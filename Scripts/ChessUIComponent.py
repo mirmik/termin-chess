@@ -1,80 +1,92 @@
-"""Chess game UI panel — buttons and status display."""
-
+"""Native chess menus, game HUD and editable agent invitations."""
 from __future__ import annotations
 
 import logging
 import subprocess
 import sys
+import time
 
 from termin.scene import PythonComponent
 from termin.ui_components import UIComponent
 from termin.gui_native import (
-    Button, Label, VStack, CrossAxisAlignment, EdgeInsets, LayoutPolicy,
-    OverlayAnchor, Point, Size, SrgbColor, StyleField, StyleOverride,
-    UiDocumentAsset,
+    CrossAxisAlignment, EdgeInsets, LayoutPolicy, OverlayAnchor, Point, Size,
+    SrgbColor, StyleField, StyleOverride, UiDocumentAsset,
 )
-
 from Scripts import chess_ui_text as ui_text
 
 log = logging.getLogger(__name__)
-log.debug("[ChessUI] ChessUIComponent module loaded.")
+
+MODES = ("human_vs_agent", "local_sandbox", "agent_vs_agent", "human_vs_bot")
+MODE_LABELS = ("С агентом", "Вдвоём за доской", "Два агента", "Со встроенным ботом")
+COLORS = ("white", "black", "random")
+COLOR_LABELS = ("Белые", "Чёрные", "Случайно")
+INK = (0.95, 0.97, 0.95, 1.0)
+MUTED = (0.80, 0.86, 0.82, 1.0)
+ACCENT = (0.76, 0.92, 0.81, 1.0)
 
 
 class ChessUIComponent(PythonComponent):
-
     def __init__(self):
-        log.debug("[ChessUI] ChessUIComponent.__init__()")
         super().__init__()
-        self._ui = None
-        self._layout_dirty = False
-        self._status_label: Label | None = None
-        self._turn_label: Label | None = None
-        self._mode_label: Label | None = None
-        self._owners_label: Label | None = None
-        self._last_move_label: Label | None = None
-        self._captures_label: Label | None = None
-        self._board_hint_label: Label | None = None
-        self._files_label: Label | None = None
-        self._ranks_label: Label | None = None
-        self._connection_labels: dict[str, Label] = {}
-        self._promotion_panel_visible = False
-        self._game_controller = None
-
-    def start(self) -> None:
-        log.info("[ChessUI] start() called")
-        super().start()
-        self._find_game_controller()
-        self._rebuild_ui()
-        log.info("[ChessUI] UI built successfully")
-
-    def on_destroy(self) -> None:
-        self._game_controller = None
         self._ui = None
         self._document = None
         self._overlay = None
-        self._connection_labels.clear()
-        for field in ("status", "turn", "mode", "owners", "last_move", "captures",
-                      "board_hint", "files", "ranks"):
-            setattr(self, f"_{field}_label", None)
+        self._game_controller = None
+        self._layout_dirty = False
+        self._screen = "game"
+        self._setup_mode = "human_vs_agent"
+        self._setup_color = "white"
+        self._invite_side = "black"
+        self._draft_game_id = None
+        self._drafts = {}
+        self._memo_editor = None
+        self._feedback = ""
+        self._feedback_label = None
+        self._status_label = None
+        self._turn_label = None
+        self._history_label = None
+        self._labels = {}
+        self._promotion_panel_visible = False
+        self._viewport = (1280, 710)
+        self._refresh_elapsed = 0.0
+        self._connection_labels = {}
 
-    def _find_game_controller(self):
-        scene = self.entity.scene
-        comps = scene.get_components_of_type("ChessGameController")
-        if comps:
-            self._game_controller = comps[0]
-            log.info("[ChessUI] Found ChessGameController")
-        else:
-            log.warning("[ChessUI] ChessGameController not found in scene")
+    def start(self):
+        super().start()
+        controllers = self.entity.scene.get_components_of_type("ChessGameController")
+        if controllers:
+            self._game_controller = controllers[0]
+        self._rebuild_ui()
+
+    def on_destroy(self):
+        self._memo_editor = None
+        self._labels.clear()
+        self._connection_labels.clear()
+        self._game_controller = None
+        self._ui = self._document = self._overlay = None
+
+    def blocks_board_input(self):
+        return self._screen != "game" or self._game_controller.is_start_menu_visible()
 
     def _build_ui(self):
-        # Button callbacks run inside native input dispatch. Rebuild next frame,
-        # after the widget that owns the callback has finished dispatching.
+        # Never destroy the widget whose input callback is currently running.
         self._layout_dirty = True
 
-    def update(self, dt: float) -> None:
+    def update(self, dt):
+        if self._overlay is not None:
+            bounds = self._overlay.widget.bounds_in_document
+            if bounds.width > 0 and bounds.height > 0:
+                size = (round(bounds.width), round(bounds.height))
+                if size != self._viewport:
+                    self._viewport = size
+                    self._build_ui()
+        self._refresh_elapsed += dt
+        if self._refresh_elapsed >= 0.5:
+            self._refresh_elapsed = 0
+            self._sync_invitation_game()
+            self._update_status()
         if self._layout_dirty:
             self._rebuild_ui()
-            self._update_status()
 
     def _rebuild_ui(self):
         self._layout_dirty = False
@@ -83,441 +95,407 @@ class ChessUIComponent(PythonComponent):
             if self._ui is None:
                 self._ui = UIComponent(priority=100)
                 self.entity.add_component(self._ui)
-            asset = UiDocumentAsset.declare_source(
+            self._ui.ui_layout = UiDocumentAsset.declare_source(
                 "chess-runtime-ui", "Chess UI", "chess-runtime-ui.uiscript",
                 "uiscript: 2\nroot: {type: termin.gui.OverlayLayout}\n",
             )
-            self._ui.ui_layout = asset
         self._document = self._ui.document
+        self._memo_editor = None
+        self._feedback_label = None
+        self._labels = {}
+        self._connection_labels = {}
+        self._status_label = self._turn_label = self._history_label = None
         while self._document.root_count:
             self._document.destroy_widget_recursive(self._document.root_at(0))
         self._overlay = self._document.create_overlay_layout()
         self._overlay.widget.mouse_transparent = True
         self._document.add_root(self._overlay.handle)
-        for field in ("status", "turn", "mode", "owners", "last_move", "captures",
-                      "board_hint", "files", "ranks"):
-            setattr(self, f"_{field}_label", None)
-        self._connection_labels = {}
         self._promotion_panel_visible = False
-        if self._game_controller is not None and self._game_controller.is_start_menu_visible():
+        if self._game_controller is None:
+            return
+        self._sync_invitation_game()
+        if self._game_controller.is_start_menu_visible():
             self._build_start_menu()
+        elif self._screen == "invite":
+            self._build_invitation()
+        elif self._screen == "export":
+            self._build_export()
         else:
             self._build_game_panel()
+        self._update_status()
 
-    def _stack(self, width: int, *, padding: int = 0) -> VStack:
+    def _stack(self, width, padding=20):
         stack = self._document.create_vstack()
-        stack.set_spacing(8)
+        stack.set_spacing(10)
         stack.set_padding(EdgeInsets(padding, padding, padding, padding))
-        stack.set_cross_axis_alignment(CrossAxisAlignment.Center)
+        stack.set_cross_axis_alignment(CrossAxisAlignment.Start)
         stack.preferred_size = Size(width, 0)
         return stack
 
     @staticmethod
-    def _add(stack: VStack, child) -> None:
+    def _add(stack, child):
         stack.add_child(child.widget, LayoutPolicy.Preferred)
 
-    def _separator(self, stack: VStack, width: int) -> None:
-        separator = self._document.create_separator()
-        separator.set_color(SrgbColor(0.4, 0.4, 0.5, 0.6))
-        separator.preferred_size = Size(width, 2)
-        self._add(stack, separator)
+    def _label(self, stack, text, width, *, size=14, color=MUTED, field=None, height=None):
+        label = self._document.create_label(text)
+        label.set_font_size(size)
+        label.set_color(SrgbColor(*color))
+        label.preferred_size = Size(width, height or (size + 10) * (text.count("\n") + 1))
+        self._add(stack, label)
+        if field:
+            self._labels[field] = label
+        return label
 
-    def _mount_panel(self, stack: VStack, *, centered: bool = False) -> None:
-        stack.set_background(SrgbColor(0.12, 0.12, 0.15, 0.94))
-        stack.set_corner_radius(8)
-        # The MCP panel can exceed the viewport height. Keep every action reachable.
+    def _button(self, stack, text, callback, width, *, primary=False, selected=False):
+        button = self._document.create_button(text, debug_name=text)
+        button.widget.preferred_size = Size(width, 40)
+        style = StyleOverride()
+        style.fields = StyleField.Background | StyleField.Foreground | StyleField.FontSize
+        style.value.background = SrgbColor(*(ACCENT if primary or selected else (0.34, 0.41, 0.36, 1)))
+        style.value.foreground = SrgbColor(*((0.08, 0.14, 0.10, 1) if primary or selected else INK))
+        style.value.font_size = 14
+        button.widget.style_override = style
+        button.connect_clicked(callback)
+        self._add(stack, button)
+        return button
+
+    def _row_buttons(self, stack, choices, width):
+        row = self._document.create_hstack()
+        row.set_spacing(8)
+        each = (width - 8 * (len(choices) - 1)) / len(choices)
+        for text, callback, selected in choices:
+            self._button(row, text, callback, each, selected=selected)
+        self._add(stack, row)
+
+    def _separator(self, stack, width):
+        line = self._document.create_separator()
+        line.set_color(SrgbColor(0.28, 0.36, 0.30, 1))
+        line.preferred_size = Size(width, 1)
+        self._add(stack, line)
+
+    def _mount_panel(self, stack, *, centered=False, height=600):
+        stack.set_background(SrgbColor(0.26, 0.31, 0.28, 1.0))
+        stack.set_corner_radius(14)
         scroll = self._document.create_scroll_area()
         scroll.set_content(stack.widget)
-        scroll.widget.preferred_size = Size(stack.preferred_size.width + 16, 260 if centered else 680)
+        scroll.widget.preferred_size = Size(stack.preferred_size.width + 12, min(height, self._viewport[1] - 24))
         if centered:
             row = self._document.create_hstack()
             row.set_cross_axis_alignment(CrossAxisAlignment.Center)
-            left = self._document.create_spacer(Size())
-            right = self._document.create_spacer(Size())
-            row.add_child(left.widget, LayoutPolicy.Flex, 1)
-            row.add_child(scroll.widget, LayoutPolicy.Preferred)
-            row.add_child(right.widget, LayoutPolicy.Flex, 1)
+            for child, policy in ((self._document.create_spacer(Size()), LayoutPolicy.Flex),
+                                  (scroll, LayoutPolicy.Preferred),
+                                  (self._document.create_spacer(Size()), LayoutPolicy.Flex)):
+                row.add_child(child.widget, policy, 1)
             self._overlay.add_child(row.widget, OverlayAnchor.Fill)
         else:
-            self._overlay.add_child(scroll.widget, OverlayAnchor.TopRight, Point(-10, 10))
+            self._overlay.add_child(scroll.widget, OverlayAnchor.TopRight, Point(-12, 12))
+
+    def _panel(self, preferred):
+        width = min(preferred, max(260, self._viewport[0] - 40))
+        return self._stack(width), width - 40
+
+    def _combo(self, stack, items, selected, callback, width):
+        combo = self._document.create_combo_box()
+        for item in items:
+            combo.add_item(item)
+        combo.selected_index = selected
+        combo.widget.preferred_size = Size(width, 40)
+        combo.connect_changed(callback)
+        self._add(stack, combo)
+        return combo
 
     def _build_start_menu(self):
-        stack = self._stack(300, padding=16)
-        self._add(stack, self._make_info_label("Chess", width=268, font_size=26))
-        self._separator(stack, 268)
-        for text, callback in (
-            ("Start Game With Agent", self._on_start_human_vs_agent),
-            ("Start Two-Agent Game", self._on_start_agent_vs_agent),
-            ("Local Sandbox", self._on_start_local_sandbox),
-            ("Quit", self._on_exit),
-        ):
-            self._add(stack, self._make_button(text, callback, width=268))
-        self._mount_panel(stack, centered=True)
+        controller = self._game_controller
+        stack, width = self._panel(440)
+        self._label(stack, "TERMIN CHESS", width, size=14, color=ACCENT)
+        self._label(stack, "Новая партия", width, size=28, color=INK)
+        if controller.is_game_started():
+            self._label(stack, "Текущая партия на паузе", width)
+            self._button(stack, "Продолжить партию", self._on_resume, width, primary=True)
+            self._separator(stack, width)
+        self._label(stack, "С кем играем", width, color=INK)
+        self._combo(stack, MODE_LABELS, MODES.index(self._setup_mode), self._select_mode, width)
+        if self._setup_mode in ("human_vs_agent", "human_vs_bot"):
+            self._label(stack, "Ваш цвет", width, color=INK)
+            self._row_buttons(stack, [(label, lambda c=color: self._select_color(c), color == self._setup_color)
+                                     for color, label in zip(COLORS, COLOR_LABELS, strict=True)], width)
+            hints = {"white": "Вы делаете первый ход.", "black": "Соперник делает первый ход.", "random": "Цвет определится при создании партии."}
+            self._label(stack, hints[self._setup_color], width)
+        else:
+            self._label(stack, "Два приглашения — по одному на сторону." if self._setup_mode == "agent_vs_agent"
+                        else "Оба игрока ходят на этом компьютере.", width)
+        text = "Начать новую партию" if controller.is_game_started() else "Создать партию"
+        self._button(stack, text, self._on_create_game, width, primary=not controller.is_game_started())
+        self._button(stack, "Выйти из игры", self._on_exit, width)
+        self._mount_panel(stack, centered=True, height=480 if controller.is_game_started() else 400)
+
+    def _select_mode(self, index, _text):
+        self._setup_mode = MODES[index]
+        self._build_ui()
+
+    def _select_color(self, color):
+        self._setup_color = color
+        self._build_ui()
+
+    def _on_create_game(self):
+        self._feedback = ""
+        self._game_controller.start_game(self._setup_mode, self._setup_color)
+        self._screen = "game"
+        info = self._connection_info()
+        if info["ok"]:
+            seats = ui_text.seat_payloads(info)
+            if seats:
+                self._invite_side = seats[0]["side"]
+                self._screen = "invite"
+        self._sync_invitation_game()
+        self._build_ui()
+
+    def _on_resume(self):
+        self._screen = "game"
+        self._game_controller.resume_game()
+        self._build_ui()
 
     def _build_game_panel(self):
-        connection_info = self._connection_info()
-        width = 296 if connection_info["ok"] else 240
-        stack = self._stack(width + 24, padding=12)
-        self._add(stack, self._make_info_label("Chess", width=width, font_size=20))
-        for field, text in (
-            ("mode", self._mode_text()), ("owners", ""), ("turn", "White to move"),
-            ("status", ""), ("last_move", "Last move: none"), ("captures", "Captured: none"),
-            ("board_hint", "Board: white view"), ("files", "Files: a b c d e f g h"),
-            ("ranks", "Ranks: 1 2 3 4 5 6 7 8"),
-        ):
-            label = self._make_info_label(text, width=width)
-            setattr(self, f"_{field}_label", label)
-            self._add(stack, label)
-        promotion_info = self._promotion_info()
-        if promotion_info["pending"]:
-            self._promotion_panel_visible = True
-            self._add_promotion_section(stack, promotion_info, width)
+        stack, width = self._panel(296)
+        self._label(stack, "TERMIN CHESS", width, size=14, color=ACCENT)
+        self._label(stack, MODE_LABELS[MODES.index(self._game_controller.current_mode())], width)
         self._separator(stack, width)
-        if connection_info["ok"]:
-            self._add_connection_section(stack, connection_info, width)
-        for text, callback in (
-            ("New Game", self._on_new_game), ("Copy FEN", self._on_copy_fen),
-            ("Copy PGN", self._on_copy_pgn), ("Return to Menu", self._on_return_to_menu),
-            ("Exit", self._on_exit),
-        ):
-            self._add(stack, self._make_button(text, callback, width=width))
-        self._mount_panel(stack)
+        self._label(stack, "", width, field="white", color=INK)
+        self._label(stack, "", width, field="black", color=INK)
+        self._turn_label = self._label(stack, "", width, size=20, color=ACCENT, field="turn")
+        self._status_label = self._label(stack, "", width, field="status")
+        self._label(stack, "", width, field="last_move")
+        self._separator(stack, width)
+        self._label(stack, "Ходы партии", width, color=INK)
+        history = self._document.create_scroll_area()
+        self._history_label = self._document.create_label("")
+        self._history_label.set_color(SrgbColor(*INK))
+        self._history_label.set_font_size(14)
+        self._history_label.preferred_size = Size(width - 12, 40)
+        history.set_content(self._history_label.widget)
+        history.widget.preferred_size = Size(width, min(150, max(70, self._viewport[1] - 520)))
+        self._add(stack, history)
+        promotion = self._game_controller.get_pending_promotion_info()
+        if promotion["pending"]:
+            self._promotion_panel_visible = True
+            self._label(stack, "Превращение пешки", width, color=ACCENT)
+            names = {"queen": "Ферзь", "rook": "Ладья", "bishop": "Слон", "knight": "Конь"}
+            for choice in promotion["choices"]:
+                piece = choice["piece"]
+                self._button(stack, names.get(piece, piece), lambda p=piece: self._on_choose_promotion(p), width)
+            self._button(stack, "Отменить превращение", self._on_cancel_promotion, width)
+        if self._game_controller.current_mode() in ("human_vs_agent", "agent_vs_agent"):
+            info = self._connection_info()
+            if info["ok"]:
+                for seat in ui_text.seat_payloads(info):
+                    side = seat["side"]
+                    label = "Пригласить агента" if len(info["active_mcp_sides"]) == 1 else f"Агент: {ui_text.side_label(side)}"
+                    self._button(stack, label, lambda s=side: self._open_invitation(s), width)
+            else:
+                self._label(stack, "Не удалось запустить подключение", width, color=ACCENT)
+                self._button(stack, "Повторить подключение", self._retry_connection, width)
+                self._label(stack, str(info["error"]), width, size=12, height=44)
+        self._button(stack, "Перевернуть доску", self._game_controller.flip_board, width)
+        self._row_buttons(stack, [("Экспорт", self._open_export, False), ("Меню", self._on_return_to_menu, False)], width)
+        self._mount_panel(stack, height=self._viewport[1] - 24)
 
-    def _add_connection_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
-        title = self._make_info_label("MCP Connection", width=width, font_size=14)
-        title.set_color(SrgbColor(0.92, 0.95, 1.0, 1.0))
-        self._add(stack, title)
+    def _retry_connection(self):
+        self._game_controller.retry_agent_connection()
+        self._build_ui()
 
-        active_seats = ui_text.seat_payloads(info)
-        if active_seats:
-            agent_memo_title = self._make_info_label("Agent Mnemo:", width=width, font_size=13)
-            agent_memo_title.set_color(SrgbColor(1.0, 0.78, 0.36, 1.0))
-            self._add(stack, agent_memo_title)
-        for seat in active_seats:
-            memo_button = self._make_button(
-                ui_text.agent_memo_button_label(seat, active_seats),
-                lambda seat_payload=seat: self._copy_text(
-                    f"{str(seat_payload['side'])} agent memo",
-                    ui_text.agent_memo_text(info, seat_payload),
-                ),
-                width=width,
-            )
-            self._style_agent_memo_button(memo_button)
-            self._add(stack, memo_button)
+    def _open_invitation(self, side):
+        self._screen = "invite"
+        self._invite_side = side
+        self._feedback = ""
+        self._build_ui()
 
-        url = str(info["url"])
-        session_file = str(info["session_file"])
-        self._connection_labels["endpoint"] = self._make_info_label(f"URL: {url}", width=width)
-        self._add(stack, self._connection_labels["endpoint"])
-        self._add(stack, self._make_button("Copy URL", lambda value=url: self._copy_text("MCP URL", value), width=width))
+    def _sync_invitation_game(self):
+        if self._game_controller is None:
+            return
+        game_id = self._game_controller.get_game_state()["game_id"]
+        if game_id != self._draft_game_id:
+            self._drafts.clear()
+            self._draft_game_id = game_id
+            self._feedback = ""
+            if self._memo_editor is not None:
+                self._build_ui()
 
-        self._connection_labels["session_file"] = self._make_info_label(
-            f"Session: {ui_text.short_path(session_file)}",
-            width=width,
-        )
-        self._add(stack, self._connection_labels["session_file"])
-        self._add(stack,
-            self._make_button(
-                "Copy Session File",
-                lambda value=session_file: self._copy_text("MCP session file", value),
-                width=width,
-            )
-        )
-
-        self._connection_labels["connection_turn"] = self._make_info_label("", width=width)
-        self._add(stack, self._connection_labels["connection_turn"])
-        self._connection_labels["last_event"] = self._make_info_label("", width=width)
-        self._add(stack, self._connection_labels["last_event"])
-
-        for seat in active_seats:
-            side = str(seat["side"])
-            label = self._make_info_label("", width=width)
-            self._connection_labels[f"{side}_status"] = label
-            self._add(stack, label)
-            token = str(seat["token"])
-            self._add(stack,
-                self._make_button(
-                    f"Copy {side.title()} Token",
-                    lambda seat_side=side, value=token: self._copy_text(f"{seat_side} token", value),
-                    width=width,
-                )
-            )
-
-        self._refresh_connection_info()
-
-    def _make_info_label(self, text: str, *, width: int, font_size: int = 12) -> Label:
-        label = self._document.create_label(text)
-        label.set_font_size(font_size)
-        label.set_color(SrgbColor(0.78, 0.80, 0.86, 1.0))
-        label.preferred_size = Size(width, max(18, font_size + 8))
-        return label
-
-    def _make_button(self, text: str, callback, *, width: int = 176) -> Button:
-        button = self._document.create_button(text, debug_name=text)
-        button.widget.preferred_size = Size(width, 34)
-        button.connect_clicked(callback)
-        return button
+    def _build_invitation(self):
+        info = self._connection_info()
+        seats = ui_text.seat_payloads(info) if info["ok"] else []
+        if not seats:
+            self._screen = "game"
+            self._build_game_panel()
+            return
+        seat = next((s for s in seats if s["side"] == self._invite_side), seats[0])
+        self._invite_side = seat["side"]
+        stack, width = self._panel(690)
+        self._label(stack, "ПОДКЛЮЧЕНИЕ АГЕНТА", width, size=14, color=ACCENT)
+        self._label(stack, "Пригласить агента", width, size=26, color=INK)
+        if len(seats) > 1:
+            self._row_buttons(stack, [(ui_text.side_label(s["side"]), lambda side=s["side"]: self._open_invitation(side), s["side"] == self._invite_side) for s in seats], width)
+        self._label(stack, f"Агент играет: {ui_text.side_label(self._invite_side)}", width, color=INK)
+        self._label(stack, "Измените сообщение и передайте его агенту.", width)
+        self._connection_labels["activity"] = self._label(stack, self._activity_text(seat), width)
+        if self._invite_side not in self._drafts:
+            self._drafts[self._invite_side] = ui_text.agent_memo_text(info, seat)
+        editor = self._document.create_text_area(self._drafts[self._invite_side])
+        editor.widget.preferred_size = Size(width, min(280, max(140, self._viewport[1] - 370)))
+        self._add(stack, editor)
+        self._memo_editor = editor
+        self._style_editor(editor)
+        identity = self._draft_game_id
+        side = self._invite_side
+        editor.connect_changed(lambda text: self._save_draft(identity, side, text))
+        self._button(stack, "Скопировать сообщение", self._copy_invitation, width, primary=True)
+        self._row_buttons(stack, [("Вернуть шаблон", self._reset_invitation, False), ("К доске", self._close_overlay, False)], width)
+        self._feedback_label = self._label(stack, self._feedback, width, color=ACCENT, height=40)
+        self._mount_panel(stack, centered=True, height=590)
 
     @staticmethod
-    def _style_agent_memo_button(button: Button) -> None:
+    def _style_editor(editor):
         style = StyleOverride()
         style.fields = StyleField.Background | StyleField.Foreground | StyleField.FontSize
-        style.value.background = SrgbColor(0.82, 0.50, 0.12, 1.0)
-        style.value.foreground = SrgbColor(0.08, 0.06, 0.04, 1.0)
+        style.value.background = SrgbColor(0.21, 0.26, 0.23, 1)
+        style.value.foreground = SrgbColor(*INK)
         style.value.font_size = 15
-        button.widget.style_override = style
+        editor.widget.style_override = style
 
-    def _add_promotion_section(self, stack: VStack, info: dict[str, object], width: int) -> None:
-        title = self._make_info_label(ui_text.promotion_title(info), width=width, font_size=13)
-        title.set_color(SrgbColor(1.0, 0.82, 0.36, 1.0))
-        self._add(stack, title)
+    def _save_draft(self, game_id, side, text):
+        if game_id == self._draft_game_id:
+            self._drafts[side] = text
 
-        for choice in ui_text.promotion_choices(info):
-            piece = str(choice["piece"])
-            label = str(choice["label"])
-            self._add(stack,
-                self._make_button(
-                    f"Promote: {label}",
-                    lambda value=piece: self._on_choose_promotion(value),
-                    width=width,
-                )
-            )
-
-        cancel = self._make_button("Cancel Promotion", self._on_cancel_promotion, width=width)
-        self._add(stack, cancel)
-
-    # --- Button callbacks ---
-
-    def _on_start_human_vs_agent(self):
-        log.info("[ChessUI] 'Start Game With Agent' clicked")
-        if self._game_controller is not None:
-            self._game_controller.start_human_vs_agent()
+    def _copy_invitation(self):
+        # Catch an operator reset before a periodic UI refresh as well.
+        previous = self._draft_game_id
+        self._sync_invitation_game()
+        if previous != self._draft_game_id:
+            self._show_feedback("Партия изменилась. Проверьте новое приглашение.")
             self._build_ui()
-            self._update_status()
-        else:
-            log.warning("[ChessUI] No game controller found")
+            return
+        self._copy_text("Сообщение", self._drafts[self._invite_side])
 
-    def _on_start_agent_vs_agent(self):
-        log.info("[ChessUI] 'Start Two-Agent Game' clicked")
-        if self._game_controller is not None:
-            self._game_controller.start_agent_vs_agent()
-            self._build_ui()
-            self._update_status()
-        else:
-            log.warning("[ChessUI] No game controller found")
+    def _reset_invitation(self):
+        info = self._connection_info()
+        seat = next(s for s in ui_text.seat_payloads(info) if s["side"] == self._invite_side)
+        self._memo_editor.text = ui_text.agent_memo_text(info, seat)
+        self._show_feedback("Шаблон восстановлен")
 
-    def _on_start_local_sandbox(self):
-        log.info("[ChessUI] 'Local Sandbox' clicked")
-        if self._game_controller is not None:
-            self._game_controller.start_local_sandbox()
-            self._build_ui()
-            self._update_status()
-        else:
-            log.warning("[ChessUI] No game controller found")
+    def _close_overlay(self):
+        self._screen = "game"
+        self._build_ui()
 
-    def _on_new_game(self):
-        log.info("[ChessUI] 'New Game' clicked")
-        if self._game_controller is not None:
-            self._game_controller.new_game()
-            self._update_status()
-        else:
-            log.warning("[ChessUI] No game controller found")
+    def _open_export(self):
+        self._screen = "export"
+        self._feedback = ""
+        self._build_ui()
+
+    def _build_export(self):
+        stack, width = self._panel(620)
+        self._label(stack, "Экспорт партии", width, size=26, color=INK)
+        self._label(stack, "PGN — история, FEN — текущая позиция.", width)
+        editor = self._document.create_text_area(self._game_controller.get_pgn())
+        self._style_editor(editor)
+        editor.widget.preferred_size = Size(width, 220)
+        self._add(stack, editor)
+        self._button(stack, "Скопировать PGN", self._on_copy_pgn, width, primary=True)
+        self._button(stack, "Скопировать FEN", self._on_copy_fen, width)
+        self._button(stack, "К доске", self._close_overlay, width)
+        self._feedback_label = self._label(stack, self._feedback, width, color=ACCENT, height=40)
+        self._mount_panel(stack, centered=True, height=520)
 
     def _on_return_to_menu(self):
-        log.info("[ChessUI] 'Return to Menu' clicked")
-        if self._game_controller is not None:
-            self._game_controller.return_to_start_menu()
-            self._build_ui()
-        else:
-            log.warning("[ChessUI] No game controller found")
+        self._screen = "game"
+        self._game_controller.return_to_start_menu()
+        self._build_ui()
 
-    def _on_copy_fen(self):
-        log.info("[ChessUI] 'Copy FEN' clicked")
-        if self._game_controller is None:
-            log.warning("[ChessUI] No game controller")
-            return
-
-        fen = self._game_controller.get_fen()
-        log.debug("[ChessUI] FEN: %s", fen)
-        self._copy_text("FEN", fen)
+    def _on_new_game(self):
+        self._game_controller.new_game()
+        self._sync_invitation_game()
+        self._build_ui()
 
     def _on_copy_pgn(self):
-        log.info("[ChessUI] 'Copy PGN' clicked")
-        if self._game_controller is None:
-            log.warning("[ChessUI] No game controller")
-            return
+        self._copy_text("PGN", self._game_controller.get_pgn())
 
-        pgn = self._game_controller.get_pgn()
-        log.debug("[ChessUI] PGN:\n%s", pgn)
-        self._copy_text("PGN", pgn)
+    def _on_copy_fen(self):
+        self._copy_text("FEN", self._game_controller.get_fen())
 
-    def _on_choose_promotion(self, piece_name: str):
-        log.info("[ChessUI] promotion choice clicked: %s", piece_name)
-        if self._game_controller is None:
-            log.warning("[ChessUI] No game controller")
-            return
-        self._game_controller.choose_promotion(piece_name)
+    def _on_choose_promotion(self, piece):
+        self._game_controller.choose_promotion(piece)
         self._build_ui()
-        self._update_status()
 
     def _on_cancel_promotion(self):
-        log.info("[ChessUI] promotion cancelled")
-        if self._game_controller is None:
-            log.warning("[ChessUI] No game controller")
-            return
         self._game_controller.cancel_promotion()
         self._build_ui()
-        self._update_status()
 
-    def _copy_text(self, label: str, text: str) -> None:
+    def _show_feedback(self, text):
+        self._feedback = text
+        if self._feedback_label is not None:
+            self._feedback_label.text = text
+
+    def _copy_text(self, label, text):
         for command in self._clipboard_commands():
             try:
-                subprocess.run(
-                    command,
-                    input=text,
-                    text=True,
-                    check=True,
-                )
-                log.info("[ChessUI] %s copied to clipboard (%s)", label, command[0])
-                return
-            except (FileNotFoundError, subprocess.CalledProcessError) as exc:
-                log.debug("[ChessUI] clipboard command failed for %s: %s (%s)", label, command[0], exc)
-        names = "/".join(command[0] for command in self._clipboard_commands())
-        log.warning("[ChessUI] %s not found or failed, cannot copy %s to clipboard", names, label)
+                subprocess.run(command, input=text, text=True, check=True, timeout=2,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                self._show_feedback(f"{label}: скопировано")
+                return True
+            except (OSError, subprocess.SubprocessError):
+                continue
+        self._show_feedback("Не удалось скопировать. Выделите текст и нажмите Ctrl+C.")
+        return False
 
     @staticmethod
-    def _clipboard_commands(platform: str | None = None) -> list[list[str]]:
-        current_platform = sys.platform if platform is None else platform
-        if current_platform.startswith("win"):
-            return [
-                ["clip.exe"],
-                ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"],
-                ["pwsh.exe", "-NoProfile", "-Command", "Set-Clipboard"],
-            ]
-        if current_platform == "darwin":
+    def _clipboard_commands(platform=None):
+        platform = sys.platform if platform is None else platform
+        if platform.startswith("win"):
+            return [["clip.exe"], ["powershell.exe", "-NoProfile", "-Command", "Set-Clipboard"],
+                    ["pwsh.exe", "-NoProfile", "-Command", "Set-Clipboard"]]
+        if platform == "darwin":
             return [["pbcopy"]]
-        return [
-            ["xclip", "-selection", "clipboard"],
-            ["xsel", "--clipboard", "--input"],
-        ]
+        return [["wl-copy"], ["xclip", "-selection", "clipboard"], ["xsel", "--clipboard", "--input"]]
 
     def _on_exit(self):
-        log.info("[ChessUI] 'Exit' clicked")
         from termin.player import request_quit
-        if not request_quit(0):
-            log.info("[ChessUI] Player runtime is not active; exit request ignored")
+        request_quit(0)
 
-    # --- Status update (called by game controller) ---
-
-    def update_status(self, turn_text: str, status_text: str = ""):
-        """Update displayed status labels."""
-        if self._promotion_layout_changed():
-            self._build_ui()
-        if self._mode_label is not None:
-            self._mode_label.text = self._mode_text()
-        hud_refreshed = self._refresh_hud_info()
-        self._refresh_connection_info()
-        if not hud_refreshed:
-            if self._turn_label is not None:
-                self._turn_label.text = turn_text
-            if self._status_label is not None:
-                self._status_label.text = status_text
-                self._apply_status_color(status_text)
-
-    def _update_status(self):
-        """Pull status from game controller."""
-        if self._game_controller is None:
-            return
-        board = self._game_controller.get_board()
-        if board is None:
-            return
-
-        turn = "White to move" if board.turn else "Black to move"
-
-        status = ""
-        if board.is_checkmate():
-            winner = "Black wins!" if board.turn else "White wins!"
-            status = f"Checkmate! {winner}"
-        elif board.is_stalemate():
-            status = "Stalemate! Draw."
-        elif board.is_check():
-            status = "Check!"
-
-        self.update_status(turn, status)
-
-    def _mode_text(self) -> str:
-        if self._game_controller is None:
-            return "Mode: unknown"
-        mode = self._game_controller.current_mode().replace("_", " ")
-        return f"Mode: {mode}"
-
-    def _connection_info(self) -> dict[str, object]:
-        if self._game_controller is None:
-            return {"ok": False, "error": "No game controller"}
+    def _connection_info(self):
         return self._game_controller.get_connection_panel_info()
 
-    def _game_state_info(self) -> dict[str, object]:
+    @staticmethod
+    def _activity_text(seat):
+        seen = seat.get("last_seen_at")
+        if seen is None:
+            return "Ожидаем первого обращения агента"
+        seconds = max(0, int(time.time() - float(seen)))
+        return f"Последнее обращение: {seconds} с назад"
+
+    def update_status(self, turn_text="", status_text=""):
+        self._update_status()
+
+    def _update_status(self):
         if self._game_controller is None:
-            return {"ok": False, "error": "No game controller"}
-        return self._game_controller.get_game_state()
-
-    def _promotion_info(self) -> dict[str, object]:
-        if self._game_controller is None:
-            return {"pending": False}
-        return self._game_controller.get_pending_promotion_info()
-
-    def _promotion_layout_changed(self) -> bool:
-        pending = bool(self._promotion_info()["pending"])
-        return pending != self._promotion_panel_visible
-
-    def _refresh_hud_info(self) -> bool:
-        if self._turn_label is None or self._status_label is None:
-            return False
-        info = self._game_state_info()
-        if not info["ok"]:
-            return False
-
-        self._turn_label.text = ui_text.turn_text(info)
-        status_text = ui_text.status_text(info)
-        self._status_label.text = status_text
-        self._apply_status_color(status_text)
-        if self._owners_label is not None:
-            self._owners_label.text = ui_text.owners_text(info)
-        if self._last_move_label is not None:
-            self._last_move_label.text = ui_text.last_move_text(info)
-        if self._captures_label is not None:
-            self._captures_label.text = ui_text.captures_text(info)
-        if self._board_hint_label is not None:
-            self._board_hint_label.text = ui_text.board_hint_text(info)
-        if self._files_label is not None:
-            self._files_label.text = ui_text.files_text(info)
-        if self._ranks_label is not None:
-            self._ranks_label.text = ui_text.ranks_text(info)
-        return True
-
-    def _refresh_connection_info(self) -> None:
-        if not self._connection_labels:
             return
-        info = self._connection_info()
-        if not info["ok"]:
-            return
-
-        turn = str(info["turn"]).title()
-        status = str(info["status"])
-        self._connection_labels["connection_turn"].text = f"Turn: {turn} / {status}"
-        self._connection_labels["last_event"].text = ui_text.last_event_text(info)
-        for seat in ui_text.seat_payloads(info):
-            side = str(seat["side"])
-            key = f"{side}_status"
-            if key in self._connection_labels:
-                self._connection_labels[key].text = ui_text.seat_status_text(seat)
-
-    def _apply_status_color(self, status_text: str) -> None:
-        if self._status_label is None:
-            return
-        if "checkmate" in status_text.lower() or "stalemate" in status_text.lower() or "draw:" in status_text.lower():
-            self._status_label.set_color(SrgbColor(1.0, 0.3, 0.3, 1.0))
-        elif "check" in status_text.lower():
-            self._status_label.set_color(SrgbColor(1.0, 0.6, 0.2, 1.0))
-        else:
-            self._status_label.set_color(SrgbColor(0.7, 0.7, 0.7, 1.0))
+        state = self._game_controller.get_game_state()
+        if bool(state["pending_promotion"]["pending"]) != self._promotion_panel_visible and self._screen == "game" and not self._game_controller.is_start_menu_visible():
+            self._build_ui()
+        for side in ("white", "black"):
+            if side in self._labels:
+                owner = {"human": "Вы" if len(state["human_sides"]) == 1 else "Игрок", "agent": "Агент", "local_bot": "Бот"}.get(state["side_owners"][side], "Игрок")
+                self._labels[side].text = f"{ui_text.side_label(side)}  ·  {owner}"
+        if self._turn_label is not None:
+            self._turn_label.text = "Партия окончена" if state["game_over"] else f"Ход: {ui_text.side_label(state['turn']).lower()}"
+            self._status_label.text = ui_text.game_status_ru(state)
+            last = state["last_move"]
+            self._labels["last_move"].text = f"Последний ход: {last['san']}" if last else "Первый ход — за белыми"
+        if self._history_label is not None:
+            moves = state["move_history"]
+            rows = [f"{i // 2 + 1}.  {moves[i]}    {moves[i + 1] if i + 1 < len(moves) else ''}" for i in range(0, len(moves), 2)]
+            self._history_label.text = "\n".join(rows) or "Ходов пока нет"
+            self._history_label.preferred_size = Size(self._history_label.preferred_size.width, max(30, len(rows) * 24))
+        if "activity" in self._connection_labels:
+            info = self._connection_info()
+            if info["ok"]:
+                seat = next((s for s in info["seats"] if s["side"] == self._invite_side), None)
+                if seat is not None:
+                    self._connection_labels["activity"].text = self._activity_text(seat)

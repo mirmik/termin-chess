@@ -17,6 +17,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from Scripts.chess_agent_cli import write_private_json
+
 import chess
 
 from Scripts.ChessMcpPayloads import ConnectionPayload, GameStatePayload, UiConnectionPayload
@@ -115,11 +117,11 @@ def load_chess_mcp_config() -> ChessMcpConfig:
 
 class ChessGameMcpServer:
     def __init__(self, controller: Any, config: ChessMcpConfig) -> None:
+        self.start_error = ""
         self._controller = controller
         self._config = config
         self._httpd: ThreadingHTTPServer | None = None
         self._thread: threading.Thread | None = None
-        self._resource_subscriptions: set[str] = set()
         self._stop_lock = threading.Lock()
         self._stopped = False
         self._atexit_registered = False
@@ -147,6 +149,7 @@ class ChessGameMcpServer:
                 self._make_handler(),
             )
         except OSError as exc:
+            self.start_error = f"Не удалось открыть порт {self._config.port}: {exc}"
             log.error("[ChessMCP] failed to bind %s:%s: %s", self._config.host, self._config.port, exc)
             return False
 
@@ -158,7 +161,12 @@ class ChessGameMcpServer:
         self._thread.start()
         self._register_atexit()
         self._install_signal_handlers()
-        self._write_session_file()
+        try:
+            self._write_session_file()
+        except OSError as exc:
+            self.start_error = f"Не удалось сохранить приглашение: {exc}"
+            self.stop()
+            return False
         log.info("[ChessMCP] listening on %s", self.url)
         log.info("[ChessMCP] session file: %s", self._config.session_file)
         return True
@@ -200,6 +208,8 @@ class ChessGameMcpServer:
     def _remove_session_file(self) -> None:
         try:
             self._config.session_file.unlink(missing_ok=True)
+            for side in ("white", "black"):
+                self._seat_file(side).unlink(missing_ok=True)
         except OSError as exc:
             log.warning("[ChessMCP] failed to remove session file: %s", exc)
 
@@ -226,6 +236,7 @@ class ChessGameMcpServer:
             seats.append(
                 {
                     "side": side_text,
+                    "session_file": str(self._seat_file(side_text)),
                     "owner": state["side_owners"][side_text],
                     "active": side_text in active_sides,
                     "token": token,
@@ -243,6 +254,7 @@ class ChessGameMcpServer:
             "health_url": self._health_url(),
             "session_file": str(self._config.session_file),
             "session_id": self._session_id,
+            "game_id": state.get("game_id", self._session_id),
             "mode": state["mode"],
             "turn": state["turn"],
             "turn_owner": state["turn_owner"],
@@ -313,6 +325,7 @@ class ChessGameMcpServer:
             "side": "black",
             "legacy_default_side": "black",
             "session_id": self._session_id,
+            "game_id": state.get("game_id", self._session_id),
             "mode": state["mode"],
             "turn": state["turn"],
             "turn_owner": state["turn_owner"],
@@ -357,15 +370,19 @@ class ChessGameMcpServer:
             "tools": [tool["name"] for tool in self._tool_schemas()],
             "resources": [resource["uri"] for resource in self._resources()],
         }
-        try:
-            path = self._config.session_file
-            path.parent.mkdir(parents=True, exist_ok=True)
-            tmp = path.with_suffix(path.suffix + ".tmp")
-            tmp.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-            os.chmod(tmp, 0o600)
-            tmp.replace(path)
-        except OSError as exc:
-            log.warning("[ChessMCP] failed to write session file: %s", exc)
+        write_private_json(self._config.session_file, payload)
+        for side in ("white", "black"):
+            if side in state["active_mcp_sides"]:
+                write_private_json(self._seat_file(side), {
+                    "url": self.url, "side": side,
+                    "token": self._token_for_side(side == "white"),
+                    "game_id": state.get("game_id", self._session_id),
+                })
+            else:
+                self._seat_file(side).unlink(missing_ok=True)
+
+    def _seat_file(self, side: str) -> Path:
+        return self._config.session_file.with_suffix(f".{side}.json")
 
     def _make_handler(self):
         owner = self
@@ -373,13 +390,32 @@ class ChessGameMcpServer:
         class Handler(BaseHTTPRequestHandler):
             server_version = "ChessGameMCP/0.1"
 
+            def _valid_headers(self) -> bool:
+                origin = self.headers.get("Origin")
+                if origin and origin != owner.url.rsplit("/", 1)[0]:
+                    self.send_error(403, "Origin is not allowed")
+                    return False
+                version = self.headers.get("MCP-Protocol-Version")
+                if version and version != "2025-06-18":
+                    self.send_error(400, "Unsupported MCP protocol version")
+                    return False
+                return True
+
             def do_GET(self) -> None:
+                if not self._valid_headers():
+                    return
                 if self.path == "/health":
                     self._send_json({"ok": True, "server": "chess-game"})
                     return
-                self.send_error(404)
+                self.send_error(405 if self.path in ("/mcp", "/jsonrpc") else 404)
+
+            def do_DELETE(self) -> None:
+                if self._valid_headers():
+                    self.send_error(405)
 
             def do_POST(self) -> None:
+                if not self._valid_headers():
+                    return
                 if self.path not in ("/mcp", "/jsonrpc"):
                     self.send_error(404)
                     return
@@ -408,7 +444,7 @@ class ChessGameMcpServer:
 
                 response = owner._handle_rpc(request, mcp_side=mcp_side)
                 if response is None:
-                    self.send_response(204)
+                    self.send_response(202)
                     self.end_headers()
                     return
                 self._send_json(response)
@@ -463,12 +499,12 @@ class ChessGameMcpServer:
                         "protocolVersion": "2025-06-18",
                         "capabilities": {
                             "tools": {"listChanged": False},
-                            "resources": {"subscribe": True, "listChanged": False},
+                            "resources": {"subscribe": False, "listChanged": False},
                         },
                         "serverInfo": {"name": "chess-game", "version": "0.1.0"},
                     },
                 )
-            if method == "notifications/initialized":
+            if isinstance(method, str) and method.startswith("notifications/") and request_id is None:
                 return None
             if method == "ping":
                 return self._rpc_result(request_id, {})
@@ -481,9 +517,9 @@ class ChessGameMcpServer:
             if method == "resources/read":
                 return self._handle_resource_read(request_id, request.get("params"), mcp_side=mcp_side)
             if method == "resources/subscribe":
-                return self._handle_resource_subscribe(request_id, request.get("params"))
+                return self._rpc_error(request_id, -32601, "Resource subscriptions are not supported; use wait_for_move")
             if method == "resources/unsubscribe":
-                return self._handle_resource_unsubscribe(request_id, request.get("params"))
+                return self._rpc_error(request_id, -32601, "Resource subscriptions are not supported")
             return self._rpc_error(request_id, -32601, f"Method not found: {method}")
         except Exception as exc:
             log.exception("[ChessMCP] request handling failed")
@@ -522,18 +558,31 @@ class ChessGameMcpServer:
             timeout = self._timeout_argument(arguments, default=10.0)
             if timeout is None:
                 return self._rpc_error(request_id, -32602, "timeout must be a non-negative finite number")
+            guard = {}
+            for key in ("game_id", "expected_fen"):
+                if key in arguments:
+                    if not isinstance(arguments[key], str) or not arguments[key]:
+                        return self._rpc_error(request_id, -32602, f"{key} must be a non-empty string")
+                    guard[key] = arguments[key]
             payload = self._controller.request_mcp_move(
                 str(arguments.get("move", "")),
                 side=mcp_side,
                 timeout=timeout,
+                **guard,
             )
         elif name == "wait_for_move":
             timeout = self._timeout_argument(arguments, default=60.0)
             if timeout is None:
                 return self._rpc_error(request_id, -32602, "timeout must be a non-negative finite number")
+            guard = {}
+            if "game_id" in arguments and arguments["game_id"] is not None:
+                if not isinstance(arguments["game_id"], str) or not arguments["game_id"]:
+                    return self._rpc_error(request_id, -32602, "game_id must be a non-empty string")
+                guard["game_id"] = arguments["game_id"]
             payload = self._controller.wait_for_mcp_event(
                 timeout=timeout,
                 caller_side=mcp_side,
+                **guard,
             )
         elif name == "get_pgn":
             payload = {"ok": True, "pgn": self._controller.get_mcp_pgn()}
@@ -598,22 +647,6 @@ class ChessGameMcpServer:
             {"contents": [{"uri": uri, "mimeType": mime_type, "text": text}]},
         )
 
-    def _handle_resource_subscribe(self, request_id: object, params: object) -> dict[str, object]:
-        uri = self._resource_uri_param(params)
-        if uri is None:
-            return self._rpc_error(request_id, -32602, "Resource URI must be a string")
-        if uri not in {resource["uri"] for resource in self._resources()}:
-            return self._rpc_error(request_id, -32002, f"Resource not found: {uri}")
-        self._resource_subscriptions.add(uri)
-        return self._rpc_result(request_id, {})
-
-    def _handle_resource_unsubscribe(self, request_id: object, params: object) -> dict[str, object]:
-        uri = self._resource_uri_param(params)
-        if uri is None:
-            return self._rpc_error(request_id, -32602, "Resource URI must be a string")
-        self._resource_subscriptions.discard(uri)
-        return self._rpc_result(request_id, {})
-
     @staticmethod
     def _resource_uri_param(params: object) -> str | None:
         if not isinstance(params, dict):
@@ -645,6 +678,8 @@ class ChessGameMcpServer:
                     "type": "object",
                     "properties": {
                         "move": {"type": "string"},
+                        "game_id": {"type": "string", "description": "Game identifier from get_state"},
+                        "expected_fen": {"type": "string", "description": "Position you used to choose this move"},
                         "timeout": {"type": "number", "default": 10},
                     },
                     "required": ["move"],
@@ -658,6 +693,7 @@ class ChessGameMcpServer:
                     "type": "object",
                     "properties": {
                         "timeout": {"type": "number", "default": 60},
+                        "game_id": {"type": "string", "description": "Return game_changed if this game is replaced"},
                     },
                     "additionalProperties": False,
                 },
@@ -667,28 +703,7 @@ class ChessGameMcpServer:
                 "description": "Return PGN move history for the current game when explicitly requested.",
                 "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             },
-            {
-                "name": "new_game",
-                "description": "Reset the game to the initial chess position. Side-seat MCP callers are rejected; use in-game UI or future system control.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {"timeout": {"type": "number", "default": 10}},
-                    "additionalProperties": False,
-                },
-            },
-            {
-                "name": "set_bot_enabled",
-                "description": "Enable or disable the built-in chess bot. Side-seat MCP callers are rejected; this is a local sandbox/debug control.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "enabled": {"type": "boolean"},
-                        "timeout": {"type": "number", "default": 10},
-                    },
-                    "required": ["enabled"],
-                    "additionalProperties": False,
-                },
-            },
+
         ]
 
     @staticmethod
@@ -820,7 +835,8 @@ class ChessGameMcpServer:
                 "1. Call `get_state` or read `chess://game/state`.",
                 "2. If it is not your turn, call `wait_for_move`.",
                 "3. When `caller_can_move` is true, call `legal_moves` and choose a legal UCI or SAN move.",
-                "4. Call `make_move` with that move.",
+                "4. Call `make_move` with that move, game_id and expected_fen from the position you read.",
+                "5. Stop if game_changed is returned; get a fresh invitation from the operator.",
                 "",
                 "Side seats cannot call `new_game` or `set_bot_enabled`; use the in-game UI for reset/debug controls.",
                 "",

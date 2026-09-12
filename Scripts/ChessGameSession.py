@@ -6,6 +6,16 @@ from dataclasses import dataclass
 from enum import Enum
 
 import chess
+import random
+
+
+def resolve_human_color(choice: str) -> bool:
+    """Resolve the UI choice once, when a new game is created."""
+    if choice == "random":
+        return random.choice((chess.WHITE, chess.BLACK))
+    if choice not in ("white", "black"):
+        raise ValueError(f"Unknown color: {choice}")
+    return choice == "white"
 
 
 class GameMode(str, Enum):

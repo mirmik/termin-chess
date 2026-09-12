@@ -27,47 +27,45 @@ def agent_memo_button_label(seat: dict[str, object], active_seats: list[dict[str
 
 
 def agent_memo_text(info: dict[str, object], seat: dict[str, object]) -> str:
-    side = str(seat["side"])
-    url = str(info["url"])
-    token = str(seat["token"])
-    authorization = str(seat.get("authorization", f"Bearer {token}"))
-    mode = str(info["mode"])
-    session_file = str(info["session_file"])
-    active_sides = info.get("active_mcp_sides")
-    if isinstance(active_sides, list):
-        active_text = ", ".join(str(active_side) for active_side in active_sides)
-    else:
-        active_text = side
+    from pathlib import Path
+    import sys
 
-    return "\n".join(
-        [
-            "You are playing chess as an MCP-connected agent.",
-            "",
-            "Connection:",
-            f"- Endpoint URL: {url}",
-            f"- Authorization header: {authorization}",
-            f"- Token: {token}",
-            f"- Your side: {side}",
-            f"- Game mode: {mode}",
-            f"- Active MCP sides: {active_text}",
-            f"- Local session file, if accessible: {session_file}",
-            "",
-            "Expected conduct:",
-            "- Play your own chess moves. Do not ask the user/operator to choose moves for you.",
-            "- Do not use external tools, chess engines, web search, opening books, or tablebases unless the user explicitly allows it.",
-            "- Use only the chess MCP connection above for game state and moves.",
-            "- If it is not your turn, call `wait_for_move` with a reasonable timeout instead of polling or asking the user for updates.",
-            "- On your turn, call `get_state` or `legal_moves`, choose one legal move, then call `make_move`.",
-            "- Side-seat agents must not try to call `new_game` or `set_bot_enabled`; those controls are reserved for the in-game UI.",
-            "",
-            "Useful MCP tools:",
-            "- `get_connection_info`: verify your seat, mode, endpoint and policy.",
-            "- `get_state`: inspect FEN, legal moves, turn owner, game status and last move.",
-            "- `legal_moves`: list legal UCI/SAN moves for the current position.",
-            "- `make_move`: play your selected legal UCI or SAN move.",
-            "- `wait_for_move`: wait until your side can move or the game ends.",
-        ]
-    )
+    side = str(seat["side"])
+    cli = str(Path(__file__).with_name("chess_agent_cli.py").resolve())
+    session = str(seat.get("session_file", info["session_file"]))
+    python = "python" if sys.platform.startswith("win") else "python3"
+    command = f'{python} "<client>" --session "<session>"'
+    return "\n".join([
+        f"Play chess with me. Your side: {side}.",
+        "Play your own moves. Do not ask the user/operator to choose moves for you.",
+        "Do not use chess engines, web search, opening books or tablebases",
+        "unless I explicitly allow them. The game connection utility is allowed.",
+        "",
+        "Use this Python 3 utility on the same computer as the game:",
+        f"Client: {cli}",
+        f"Session: {session}",
+        "Replace <client> and <session> below with these paths:",
+        f"{command} status",
+        f"{command} wait --timeout 60",
+        f"{command} move <UCI-or-SAN>",
+        f"{command} pgn",
+        "Add --json before the subcommand for machine-readable output.",
+        "",
+        "Loop: wait for your turn, read the returned position and legal moves,",
+        "choose a move, then send it. Wait again on timeout; stop at game over.",
+        "If the game changes, stop and request a fresh invitation.",
+        "Do not reset the game or change the players. I control new games in the UI.",
+        "The move command checks the game and position you last read.",
+        "",
+        "Optional MCP / HTTP connection (use only your seat):",
+        f"Endpoint URL: {info['url']}",
+        f"Authorization header: {seat.get('authorization', 'Bearer ' + str(seat['token']))}",
+        "Tools: get_state, wait_for_move, make_move, get_pgn.",
+        "Pass game_id and expected_fen from get_state when calling make_move.",
+        "Do not call new_game or set_bot_enabled.",
+        "",
+        "My preferences: briefly explain the idea behind each move.",
+    ])
 
 
 def last_event_text(info: dict[str, object]) -> str:
@@ -125,6 +123,8 @@ def captured_side_text(items: object) -> str:
 
 
 def board_view(info: dict[str, object]) -> str:
+    if info.get("board_view") in ("white", "black"):
+        return str(info["board_view"])
     human_sides = info.get("human_sides")
     if not isinstance(human_sides, list):
         return "white"
@@ -210,3 +210,26 @@ def promotion_choices(info: dict[str, object]) -> list[dict[str, object]]:
     if not isinstance(choices, list):
         return []
     return [choice for choice in choices if isinstance(choice, dict)]
+
+
+def side_label(side: str) -> str:
+    return "Белые" if side == "white" else "Чёрные"
+
+
+def game_status_ru(info: dict[str, object]) -> str:
+    status = str(info["status"])
+    if status.startswith("checkmate:"):
+        return f"Мат. Победили {side_label(status.split(':')[1]).lower()}."
+    if status == "stalemate":
+        return "Пат. Ничья."
+    if status.startswith("draw:"):
+        reasons = {"insufficient_material": "недостаточно фигур", "seventyfive_moves": "75 ходов",
+                   "fivefold_repetition": "повторение позиции"}
+        reason = status.split(":", 1)[1]
+        return "Ничья: " + reasons.get(reason, reason.replace("_", " "))
+    if info.get("pending_promotion", {}).get("pending"):
+        return "Выберите фигуру для превращения"
+    if status == "check":
+        return "Шах!"
+    actor = info.get("turn_owner", {}).get("owner")
+    return "Ожидаем ход агента" if actor == "agent" else "Выберите фигуру и поле"
