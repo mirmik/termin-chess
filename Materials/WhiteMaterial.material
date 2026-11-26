@@ -2,14 +2,19 @@
   "uuid": "cf32a9b7-e144-4b74-aa59-ba86da8af2a9",
   "shader": "CookTorrancePBR",
   "shader_uuid": "termin-stdlib-shader-cook-torrance-pbr",
+  "phase_marks": [
+    "",
+    "opaque"
+  ],
   "uniforms": {
     "u_color": [
-      0.8120851516723633,
-      0.8087586760520935,
-      0.7129930853843689,
+      1.0,
+      0.8888888955116272,
+      0.8888888955116272,
       1.0
     ],
-    "u_shininess": 32.0,
+    "u_metallic": 0.0,
+    "u_roughness": 0.5,
     "u_emission_color": [
       0.6442969441413879,
       0.6307621598243713,
@@ -17,6 +22,8 @@
       1.0
     ],
     "u_emission_intensity": 0.30000001192092896,
+    "u_normal_strength": 1.0,
+    "u_shininess": 32.0,
     "u_subsurface": 1.0,
     "u_diffuse_mul": 3.140000104904175
   }
